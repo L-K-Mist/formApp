@@ -5,12 +5,28 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-
+    showCameraDialog: false
   },
-  mutations: {
-
+  getters: {
+    showCameraDialog(state){
+      return state.showCameraDialog
+    }
   },
+  // mutations: {
+  //   showCameraDialog({
+  //     state
+  //   }, payload) {
+  //     state.showCameraDialog = payload
+  //   }
+  // },
   actions: {
-
+    showCameraDialog({
+      commit, state
+    }, payload) {
+      state.showCameraDialog = payload;
+      console.log('​-----------------------------------------------');
+      console.log('​state.showCameraDialog', state.showCameraDialog);
+      console.log('​-----------------------------------------------');
+    }
   }
-})
+});
