@@ -3,6 +3,8 @@ import moment from "moment";
 
 
 const state = {
+  selectedPic: null,
+
   showConnectDialog: false,
   heaterLeft: {
     name: "Left Inlet",
@@ -19,6 +21,9 @@ const getters = {
   showConnectDialog(state) {
     return state.showConnectDialog
   },
+  selectedPic(state) {
+    return state.selectedPic
+  }
 }
 
 const mutations = {
@@ -41,6 +46,11 @@ const actions = {
     // console.log('​state.imageBlob', state.imageBlob);
     // console.log('​---------------------------------');
     state.imageUrl = URL.createObjectURL(payload);
+  },
+  selectPic({
+    state
+  }, payload) {
+    state.selectedPic = payload
   }
 };
 

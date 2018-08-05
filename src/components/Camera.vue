@@ -24,6 +24,14 @@
                         <v-icon class="ma-2" color="pink" @click.stop="shortlistPic">thumb_up</v-icon> 
                         <v-icon class="ma-2" color="pink" @click.stop="discardPic">thumb_down</v-icon>        
                     </v-flex>                    
+                    <v-flex v-if="shortList.length > 0" xs12>
+                        <h4>After you've got a few options choose the best to confirm</h4>
+                        <v-layout row wrap align-content-start>
+                            <v-flex class="text-xs-left" v-for="(image, index) in shortList" :key="index">
+                                <img @click.stop="selectPic(image)" height="60vw" :src="image.src"/>
+                            </v-flex>
+                        </v-layout>
+                    </v-flex>
                 </v-layout>
             </v-container>
         </v-card>
@@ -37,7 +45,8 @@ export default {
             blob: null,
             imageUrl: "https://cdn.vuetifyjs.com/images/cards/desert.jpg",
             cameraView: true,
-            shortList:[]
+            shortList:[],
+            
         }
     },
     mounted () {
@@ -70,23 +79,33 @@ export default {
             console.log('​----------------------');
             console.log('​snapPic -> blob', blob);
             console.log('​----------------------');
-                this.$store.dispatch("captureImage", blob)
+                // this.$store.dispatch("captureImage", blob)
+                this.blob = blob
                 this.imageUrl = URL.createObjectURL(blob);
                 this.cameraView = false
             })                        
         },
         discardPic() {
+            this.cameraView = true
+            this.mountCam()
+        },
+        shortlistPic() {
+            this.shortList.push({
+                src: this.imageUrl,
+                blob: this.blob
+                })
+            console.log('​-----------------------------------------------');
+            console.log('​shortlistPic -> this.shortList', this.shortList);
+            console.log('​-----------------------------------------------');            
             this.mountCam()
             this.cameraView = true
         },
-        shortlistPic() {
-            this.shortList.push(this.imageUrl)
-            console.log('​-----------------------------------------------');
-            console.log('​shortlistPic -> this.shortList', this.shortList);
-            console.log('​-----------------------------------------------');
-            
-            this.mountCam()
-            this.cameraView = true
+        selectPic(pic) {
+        console.log('​----------------------');
+        console.log('​selectPic -> pic', pic);
+        console.log('​----------------------');
+        this.$store.dispatch("selectPic", pic)
+        this.$store.dispatch("showCameraDialog", false)
         }
     }
   }

@@ -1,6 +1,6 @@
 <template>
     <v-layout row wrap>
-        <v-container grid-list-sm>
+        <v-container grid-list-md>
             <v-flex xs12>
                 <v-text-field
                     name="name"
@@ -17,6 +17,9 @@
                     @click.stop="openCamera"
                 ></v-text-field>
             </v-flex>
+            <v-flex v-if="$store.getters.selectedPic !== null" xs12>
+                <img :src="$store.getters.selectedPic.src"/>
+            </v-flex>    
         </v-container>
         <cam-dialog></cam-dialog>
     </v-layout>
