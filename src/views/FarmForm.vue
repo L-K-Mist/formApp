@@ -18,7 +18,7 @@
                 ></v-text-field>
             </v-flex>
             <v-flex v-if="$store.getters.selectedPic !== null" xs12>
-                <img :src="$store.getters.selectedPic.src"/>
+                <img height="90vh" :src="$store.getters.selectedPic.src"/>
             </v-flex>    
         </v-container>
         <cam-dialog></cam-dialog>
