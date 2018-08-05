@@ -8,13 +8,14 @@
                     prepend-icon="person"
                 ></v-text-field>
             </v-flex>
-            <v-flex xs12>
+            <v-flex @click.stop="openCamera" xs12>
                 <v-text-field
+                    disabled=""
                     name="name"
-                    label="photo"
-                    prepend-icon="photo"
+                    label="click to add photo"
+                    prepend-icon="camera_alt"
                     :prepend-icon-cb="openCamera"
-                    @click.stop="openCamera"
+                    
                 ></v-text-field>
             </v-flex>
             <v-flex v-if="$store.getters.selectedPic !== null" xs12>
