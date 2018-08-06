@@ -57,7 +57,7 @@ export default {
     },
     methods: {
         mountCam(){
-            navigator.mediaDevices.getUserMedia({ video: true })  // Method asks user for permission to use camera
+            navigator.mediaDevices.getUserMedia({video: { facingMode: "environment" } })  // Method asks user for permission to use camera AND selects the "environment" facing camera over "user" facing camera
             .then(mediaStream => {
                 this.mediaStream = mediaStream
                 this.$refs.video.srcObject = mediaStream
