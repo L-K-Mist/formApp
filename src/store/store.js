@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Camera from './modules/camera'
 import db from "@/api/pouchDB";
+import csvData from './modules/csvData'
 
 Vue.use(Vuex)
 
@@ -32,6 +33,7 @@ export const store = new Vuex.Store({
     }
   },
   modules: {
-    Camera
+    Camera,
+    csvData
   }
 });

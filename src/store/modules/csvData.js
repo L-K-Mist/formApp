@@ -3,32 +3,35 @@ import moment from "moment";
 
 
 const state = {
-    csvFile: null
+    csvFileAsJSON: null
 };
 
 const getters = {
-    csvFile(state) {
-        return state.csvFile
+    csvFileAsJSON(state) {
+        return state.csvFileAsJSON
     }
 }
 
-const mutations = {
-    csvFile(state, payload) {
-        state.csvFile = payload
-    },
-}
+// const mutations = {
+//     csvFileAsJSON(state, payload) {
+//         state.csvFileAsJSON = payload
+//     },
+// }
 
 const actions = {
-    csvFile({
+    csvFileAsJSON({
         state
     }, payload) {
-        state.csvFile = payload;
+        state.csvFileAsJSON = payload;
+        console.log('​-----------------------------------------');
+        console.log('​state.csvFileAsJSON', state.csvFileAsJSON);
+        console.log('​-----------------------------------------');
     }
 };
 
 export default {
     state,
     getters,
-    mutations,
+    // mutations,
     actions,
 }
