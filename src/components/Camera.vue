@@ -106,6 +106,7 @@ export default {
         console.log('​----------------------');
         this.$store.dispatch("selectPic", pic)
         this.$store.dispatch("showCameraDialog", false)
+                    this.shortList = []
         }
     }
   }
