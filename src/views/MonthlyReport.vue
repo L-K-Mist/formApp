@@ -1,5 +1,6 @@
 <template>
   <div class="parse">
+    <month-picker></month-picker>
     <h1>Parse CSV to JSON</h1>
     <input 
       id="fileInput"
@@ -27,11 +28,13 @@
   import Papa from 'papaparse'
   import Blob from 'blob'
   import FileSaver from 'file-saver'
+  import MonthPicker from '@/components/MonthPicker'
   export default {
     name: 'parse',
     data () {
       return {
-        doc: null
+        doc: null,
+        picker: null
       }
     },
     methods: {
@@ -69,6 +72,9 @@
       parseJSONtoCSV () {
         return Papa.unparse(this.doc)
       }
+    },
+    components: {
+      MonthPicker
     }  
   }
 </script>

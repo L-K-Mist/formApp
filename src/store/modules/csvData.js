@@ -6,6 +6,7 @@ import moment from "moment";
 // https://stackoverflow.com/questions/18133635/javascript-remove-attribute-for-all-objects-in-array
 
 const state = {
+    reportMonth: null,
   salesForm: null,
   mentorVisit: null
 };
@@ -26,6 +27,14 @@ const getters = {
 // }
 
 const actions = {
+    reportMonth({
+        state
+    }, payload) {
+        state.reportMonth = payload
+        console.log('​-------------------------------------');
+        console.log('​state.reportMonth', state.reportMonth);
+        console.log('​-------------------------------------');        
+    },
     salesForm({
         state
     }, payload) {
@@ -33,7 +42,7 @@ const actions = {
         // TODO iterate through and create new object with only the dates in question and fields required.
         // TODO take away hardcoded date once monthpicker is used
         payload.forEach(function (item) {
-            if(item.Date !== undefined && item.Date.includes("2018-07")) {
+            if(item.Date !== undefined && item.Date.includes(state.reportMonth)) {
                 console.log('​---------------------');
                 console.log('​item.Date', item.Date);
                 console.log('​---------------------');
@@ -42,9 +51,9 @@ const actions = {
         });
         
         state.salesForm = payload;
-        console.log('​-----------------------------------------');
-        console.log('​state.salesForm', state.salesForm);
-        console.log('​-----------------------------------------');
+        // console.log('​-----------------------------------------');
+        // console.log('​state.salesForm', state.salesForm);
+        // console.log('​-----------------------------------------');
     },
     mentorVisit({
         state
