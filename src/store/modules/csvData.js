@@ -11,7 +11,8 @@ const state = {
   reportMonth: null,
   salesForm: null,
   mentorVisit: null,
-  seedlingSum: null
+  seedlingSum: null,
+  supportedGrowersCount: null
 };
 
 const getters = {
@@ -20,6 +21,9 @@ const getters = {
   },
   seedlingSum(state) {
     return state.seedlingSum
+  },
+  supportedGrowersCount(state){
+    return state.supportedGrowersCount
   },
     salesForm(state) {
     return state.salesForm;
@@ -77,15 +81,9 @@ Hope this helps.  Enjoy your day with fam.
       };
     });
 
-    // function numString(string) {
-    //     let num = parseInt(string)
-    //     if (num)
-    // }
-
     console.log("​-------------------");
     console.log("​fieldMap", fieldMap);
     console.log("​-------------------");
-
    
     state.salesForm = fieldMap;
     console.log('​-----------------------------------------');
@@ -93,6 +91,7 @@ Hope this helps.  Enjoy your day with fam.
     console.log('​-----------------------------------------');
 
     dispatch("seedlingsSold", fieldMap)
+    dispatch("supportedGrowersCount", fieldMap)
   },
   mentorVisit({ state }, payload) {
     state.mentorVisit = payload;
@@ -109,6 +108,20 @@ Hope this helps.  Enjoy your day with fam.
       console.log('​-------------------------');
       console.log('​seedlingSum', state.seedlingSum);
       console.log('​-------------------------');
+  },
+  supportedGrowersCount({
+    state
+  }, payload) {
+    var growerArray = payload.map(row => row.profileId)
+    console.log('​-------------------------');
+    console.log('​growerArray', growerArray);
+    console.log('​-------------------------');
+    var uniqueItems = Array.from(new Set(growerArray));
+    var uniqueItemsCount = uniqueItems.length
+    console.log('​-----------------------------------');
+    console.log('​uniqueItemsCount', uniqueItemsCount);
+    console.log('​-----------------------------------');
+    state.supportedGrowersCount = uniqueItemsCount
   }
 };
 

@@ -14,7 +14,6 @@
           <v-card-title>
             <span class="headline">{{ formTitle }}</span>
           </v-card-title>
-
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
@@ -49,7 +48,7 @@
         <!-- <td>{{ props.item.name }}</td> -->
         <td class="text-xs-left">{{ props.item.date }}</td>
         <td class="text-xs-left">{{ props.item.memberUid }}</td>
-        <td class="text-xs-left">{{ props.item.gardenId }}</td>
+        <td class="text-xs-left">{{ props.item.profileId }}</td>
         <td class="text-xs-left">{{ props.item.seedlingsDistributed }}</td>
         <td class="justify-center layout px-0">
           <v-icon
@@ -86,7 +85,7 @@
           value: 'date'
         },
         { text: 'UID', value: 'uid' },
-        { text: 'Garden ID', value: 'uid'},
+        { text: 'Profile ID', value: 'id'},
         { text: 'Seedlings', value: 'seedlings' },      
         ],
       desserts: [],
@@ -94,11 +93,13 @@
       editedItem: {
         date: '',
         uid: '',
+        id: 'id',
         seedlings: '',
       },
       defaultItem: {
         date: '',
         uid: '',
+        id: 'id',
         seedlings: '',
       }
     }),
