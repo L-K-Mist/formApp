@@ -12,7 +12,10 @@ const state = {
   salesForm: null,
   mentorVisit: null,
   seedlingSum: null,
-  supportedGrowersCount: null
+  supportedGrowersCount: null,
+  plantedArea: null,
+  cropYield: null,
+  cropValue: null,
 };
 
 const getters = {
@@ -25,12 +28,18 @@ const getters = {
   supportedGrowersCount(state){
     return state.supportedGrowersCount
   },
-    salesForm(state) {
+  salesForm(state) {
     return state.salesForm;
-    },
-    mentorVisit(state) {
+  },
+  mentorVisit(state) {
         return state.mentorVisit;
-    },
+  },
+  cropYield(state) {
+    return state.cropYield;
+  },
+  cropValue(state) {
+    return state.cropValue;
+  },
 };
 
 // const mutations = {
@@ -60,12 +69,13 @@ Hope this helps.  Enjoy your day with fam.
 
   reportMonth({ state }, payload) {
     state.reportMonth = payload;
-    state.gotMonth = true
+    state.gotMonth = true;
     console.log("​-------------------------------------");
     console.log("​state.reportMonth", state.reportMonth);
     console.log("​-------------------------------------");
   },
-  salesForm({ state, dispatch }, payload) { // Takes the JSON of the csv and simplifies it to the essentials
+  salesForm({ state, dispatch }, payload) {
+    // Takes the JSON of the csv and simplifies it to the essentials
     const dateFilter = payload.filter(
       entry =>
         entry.Date !== undefined && entry.Date.includes(state.reportMonth)
@@ -84,14 +94,14 @@ Hope this helps.  Enjoy your day with fam.
     console.log("​-------------------");
     console.log("​fieldMap", fieldMap);
     console.log("​-------------------");
-   
-    state.salesForm = fieldMap;
-    console.log('​-----------------------------------------');
-    console.log('​state.salesForm', state.salesForm);
-    console.log('​-----------------------------------------');
 
-    dispatch("seedlingsSold", fieldMap)
-    dispatch("supportedGrowersCount", fieldMap)
+    state.salesForm = fieldMap;
+    console.log("​-----------------------------------------");
+    console.log("​state.salesForm", state.salesForm);
+    console.log("​-----------------------------------------");
+
+    dispatch("seedlingsSold", fieldMap);
+    dispatch("supportedGrowersCount", fieldMap);
   },
   mentorVisit({ state }, payload) {
     state.mentorVisit = payload;
@@ -99,30 +109,43 @@ Hope this helps.  Enjoy your day with fam.
     console.log("​state.mentorVisit", state.mentorVisit);
     console.log("​---------------------------------------");
   },
-  seedlingsSold({
-      state
-  }, payload){
+  seedlingsSold({ state, dispatch }, payload) {
+    state.seedlingSum = payload.reduce(
+      (total, row) => total + row.seedlingsDistributed,
+      0
+    );
+    dispatch("plantedArea", state.seedlingSum)
 
-      state.seedlingSum = payload.reduce((total, row) => total + row.seedlingsDistributed, 0);
-
-      console.log('​-------------------------');
-      console.log('​seedlingSum', state.seedlingSum);
-      console.log('​-------------------------');
+    console.log("​-------------------------");
+    console.log("​seedlingSum", state.seedlingSum);
+    console.log("​-------------------------");
   },
-  supportedGrowersCount({
+  supportedGrowersCount({ state }, payload) {
+    var growerArray = payload.map(row => row.profileId);
+    var uniqueItems = Array.from(new Set(growerArray));
+    var uniqueItemsCount = uniqueItems.length;
+    console.log("​-----------------------------------");
+    console.log("​uniqueItemsCount", uniqueItemsCount);
+    console.log("​-----------------------------------");
+    state.supportedGrowersCount = uniqueItemsCount;
+  },
+  plantedArea({
     state
   }, payload) {
-    var growerArray = payload.map(row => row.profileId)
-    console.log('​-------------------------');
-    console.log('​growerArray', growerArray);
-    console.log('​-------------------------');
-    var uniqueItems = Array.from(new Set(growerArray));
-    var uniqueItemsCount = uniqueItems.length
-    console.log('​-----------------------------------');
-    console.log('​uniqueItemsCount', uniqueItemsCount);
-    console.log('​-----------------------------------');
-    state.supportedGrowersCount = uniqueItemsCount
+    state.plantedArea = Math.round(payload / 12)
+
+    state.cropYield = (state.plantedArea * 4.5 / 1000).toFixed(2)
+
+    state.cropValue = Math.round(state.cropYield * 10)
+    console.log('​---------------------------------');
+    console.log('​state.cropValue', state.cropValue);
+    console.log('​---------------------------------');
+
   }
+  /**
+   * Seedling Sale (memsalesformfull_export)
+#seedlings /12 (to get m2) x 4.5 (to get est. yield in kg) x R10 (to get R value of seedling if successfully grown)
+   */
 };
 
 export default {
