@@ -31,6 +31,9 @@ const getters = {
   salesForm(state) {
     return state.salesForm;
   },
+  plantedArea(state) {
+    return state.plantedArea;
+  },
   mentorVisit(state) {
         return state.mentorVisit;
   },
