@@ -13,7 +13,7 @@
         <v-text-field
           slot="activator"
           v-model="date"
-          label="Reported Month"
+          label="Month Being Reported On"
           prepend-icon="event"
           readonly
         ></v-text-field>

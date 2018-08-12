@@ -1,12 +1,7 @@
 <template>
   <div class="parse">
-    <month-picker></month-picker>
-    <h1>Parse CSV to JSON</h1>
-    <input 
-      id="fileInput"
-      type="file"
-      @change="upload">
-    <a
+    <v-layout row wrap>
+    <!-- <a
       @click='save'
       type='button'
       download >
@@ -20,7 +15,24 @@
           placeholder="Type here">
         </textarea>
       </div>
-    </div>
+    </div> -->
+      <v-container grid-list-xs>
+        <month-picker></month-picker>
+          <template v-if="$store.getters.reportMonth !== null">
+            <h3>Select CSV (for now the sales one)</h3>
+            <input 
+              id="fileInput"
+              type="file"
+              @change="upload">
+          </template>
+        <v-flex xs12>
+          <report-text v-if="$store.getters.seedlingSum !== null"></report-text>
+          <simple-table v-if="$store.getters.salesForm !== null"></simple-table>
+          
+        </v-flex>
+      </v-container>
+      
+    </v-layout>
   </div>
 </template>
 
@@ -29,6 +41,9 @@
   import Blob from 'blob'
   import FileSaver from 'file-saver'
   import MonthPicker from '@/components/MonthPicker'
+  import SimpleTable from "@/components/SimpleTable"
+  import ReportText from "@/components/ReportText"
+
   export default {
     name: 'parse',
     data () {
@@ -74,7 +89,9 @@
       }
     },
     components: {
-      MonthPicker
+      MonthPicker,
+      SimpleTable,
+      ReportText
     }  
   }
 </script>

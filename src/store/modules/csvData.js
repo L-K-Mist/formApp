@@ -7,12 +7,20 @@ import { totalmem } from 'os';
 // https://stackoverflow.com/questions/18133635/javascript-remove-attribute-for-all-objects-in-array
 
 const state = {
-    reportMonth: null,
+  gotMonth: false,
+  reportMonth: null,
   salesForm: null,
-  mentorVisit: null
+  mentorVisit: null,
+  seedlingSum: null
 };
 
 const getters = {
+  reportMonth(state) {
+    return state.reportMonth
+  },
+  seedlingSum(state) {
+    return state.seedlingSum
+  },
     salesForm(state) {
     return state.salesForm;
     },
@@ -48,6 +56,7 @@ Hope this helps.  Enjoy your day with fam.
 
   reportMonth({ state }, payload) {
     state.reportMonth = payload;
+    state.gotMonth = true
     console.log("​-------------------------------------");
     console.log("​state.reportMonth", state.reportMonth);
     console.log("​-------------------------------------");
@@ -63,7 +72,8 @@ Hope this helps.  Enjoy your day with fam.
         date: row.Date,
         seedlingsDistributed: Number(row["Total Recieved"], 10),
         gardenId: row.Garden_id,
-        profileId: row["profile id"]
+        profileId: row["profile id"],
+        memberUid: row["Member UID"]
       };
     });
 
@@ -94,10 +104,10 @@ Hope this helps.  Enjoy your day with fam.
       state
   }, payload){
 
-      const seedlingSum = payload.reduce((total, row) => total + row.seedlingsDistributed, 0);
+      state.seedlingSum = payload.reduce((total, row) => total + row.seedlingsDistributed, 0);
 
       console.log('​-------------------------');
-      console.log('​seedlingSum', seedlingSum);
+      console.log('​seedlingSum', state.seedlingSum);
       console.log('​-------------------------');
   }
 };
