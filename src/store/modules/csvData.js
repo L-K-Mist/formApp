@@ -39,16 +39,23 @@ const actions = {
         state
     }, payload) {
         var count = 0
+        const reportFields = payload.filter(entry => 
+            entry.Date !== undefined && entry.Date.includes(state.reportMonth)
+        );
+        const reportLength = reportFields.length
+        console.log('​---------------------------');
+        console.log('​reportLength', reportLength);
+        console.log('​---------------------------');
+        
         // TODO iterate through and create new object with only the dates in question and fields required.
-        // TODO take away hardcoded date once monthpicker is used
-        payload.forEach(function (item) {
-            if(item.Date !== undefined && item.Date.includes(state.reportMonth)) {
-                console.log('​---------------------');
-                console.log('​item.Date', item.Date);
-                console.log('​---------------------');
-                count ++
-            }
-        });
+        // payload.forEach(function (item) {
+        //     if(item.Date !== undefined && item.Date.includes(state.reportMonth)) {
+        //         console.log('​---------------------');
+        //         console.log('​item.Date', item.Date);
+        //         console.log('​---------------------');
+        //         count ++
+        //     }
+        // });
         
         state.salesForm = payload;
         // console.log('​-----------------------------------------');
