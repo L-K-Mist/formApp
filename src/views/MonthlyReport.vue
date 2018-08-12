@@ -38,13 +38,20 @@
       upload (e) {
         const that = this
         const fileToLoad = event.target.files[0]
+        console.log('​---------------------------------');
+        console.log('​upload -> fileToLoad', fileToLoad.name);
+        console.log('​---------------------------------');
+        
         const reader = new FileReader()
         reader.onload = fileLoadedEvent => {
           Papa.parse(fileLoadedEvent.target.result, {
             header: true,
             complete (results) {
-                
-            that.$store.dispatch("csvFileAsJSON", results.data)
+            if (fileToLoad.name.includes("salesforms")) {
+              that.$store.dispatch("salesForm", results.data)
+            } else if(fileToLoad.name.includes("mentorvisit")) {
+              that.$store.dispatch("mentorVisit", results.data)
+            }
             //   console.log('complete', results)
               that.doc = JSON.stringify(results.data, null, 2)
             },
