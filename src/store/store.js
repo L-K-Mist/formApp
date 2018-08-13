@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import Camera from './modules/camera'
 import db from "@/api/pouchDB";
 import csvData from './modules/csvData'
+import SeedlingSupply from './modules/csvData/SeedlingSupply'
 
 Vue.use(Vuex)
 
@@ -11,7 +12,7 @@ export const store = new Vuex.Store({
     showCameraDialog: false
   },
   getters: {
-    showCameraDialog(state){
+    showCameraDialog(state) {
       return state.showCameraDialog
     }
   },
@@ -24,7 +25,8 @@ export const store = new Vuex.Store({
   // },
   actions: {
     showCameraDialog({
-      commit, state
+      commit,
+      state
     }, payload) {
       state.showCameraDialog = payload;
       console.log('​-----------------------------------------------');
@@ -34,6 +36,6 @@ export const store = new Vuex.Store({
   },
   modules: {
     Camera,
-    csvData
+    csvData,
   }
 });
