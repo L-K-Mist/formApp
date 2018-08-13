@@ -2,8 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Camera from './modules/camera'
 import db from "@/api/pouchDB";
-import csvData from './modules/csvData'
-import SeedlingSupply from './modules/csvData/SeedlingSupply'
+import SeedlingSales from './modules/SeedlingSales'
+import MentorVisits from './modules/MentorVisits'
 
 Vue.use(Vuex)
 
@@ -36,6 +36,7 @@ export const store = new Vuex.Store({
   },
   modules: {
     Camera,
-    csvData,
+    SeedlingSales,
+    MentorVisits
   }
 });

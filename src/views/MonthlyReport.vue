@@ -61,6 +61,7 @@ export default {
       console.log("​---------------------------------");
 
       const reader = new FileReader();
+      reader.readAsText(fileToLoad);
       reader.onload = fileLoadedEvent => {
         Papa.parse(fileLoadedEvent.target.result, {
           header: true,
@@ -68,7 +69,7 @@ export default {
             if (fileToLoad.name.includes("salesforms")) {
               that.$store.dispatch("salesForm", results.data);
             } else if (fileToLoad.name.includes("mentorvisit")) {
-              that.$store.dispatch("mentorVisit", results.data);
+              that.$store.dispatch("mentorVisits", results.data);
             } else if (fileToLoad.name.includes("cropupdate")) {
               that.$store.dispatch("cropUpdate", results.data);
             } else if (fileToLoad.name.includes("producesales")) {
@@ -82,7 +83,6 @@ export default {
           }
         });
       };
-      //reader.readAsText(fileToLoad)
     }
     // save () {
     //   const blob = new Blob([this.parseJSONtoCSV()], { type: 'text/csv' })

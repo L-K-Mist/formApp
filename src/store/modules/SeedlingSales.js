@@ -1,6 +1,8 @@
 import db from '@/api/pouchDB'
 import moment from "moment";
-import { totalmem } from 'os';
+import {
+  totalmem
+} from 'os';
 
 // TODO delete unessecary fields or map only necessary ones
 // https://stackoverflow.com/questions/24440403/returning-only-certain-properties-from-an-array-of-objects-in-javascript
@@ -25,7 +27,7 @@ const getters = {
   seedlingSum(state) {
     return state.seedlingSum
   },
-  supportedGrowersCount(state){
+  supportedGrowersCount(state) {
     return state.supportedGrowersCount
   },
   salesForm(state) {
@@ -35,7 +37,7 @@ const getters = {
     return state.plantedArea;
   },
   mentorVisit(state) {
-        return state.mentorVisit;
+    return state.mentorVisit;
   },
   cropYield(state) {
     return state.cropYield;
@@ -70,21 +72,28 @@ This has no data other than it's a proof that he was there - as pics and gps wer
 Hope this helps.  Enjoy your day with fam.
  */
 
-  reportMonth({ state }, payload) {
+  reportMonth({
+    state
+  }, payload) {
     state.reportMonth = payload;
     state.gotMonth = true;
     console.log("​-------------------------------------");
     console.log("​state.reportMonth", state.reportMonth);
     console.log("​-------------------------------------");
   },
-  salesForm({ state, dispatch }, payload) {
+  salesForm({
+    state,
+    dispatch
+  }, payload) {
     // Takes the JSON of the csv and simplifies it to the essentials
     const dateFilter = payload.filter(
       entry =>
-        entry.Date !== undefined && entry.Date.includes(state.reportMonth)
+      entry.Date !== undefined && entry.Date.includes(state.reportMonth)
     );
+    console.log('​salesForm -> dateFilter', dateFilter);
 
-    const fieldMap = dateFilter.map(function(row) {
+
+    const fieldMap = dateFilter.map(function (row) {
       return {
         date: row.Date,
         seedlingsDistributed: Number(row["Total Recieved"], 10),
@@ -106,13 +115,18 @@ Hope this helps.  Enjoy your day with fam.
     dispatch("seedlingsSold", fieldMap);
     dispatch("supportedGrowersCount", fieldMap);
   },
-  mentorVisit({ state }, payload) {
+  mentorVisit({
+    state
+  }, payload) {
     state.mentorVisit = payload;
     console.log("​---------------------------------------");
     console.log("​state.mentorVisit", state.mentorVisit);
     console.log("​---------------------------------------");
   },
-  seedlingsSold({ state, dispatch }, payload) {
+  seedlingsSold({
+    state,
+    dispatch
+  }, payload) {
     state.seedlingSum = payload.reduce(
       (total, row) => total + row.seedlingsDistributed,
       0
@@ -123,7 +137,9 @@ Hope this helps.  Enjoy your day with fam.
     console.log("​seedlingSum", state.seedlingSum);
     console.log("​-------------------------");
   },
-  supportedGrowersCount({ state }, payload) {
+  supportedGrowersCount({
+    state
+  }, payload) {
     var growerArray = payload.map(row => row.profileId);
     var uniqueItems = Array.from(new Set(growerArray));
     var uniqueItemsCount = uniqueItems.length;
@@ -152,8 +168,8 @@ Hope this helps.  Enjoy your day with fam.
 };
 
 export default {
-    state,
-    getters,
-    // mutations,
-    actions,
+  state,
+  getters,
+  // mutations,
+  actions,
 }
