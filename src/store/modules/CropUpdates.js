@@ -1,21 +1,16 @@
 const state = {
-    mentorVisits: null,
-    countMentorVisits: null,
-    countGrowersVisited: null
+
 }
 
 const getters = {
-    countMentorVisits(state) {
-        return state.countMentorVisits
+    cropsCaptured(state) {
+        return state.cropsCaptured
     },
-    countGrowersVisited(state) {
-        return state.countGrowersVisited
-    }
 }
 
 const actions = { // If the file-name includes "mentorvisit" it is sent here
     // Must pivot to grouped months, then count each unique occurance of member id
-    mentorVisits({
+    cropsCaptured({
         rootState,
         dispatch
     }, payload) {

@@ -26,7 +26,8 @@
               @change="upload">
           </template>
         <v-flex xs12>
-          <report-text v-if="$store.getters.cropValue !== null"></report-text>
+          <!-- <report-text v-if="$store.getters.cropValue !== null"></report-text> -->
+          <report-text></report-text>
           <simple-table v-if="$store.getters.salesForm !== null"></simple-table>
           
         </v-flex>

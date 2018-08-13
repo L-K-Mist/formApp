@@ -4,6 +4,8 @@ import Camera from './modules/camera'
 import db from "@/api/pouchDB";
 import SeedlingSales from './modules/SeedlingSales'
 import MentorVisits from './modules/MentorVisits'
+import CropUpdates from './modules/CropUpdates'
+import ProduceSales from './modules/ProduceSales'
 
 Vue.use(Vuex)
 
@@ -37,6 +39,8 @@ export const store = new Vuex.Store({
   modules: {
     Camera,
     SeedlingSales,
-    MentorVisits
+    MentorVisits,
+    CropUpdates,
+    ProduceSales
   }
 });
