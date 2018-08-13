@@ -7,7 +7,7 @@ const getters = {
 
 }
 
-const actions = {
+const actions = { // If the file-name includes "mentorvisit" it is sent here
     // Must pivot to grouped months, then count each unique occurance of member id
     mentorVisits({
         rootState,
