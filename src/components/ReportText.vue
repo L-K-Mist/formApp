@@ -1,7 +1,7 @@
 <template>
     <v-layout row wrap>
         <v-container grid-list-sx>
-            <v-flex xs12 md10 offset-md1>
+            <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
                 <v-card>
                     <v-card-title primary-title>
                         <h1>The Fair Food Foundation</h1>

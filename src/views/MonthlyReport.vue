@@ -19,7 +19,8 @@
       <v-container grid-list-xs>
         <month-picker></month-picker>
           <template v-if="$store.getters.reportMonth !== null">
-            <h3>Select CSV (for now the sales one)</h3>
+            <h3>Select CSV</h3>
+            <h5>Better to load them in the order they appear in the report, but system can handle either way.</h5>
             <input 
               id="fileInput"
               type="file"
@@ -27,7 +28,7 @@
           </template>
         <v-flex xs12>
           <!-- <report-text v-if="$store.getters.cropValue !== null"></report-text> -->
-          <report-text></report-text>
+          <report-text v-if="$store.getters.cropValue !== null"></report-text>
           <simple-table v-if="$store.getters.salesForm !== null"></simple-table>
           
         </v-flex>
@@ -69,6 +70,7 @@ export default {
           complete(results) {
             if (fileToLoad.name.includes("salesforms")) {
               that.$store.dispatch("salesForm", results.data);
+              console.log("​complete -> fileToLoad.name", fileToLoad.name);
             } else if (fileToLoad.name.includes("mentorvisit")) {
               that.$store.dispatch("mentorVisits", results.data);
             } else if (fileToLoad.name.includes("cropupdate")) {
@@ -84,11 +86,11 @@ export default {
           }
         });
       };
+    },
+    save() {
+      const blob = new Blob([this.parseJSONtoCSV()], { type: "text/csv" });
+      FileSaver.saveAs(blob, "test.csv");
     }
-    // save () {
-    //   const blob = new Blob([this.parseJSONtoCSV()], { type: 'text/csv' })
-    //   FileSaver.saveAs(blob, 'test.csv')
-    // },
     // parseJSONtoCSV () {
     //   return Papa.unparse(this.doc)
     // }
