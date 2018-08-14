@@ -18,6 +18,16 @@
     </div> -->
       <v-container grid-list-xs>
         <month-picker></month-picker>
+
+        <div id="holder" @drop="multiFile" @dragover="stopDefault">
+          Drag your file here
+        </div>
+
+
+
+
+
+
           <template v-if="$store.getters.reportMonth !== null">
             <h3>Select CSV</h3>
             <h5>Better to load them in the order they appear in the report, but system can handle either way.</h5>
@@ -55,6 +65,49 @@ export default {
     };
   },
   methods: {
+    // multiFile(e) {
+    //   e.preventDefault();
+    //   e.stopPropagation();
+
+    //   for (let f of e.dataTransfer.files) {
+    //     console.log("File(s) you dragged here: ", f.path);
+    //   }
+    // },
+    stopDefault(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    },
+    traverseFileTree(item, path) {
+      const that = this;
+      // from main answer https://stackoverflow.com/questions/3590058/does-html5-allow-drag-drop-upload-of-folders-or-a-folder-tree
+      path = path || "";
+      if (item.isFile) {
+        // Get file
+        item.file(function(file) {
+          console.log("File:", path + file.name);
+        });
+      } else if (item.isDirectory) {
+        // Get folder contents
+        var dirReader = item.createReader();
+        dirReader.readEntries(function(entries) {
+          for (var i = 0; i < entries.length; i++) {
+            that.traverseFileTree(entries[i], path + item.name + "/");
+          }
+        });
+      }
+    },
+    multiFile(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var items = event.dataTransfer.items;
+      for (var i = 0; i < items.length; i++) {
+        // webkitGetAsEntry is where the magic happens
+        var item = items[i].webkitGetAsEntry();
+        if (item) {
+          this.traverseFileTree(item);
+        }
+      }
+    },
     upload(e) {
       const that = this;
       const fileToLoad = event.target.files[0];
