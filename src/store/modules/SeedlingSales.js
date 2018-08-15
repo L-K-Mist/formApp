@@ -60,8 +60,7 @@ const actions = {
 Seedling Sale (memsalesformfull_export)
 #seedlings /12 (to get m2) x 4.5 (to get est. yield in kg) x R10 (to get R value of seedling if successfully grown)
 
-Crop Update  (memcropupdate_export)
-#m2 x 4.5 (to get est. yield in kg) x R10 (to get R value of crops captured)
+
 
 Produce Purchases (memproducesalefull_export)
 This has no formula as these capture kg and R value as actuals not estimates.  But will start updating this form to catch up to July/Aug 2018 - but is usable as is right now to set up I think.

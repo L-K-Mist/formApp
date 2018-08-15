@@ -8,6 +8,9 @@ const getters = {
     },
 }
 
+/**Crop Update  (memcropupdate_export)
+#m2 x 4.5 (to get est. yield in kg) x R10 (to get R value of crops captured) */
+
 const actions = { // If the file-name includes "mentorvisit" it is sent here
     // Must pivot to grouped months, then count each unique occurance of member id
     cropsCaptured({

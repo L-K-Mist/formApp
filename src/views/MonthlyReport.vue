@@ -33,7 +33,9 @@
           </template>
         <v-flex xs12>
           <!-- <report-text v-if="$store.getters.cropValue !== null"></report-text> -->
+          <br>
           <report-text v-if="$store.getters.cropValue !== null"></report-text>
+          <br><br>
           <simple-table v-if="$store.getters.salesForm !== null"></simple-table>
           
         </v-flex>
@@ -127,7 +129,7 @@ export default {
             } else if (fileToLoad.name.includes("mentorvisit")) {
               that.$store.dispatch("mentorVisits", results.data);
             } else if (fileToLoad.name.includes("cropupdate")) {
-              that.$store.dispatch("cropUpdate", results.data);
+              that.$store.dispatch("cropsCaptured", results.data);
             } else if (fileToLoad.name.includes("producesales")) {
               that.$store.dispatch("produceSales", results.data);
             }
