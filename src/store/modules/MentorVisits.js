@@ -1,3 +1,5 @@
+import db from '@/api/pouchDB'
+
 const state = {
     mentorVisits: null,
     countMentorVisits: null,
@@ -34,8 +36,27 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
             return {
                 date: row.Date,
                 memberId: row.Member_id,
+                gps: row.GPS,
+                gardenName: row['Garden Name'],
+                photos: [
+                    row.Picture1,
+                    row.Picture2,
+                    row.Picture3,
+                ],
+                name: row['First Name'] + ' ' + row['Last Name'],
+                nationalId: row['SA ID Number'],
+                farmingActivity: row['Farming Activity'],
+                memberArea: row['Member Area']
             };
         });
+        state.mentorVisits = fieldMap
+
+        var dataFormatForDB = {
+            _id: rootState.SeedlingSales.reportMonth + "MentorVisits",
+            mentorVisits: fieldMap
+        }
+        db.put(dataFormatForDB).then(response => console.log("dbResp", response))
+
         console.log('​fieldMap', fieldMap);
 
         dispatch("growersVisited", fieldMap) // Send the fieldMap data to the action-function that must work out how many growers were visited, while this action-function carries on crunching down to number of mentorvisits in the month.

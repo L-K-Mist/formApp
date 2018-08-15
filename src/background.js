@@ -28,8 +28,10 @@ protocol.registerStandardSchemes(['app'], {
 
 function createMainWindow() {
   const window = new BrowserWindow({
-    darkTheme: true
-
+    darkTheme: true,
+    webPreferences: {
+      webSecurity: false
+    }
   })
 
   if (isDevelopment) {

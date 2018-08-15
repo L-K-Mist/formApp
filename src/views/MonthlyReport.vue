@@ -22,7 +22,7 @@
           <div id="holder" @drop="multiFile" @dragover="stopDefault">
             Drag your file here  [Experimental please ignore] 
           </div>
-
+          <img v-if="src !== null"  :src="src">
           <template v-if="$store.getters.reportMonth !== null">
             <h3>Select CSV</h3>
             <h5>Better to load them in the order they appear in the report, but system can handle either way.</h5>
@@ -37,6 +37,8 @@
           <report-text v-if="$store.getters.cropValue !== null"></report-text>
           <br><br>
           <simple-table v-if="$store.getters.salesForm !== null"></simple-table>
+
+          <v-btn @click.stop="$store.dispatch('connectImagesToVisits')"  color="info">Ready to Test the Union of Unconnected Tables?</v-btn>
           
         </v-flex>
       </v-container>
@@ -58,7 +60,9 @@ export default {
   data() {
     return {
       doc: null,
-      picker: null
+      picker: null,
+      src: null,
+      imageIndex: []
     };
   },
   methods: {
@@ -74,41 +78,14 @@ export default {
       e.preventDefault();
       e.stopPropagation();
     },
-    traverseFileTree(item, path) {
-      // A freaky self-referencing function. TODO Go through this carefully to clearly understand what's going on.
-      const that = this;
-      // from main answer https://stackoverflow.com/questions/3590058/does-html5-allow-drag-drop-upload-of-folders-or-a-folder-tree
-      path = path || "";
-      if (item.isFile) {
-        // Get file
-        item.file(function(file) {
-          if (file.name.includes(".hash")) {
-            console.log("NAH!");
-          } else {
-            console.log("File:", path + file.name);
-          }
-        });
-      } else if (item.isDirectory) {
-        // Get folder contents
-        var dirReader = item.createReader();
-        dirReader.readEntries(function(entries) {
-          for (var i = 0; i < entries.length; i++) {
-            that.traverseFileTree(entries[i], path + item.name + "/");
-          }
-        });
-      }
-    },
-    multiFile(e) {
+
+    async multiFile(e) {
       e.preventDefault();
       e.stopPropagation();
-      var items = event.dataTransfer.items;
-      for (var i = 0; i < items.length; i++) {
-        // webkitGetAsEntry is where the magic happens
-        var item = items[i].webkitGetAsEntry();
-        if (item) {
-          this.traverseFileTree(item);
-        }
-      }
+      //this.imageIndex = []; // clear the image index for a fresh "upload"
+      var items = await event.dataTransfer.items;
+
+      this.$store.dispatch("processImageIndex", items);
     },
     upload(e) {
       const that = this;
@@ -150,6 +127,13 @@ export default {
     //   return Papa.unparse(this.doc)
     // }
   },
+  // watch: {
+  //   imageIndex(newVal) {
+  //     if (newVal.length > 0) {
+  //       this.$store.dispatch("processImageIndex", newVal);
+  //     } else return;
+  //   }
+  // },
   components: {
     MonthPicker,
     SimpleTable,

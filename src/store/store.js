@@ -6,6 +6,7 @@ import SeedlingSales from './modules/SeedlingSales'
 import MentorVisits from './modules/MentorVisits'
 import CropUpdates from './modules/CropUpdates'
 import ProduceSales from './modules/ProduceSales'
+import MentorVisitImages from './modules/MentorVisitImages'
 
 Vue.use(Vuex)
 
@@ -41,6 +42,7 @@ export const store = new Vuex.Store({
     SeedlingSales,
     MentorVisits,
     CropUpdates,
-    ProduceSales
+    ProduceSales,
+    MentorVisitImages
   }
 });
