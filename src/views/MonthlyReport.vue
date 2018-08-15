@@ -19,14 +19,9 @@
       <v-container grid-list-xs>
         <month-picker></month-picker>
 
-        <div id="holder" @drop="multiFile" @dragover="stopDefault">
-          Drag your file here
-        </div>
-
-
-
-
-
+          <div id="holder" @drop="multiFile" @dragover="stopDefault">
+            [Experimental please ignore] Drag your file here
+          </div>
 
           <template v-if="$store.getters.reportMonth !== null">
             <h3>Select CSV</h3>
@@ -78,13 +73,18 @@ export default {
       e.stopPropagation();
     },
     traverseFileTree(item, path) {
+      // A freaky self-referencing function. TODO Go through this carefully to clearly understand what's going on.
       const that = this;
       // from main answer https://stackoverflow.com/questions/3590058/does-html5-allow-drag-drop-upload-of-folders-or-a-folder-tree
       path = path || "";
       if (item.isFile) {
         // Get file
         item.file(function(file) {
-          console.log("File:", path + file.name);
+          if (file.name.includes(".hash")) {
+            console.log("NAH!");
+          } else {
+            console.log("File:", path + file.name);
+          }
         });
       } else if (item.isDirectory) {
         // Get folder contents
