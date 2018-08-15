@@ -20,7 +20,7 @@
         <month-picker></month-picker>
 
           <div id="holder" @drop="multiFile" @dragover="stopDefault">
-            [Experimental please ignore] Drag your file here
+            Drag your file here  [Experimental please ignore] 
           </div>
 
           <template v-if="$store.getters.reportMonth !== null">

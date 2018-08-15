@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app dark>
     <v-navigation-drawer
       persistent
       :mini-variant="miniVariant"
@@ -45,23 +45,24 @@
 </template>
 
 <script>
-
 export default {
-  name: 'App',
-  data () {
+  name: "App",
+  data() {
     return {
       clipped: false,
       drawer: false,
       fixed: false,
-      items: [{
-        icon: 'bubble_chart',
-        title: 'Future View Navigations'
-      }],
+      items: [
+        {
+          icon: "bubble_chart",
+          title: "Future View Navigations"
+        }
+      ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'Future Data Gathering App'
-    }
+      title: "Future Data Gathering App"
+    };
   }
-}
+};
 </script>
