@@ -83,9 +83,27 @@ export default {
       e.preventDefault();
       e.stopPropagation();
       //this.imageIndex = []; // clear the image index for a fresh "upload"
-      var items = await event.dataTransfer.items;
+      var imageIndex = [];
+      for (let f of e.dataTransfer.files) {
+        if (!f.path.includes(".hash")) {
+          //console.log("File(s) you dragged here: ", f.path);
+          imageIndex.push(f.path);
+        }
+      }
+      var fileNames = imageIndex.map(entry => {
+        var fn = entry.match(/([^/])+/g);
+        fn = fn[fn.length - 1];
+        var obj = {
+          path: entry,
+          name: fn
+        };
+        return obj;
+      });
+      console.log("​asyncmultiFile -> fileNames", fileNames);
 
-      this.$store.dispatch("processImageIndex", items);
+      this.imageIndex = fileNames;
+      console.log("​asyncmultiFile -> this.imageIndex", this.imageIndex);
+      this.$store.dispatch("processImageIndex", this.imageIndex);
     },
     upload(e) {
       const that = this;
