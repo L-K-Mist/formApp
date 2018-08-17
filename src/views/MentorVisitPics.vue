@@ -14,6 +14,7 @@
                         </p>
                     </div>
             </div>
+            <v-btn @click.stop="$store.dispatch('connectImagesToVisits')"  color="info">Ready to Test the Union of Unconnected Tables?</v-btn>
         </template>
         </v-flex>
       </v-container>   

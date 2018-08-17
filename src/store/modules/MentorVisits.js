@@ -24,6 +24,20 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         console.log('​payload', payload);
         console.log('​state.reportMonth', rootState.SeedlingSales.reportMonth);
 
+        function imageObj(linkString) {
+            if(linkString == "") {
+                return "No Image"
+            } else {
+                var path = linkString
+                var stringArray = linkString.match(/([^/])+/g);
+                var name = stringArray[stringArray.length - 1];
+                return {
+                    path,
+                    name
+                }
+            }
+        }
+
         // Filter to include only the month in question
         const dateFilter = payload.filter(
             entry =>
@@ -33,15 +47,17 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
 
         // Pull out only those columns we need
         const fieldMap = dateFilter.map(function (row) {
+            
             return {
                 date: row.Date,
                 memberId: row.Member_id,
                 gps: row.GPS,
                 gardenName: row['Garden Name'],
-                photos: [
-                    row.Picture1,
-                    row.Picture2,
-                    row.Picture3,
+                photos: 
+                [ // TODO give this same struct as imageIndex array
+                    imageObj(row.Picture1),
+                    imageObj(row.Picture2),
+                    imageObj(row.Picture3),
                 ],
                 name: row['First Name'] + ' ' + row['Last Name'],
                 nationalId: row['SA ID Number'],

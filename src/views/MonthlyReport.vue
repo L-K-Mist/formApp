@@ -1,51 +1,28 @@
 <template>
   <div class="parse">
     <v-layout row wrap>
-    <!-- <a
-      @click='save'
-      type='button'
-      download >
-      Save
-    </a>
-    <div class="body">
-      <div class="entry">
-        <textarea 
-          class="entry-result"
-          v-model='doc'
-          placeholder="Type here">
-        </textarea>
-      </div>
-    </div> -->
       <v-container grid-list-xs>
         <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
           <h1>Monthly Narrative Report</h1>
           <month-picker></month-picker>
-
-            <div id="holder" @drop="multiFile" @dragover="stopDefault">
-              Drag your file here  [Experimental please ignore] 
-            </div>
-            <img v-if="src !== null"  :src="src">
-            <template v-if="$store.getters.reportMonth !== null">
-              <h3>Select CSV</h3>
-              <h5>Better to load them in the order they appear in the report, but system can handle either way.</h5>
-              <input 
-                id="fileInput"
-                type="file"
-                @change="upload">
-            </template>
+          <img v-if="src !== null"  :src="src">
+          <template v-if="$store.getters.reportMonth !== null">
+            <h3>Select CSV</h3>
+            <h5>Better to load them in the order they appear in the report, but system can handle either way.</h5>
+            <input 
+              id="fileInput"
+              type="file"
+              @change="upload">
+          </template>
           <v-flex xs12>
             <!-- <report-text v-if="$store.getters.cropValue !== null"></report-text> -->
             <br>
             <report-text v-if="$store.getters.cropValue !== null"></report-text>
             <br><br>
             <simple-table v-if="$store.getters.salesForm !== null"></simple-table>
-
-            <v-btn @click.stop="$store.dispatch('connectImagesToVisits')"  color="info">Ready to Test the Union of Unconnected Tables?</v-btn>
-          
           </v-flex>
         </v-flex>
-      </v-container>
-      
+      </v-container>     
     </v-layout>
   </div>
 </template>
@@ -69,14 +46,6 @@ export default {
     };
   },
   methods: {
-    // multiFile(e) {
-    //   e.preventDefault();
-    //   e.stopPropagation();
-
-    //   for (let f of e.dataTransfer.files) {
-    //     console.log("File(s) you dragged here: ", f.path);
-    //   }
-    // },
     stopDefault(e) {
       e.preventDefault();
       e.stopPropagation();

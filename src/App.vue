@@ -1,7 +1,6 @@
 <template>
   <v-app dark>
     <v-navigation-drawer
-      persistent
       :mini-variant="miniVariant"
       :clipped="clipped"
       v-model="drawer"
@@ -42,7 +41,7 @@
       
     </v-toolbar>
     <v-content>
-      <router-view/>
+      <router-view transition="fade-transition"/>
     </v-content>
    
     <v-footer :fixed="fixed" app>
@@ -63,7 +62,7 @@ export default {
         {
           icon: "list_alt",
           title: "Monthly Narrative Report",
-          path: "/pics"
+          path: "/"
         },
         {
           icon: "photo",

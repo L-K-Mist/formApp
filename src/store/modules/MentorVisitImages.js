@@ -22,29 +22,41 @@ const actions = {
             console.log(err);
         })
     },
-    connectImagesToVisits({
+    async connectImagesToVisits({
         rootState,
         state,
         dispatch
     }) {
-        var mentorVisits;
-        var mentorPhotos;
-        db.get(rootState.SeedlingSales.reportMonth + "MentorVisits")
-            .then(function (doc) {
-                console.log("fetching from db", doc);
-                mentorVisits = doc
-            })
+         // let result = appointments.map(a => ({...patients.find(p => a.patientId === p.patientId), ...a}));
+        var mentorVisits = await db.get(rootState.SeedlingSales.reportMonth + "MentorVisits")
+        var mentorPhotos = await db.get(rootState.SeedlingSales.reportMonth + "MentorPhotos")
 
-        db.get(rootState.SeedlingSales.reportMonth + "MentorPhotos")
-            .then(function (doc) {
-                console.log("fetching from db", doc);
-                mentorPhotos = doc
-            })
+        
+        
+        // TODO SOLUTION: Think I need a forEach first bacause it's not the whole array I'm iterating  but each photos array in photoVisits, that needs to find it's photo.
+            
+                
+                
+ 
+        var photoVisits = mentorVisits.mentorVisits // visits with all three photos (note: count starts at [0])
+        .filter(row => (row.photos[0] !== "No Image" && row.photos[1] !== "No Image" && row.photos[2] !== "No Image"))
+        
+        console.log('​-------------------------');
+        console.log('​photoVisits', photoVisits);
+        console.log('​-------------------------');
+         // let result = appointments.map(a => ({...patients.find(p => a.patientId === p.patientId), ...a}));
 
-    }
-}
+        var combo = photoVisits.map(visitRow => ({
+            ...mentorPhotos.fsImages.find(photoRow => visitRow.photos.name == photoRow.photos.name), ...visitRow}))
 
+                  console.log('​-------------');
+            console.log('​combo', combo);
+            console.log('​-------------');
 
+            }
+        }
+        
+        
 export default {
     state,
     // getters,
