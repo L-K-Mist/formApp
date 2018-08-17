@@ -12,7 +12,7 @@
                             <h3>{{ date }}</h3>
                             <br>
                             <h4>Seedling Supply</h4>
-                            <p>In {{ date }}, approximately {{ seedlingSum.toLocaleString() }} seedlings were distributed to {{ supportedGrowers.toLocaleString() }} supported growers, as well as 2200 [DeeNote: this number not is non-calc, dunno where to pull from] to the Mariannhill Co-Op Gardens. This seedling sale figure equates to an approximated planted area of {{ plantedArea.toLocaleString() }} m<span>2</span>, which if all are successfully grown represent an estimated yield  of approximately {{ cropYield.toLocaleString() }}T, which at retail value is about R{{ (cropValue * 1000).toLocaleString() }}.  </p>
+                            <p>In {{ date }}, approximately {{ seedlingSum.toLocaleString() }} seedlings were distributed to {{ supportedGrowers.toLocaleString() }} supported growers, as well as [manual amount] to the Mariannhill Co-Op Gardens. This seedling sale figure equates to an approximated planted area of {{ plantedArea.toLocaleString() }} m<span>2</span>, which if all are successfully grown represent an estimated yield  of approximately {{ cropYield.toLocaleString() }}T, which at retail value is about R{{ (cropValue * 1000).toLocaleString() }}.  </p>
                           </template>
                           <template v-if="countMentorVisits !== null">
                             <h4>Mentor Visits</h4>
