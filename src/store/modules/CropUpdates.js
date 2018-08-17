@@ -1,13 +1,25 @@
 const state = {
-    // cropsRecorded: null,
-    // totalArea: null,
-    // totalKg: null,
-    // totalValue: null,
-    // altTotalValue: null
+    cropsRecorded: null,
+    totalArea: null,
+    totalKg: null,
+    totalValue: null,
+    altTotalValue: null
 }
 
 
 const getters = {
+    cropsRecorded(state) {
+        return state.cropsRecorded
+    },
+    totalArea(state) {
+        return state.totalArea
+    },
+    totalKg(state) {
+        return state.totalKg
+    },
+    totalValue(state) {
+        return state.totalValue
+    },
 
 }
 
@@ -66,7 +78,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         state.cropsRecorded = cropsRecorded
         state.totalArea = totalArea
         state.totalKg = totalKg
-        state.​totalValue = ​totalValue
+        state.totalValue = totalValue
     },
 
 }
