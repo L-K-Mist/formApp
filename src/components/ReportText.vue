@@ -8,29 +8,30 @@
                     </v-card-title>
                     <v-card-text>
                         <v-flex xs12>
-                          <template v-if="cropValue !== null">
+                          <template>
                             <h3>{{ date }}</h3>
                             <br>
                             <h4>Seedling Supply</h4>
-                            <p>In {{ date }}, approximately {{ seedlingSum }} seedlings were distributed to {{ supportedGrowers }} supported growers, as well as 2200 [DeeNote: this number not is non-calc, dunno where to pull from] to the Mariannhill Co-Op Gardens. This seedling sale figure equates to an approximated planted area of {{ plantedArea }} m<span>2</span>, which if all are successfully grown represent an estimated yield  of approximately {{ cropYield }}T, which at retail value is about R{{ cropValue }} 000.  </p>
+                            <p>In {{ date }}, approximately {{ seedlingSum.toLocaleString() }} seedlings were distributed to {{ supportedGrowers.toLocaleString() }} supported growers, as well as 2200 [DeeNote: this number not is non-calc, dunno where to pull from] to the Mariannhill Co-Op Gardens. This seedling sale figure equates to an approximated planted area of {{ plantedArea.toLocaleString() }} m<span>2</span>, which if all are successfully grown represent an estimated yield  of approximately {{ cropYield.toLocaleString() }}T, which at retail value is about R{{ (cropValue * 1000).toLocaleString() }}.  </p>
                           </template>
                           <template v-if="countMentorVisits !== null">
                             <h4>Mentor Visits</h4>
-                            <p>{{ countMentorVisits }} mentor visits were conducted in {{ date }} to {{ $store.getters.countGrowersVisited }} Growers.  Most mentor visits were conducted to capture crops in the ground (General Mentorship), to deliver seedlings, or collect produce/seed for sale.  </p>
+                            <p>{{ countMentorVisits.toLocaleString() }} mentor visits were conducted in {{ date }} to {{ $store.getters.countGrowersVisited.toLocaleString() }} Growers.  Most mentor visits were conducted to capture crops in the ground (General Mentorship), to deliver seedlings, or collect produce/seed for sale.  </p>
                           </template>
                           <template v-if="totalValue !==null">
                             <h4>Crop Updates [not real data yet]</h4>
-                            <p>[{{cropsRecorded}} Crops were captured in {{date}} with a total of {{totalArea}} Ha.  This area represents approximately {{totalKg}} T of produce.  At an average retail rate of R10 000 per Ha the crops captured have a value of  R{{totalValue}}.  </p>
+                            <p>{{ cropsRecorded.toLocaleString() }} Crops were captured in {{date}} with a total of {{ totalArea.toLocaleString() }} Ha.  This area represents approximately {{ totalKg.toLocaleString() }} T of produce.  At an average retail rate of R10 000 per Ton the crops captured have a value of  R{{ totalValue.toLocaleString() }}.  </p>
                           </template>     
                           <template v-if="$store.getters.honeySold !== null">
-                            <h4>Produce Sales [ @Paula: I'm not sure what figures you count for income generated. Since categorising is easy, might you rather want a text verion of the break-down bulleted below? ]</h4>
-                            <p>In July, produce was supplied to Shops and some veggie boxes were distributed to a few areas in and around Durban. Farmers supplied 1002kg and generated an income of about R10 900[text not calc]. </p>
+                            <h4>Produce Sales </h4>
+                            <p>[ @Paula: I'm not sure what figures you count for income generated. Since categorising is easy, might you rather want a text verion of the break-down bulleted below? ]</p>
+                            <p>In {{month}}, produce was supplied to Shops and some veggie boxes were distributed to a few areas in and around Durban. Farmers supplied 1002kg and generated an income of about R10 900[text not calc]. </p>
                             <p>Sales per category were as follows:</p>
                             <ul>
-                            <li>Vegetables Sold is: R {{ $store.getters.vegSold }}.00</li>
-                            <li>Herbs Sold is: R {{ $store.getters.herbsSold }}.00</li>
-                            <li>Fruit Sold is: R {{ $store.getters.fruitSold }}.00</li>
-                            <li>Honey Sold is: R {{ $store.getters.honeySold }}.00</li>
+                            <li>Vegetables Sold is: R {{ $store.getters.vegSold.toLocaleString() }}.00</li>
+                            <li>Herbs Sold is: R {{ $store.getters.herbsSold.toLocaleString() }}.00</li>
+                            <li>Fruit Sold is: R {{ $store.getters.fruitSold.toLocaleString() }}.00</li>
+                            <li>Honey Sold is: R {{ $store.getters.honeySold.toLocaleString() }}.00</li>
 
                             </ul>
                           </template>                                                   
@@ -48,6 +49,9 @@ export default {
   computed: {
     date() {
       return moment(this.$store.getters.reportMonth).format("MMMM YYYY");
+    },
+    month() {
+      return moment(this.$store.getters.reportMonth).format("MMMM");
     },
     seedlingSum() {
       return this.$store.getters.seedlingSum;
