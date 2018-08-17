@@ -18,14 +18,14 @@
                             <h4>Mentor Visits</h4>
                             <p>{{ countMentorVisits }} mentor visits were conducted in {{ date }} to {{ $store.getters.countGrowersVisited }} Growers.  Most mentor visits were conducted to capture crops in the ground (General Mentorship), to deliver seedlings, or collect produce/seed for sale.  </p>
                           </template>
-                          <template>
+                          <template v-if="totalValue !==null">
                             <h4>Crop Updates [not real data yet]</h4>
-                            <p>47 Crops were captured in July 2018 with a total of 1.02 Ha.  This area represents approximately 46.2 T of produce.  At an average retail rate of R10 000 per Ha the crops captured have a value of  R462 000.  </p>
+                            <p>[{{cropsRecorded}} Crops were captured in {{date}} with a total of {{totalArea}} Ha.  This area represents approximately {{totalKg}} T of produce.  At an average retail rate of R10 000 per Ha the crops captured have a value of  R{{totalValue}}.  </p>
                           </template>     
                           <template v-if="$store.getters.honeySold !== null">
-                            <h4>Produce Sales [not real data yet]</h4>
-                            <p>In July, produce was supplied to Shops and some veggie boxes were distributed to a few areas in and around Durban. Farmers supplied 1002kg and generated an income of about R10 900. </p>
-                            <p>But on Dilly-Dee's tweaked csv:</p>
+                            <h4>Produce Sales [ @Paula: I'm not sure what figures you count for income generated. Since categorising is easy, might you rather want a text verion of the break-down bulleted below? ]</h4>
+                            <p>In July, produce was supplied to Shops and some veggie boxes were distributed to a few areas in and around Durban. Farmers supplied 1002kg and generated an income of about R10 900[text not calc]. </p>
+                            <p>Sales per category were as follows:</p>
                             <ul>
                             <li>Vegetables Sold is: R {{ $store.getters.vegSold }}.00</li>
                             <li>Herbs Sold is: R {{ $store.getters.herbsSold }}.00</li>
@@ -77,7 +77,21 @@ export default {
     },
     countGrowersVisited() {
       return this.$store.getters.countGrowersVisited;
+    },
+
+    cropsRecorded() {
+      return this.$store.getters.cropsRecorded;
+    },
+    totalArea() {
+      return this.$store.getters.totalArea;
+    },
+    totalKg() {
+      return this.$store.getters.totalKg;
+    },
+    totalValue() {
+      return this.$store.getters.totalValue;
     }
+
     /**
      * ​visitsCount 46
 CropUpdates.js?8c19:51 ​totalArea 1.30
