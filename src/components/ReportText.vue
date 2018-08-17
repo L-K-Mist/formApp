@@ -78,6 +78,13 @@ export default {
     countGrowersVisited() {
       return this.$store.getters.countGrowersVisited;
     }
+    /**
+     * ​visitsCount 46
+CropUpdates.js?8c19:51 ​totalArea 1.30
+CropUpdates.js?8c19:54 ​totalKg 58504.5
+CropUpdates.js?8c19:58 ​totalValue 585045
+CropUpdates.js?8c19:61 ​altTotalValue 585045
+     */
   }
 };
 </script>
