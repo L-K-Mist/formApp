@@ -6,14 +6,21 @@
       :clipped="clipped"
       v-model="drawer"
       enable-resize-watcher
-      fixed
+      light
       app
     >
       <v-list>
+        <v-divider light></v-divider>
+        <h3>Go To</h3>
         <v-list-tile
+        ripple
           value="true"
-          v-for="(item, i) in items"
-          :key="i"
+          v-for="(item) in items"
+          :key="item.title"
+          @click.stop="$router.push({
+        path: item.path
+    })" 
+         
         >
           <v-list-tile-action>
             <v-icon v-html="item.icon"></v-icon>
@@ -49,13 +56,19 @@ export default {
   name: "App",
   data() {
     return {
-      clipped: false,
+      clipped: true,
       drawer: false,
       fixed: false,
       items: [
         {
-          icon: "bubble_chart",
-          title: "Future View Navigations"
+          icon: "list_alt",
+          title: "Monthly Narrative Report",
+          path: "/pics"
+        },
+        {
+          icon: "photo",
+          title: "Mentor-Visit Pictures",
+          path: "/pics"
         }
       ],
       miniVariant: false,
