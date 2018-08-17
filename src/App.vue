@@ -6,8 +6,7 @@
       :clipped="clipped"
       v-model="drawer"
       enable-resize-watcher
-      temporary
-      dark
+      light
       app
     >
       <v-list>
@@ -68,7 +67,7 @@ export default {
         },
         {
           icon: "photo",
-          title: "Mentor Visit Pictures",
+          title: "Mentor-Visit Pictures",
           path: "/pics"
         }
       ],
