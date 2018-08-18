@@ -1,7 +1,9 @@
 import db from '@/api/pouchDB'
+import moment from 'moment'
 
 const state = {
-    imageIndex: []
+    imageIndex: [],
+    photoReport: null
 }
 
 const actions = {
@@ -27,6 +29,9 @@ const actions = {
         state,
         dispatch
     }) {
+        rootState.SeedlingSales.reportMonth = "2018-07"; // Hardcoded for now to avoid re-setting each time during dev-cycles.
+
+
          // let result = appointments.map(a => ({...patients.find(p => a.patientId === p.patientId), ...a}));
         var mentorVisits = await db.get(rootState.SeedlingSales.reportMonth + "MentorVisits")
         var mentorPhotos = await db.get(rootState.SeedlingSales.reportMonth + "MentorPhotos")
@@ -47,7 +52,7 @@ const actions = {
          // let result = appointments.map(a => ({...patients.find(p => a.patientId === p.patientId), ...a}));
 
          console.log(mentorPhotos.fsImages)
-
+        var photoReport = []
         photoVisits.forEach(function(row){
             var combo = row.photos.map(visitPhoto => ({
                 ...mentorPhotos.fsImages.find(photoRow => visitPhoto.name == photoRow.name)
@@ -55,13 +60,27 @@ const actions = {
             console.log('​-------------');
             console.log('​combo', combo);
             console.log('​-------------');
-            photoVisits.photos = combo
-            
+            var comboRow = { 
+                date: row.date, 
+                memberId: row.memberId, 
+                gps: row.gps, 
+                gardenName: row.gardenName,
+                 name: row.name, 
+                 nationalId: row.nationalId, 
+                 farmingActivity: row.farmingActivity, 
+                 memberArea: row.memberArea, 
+                 photos: combo
+                 };
+            photoReport.push(comboRow)
         })
+        photoReport.sort(function (obj1, obj2) {
+            return moment(obj1.date) - moment(obj2.date);
+        })
+
+        state.photoReport = photoReport
+        console.log("​-------------------------");
+        console.log('photoReport', state.photoReport);
         console.log('​-------------------------');
-        console.log('​photoVisits', photoVisits);
-        console.log('​-------------------------');
-        
     }        
 }    
 export default {
