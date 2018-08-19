@@ -1,24 +1,29 @@
 <template>
   <v-layout row wrap>
-      <v-card>
-        <v-container grid-list-lg>
-          <v-layout row wrap>
-            <v-flex xs12>
-              <h3 class="headline mb-0">{{ date }} &nbsp; | &nbsp; {{ headlineSelect(name, gardenName)}}</h3>
-              <br>
-              <ul>
-                <li>Activity: {{farmingActivity}}</li>
-                <li>Person Mentored: {{ name }}</li>
-                <li>GPS Co-ordinates: {{ gps }}</li>
-              </ul>
-            </v-flex>
-            <v-flex xs4
-            v-for="(item, index) in visitPics" :key="index" >
-            <img :src="'File:' + item">           
-            </v-flex>
-          </v-layout>
-        </v-container>
-      </v-card>
+    <v-container grid-list-xl>
+      <v-flex xs12>
+        <v-card class="mb-2" v-for="(item, index) in photoReport" :key="index">
+          <v-container grid-list-lg> 
+            <v-layout row wrap>
+              <v-flex xs12>
+                <h3 class="headline mb-0">{{ item.date }} &nbsp; | &nbsp; {{ headlineSelect(item.name, item.gardenName)}}</h3>
+                <br>
+                <ul>
+                  <li>Activity: {{item.farmingActivity}}</li>
+                  <li>Person Mentored: {{ item.name }}</li>
+                  <li>GPS Co-ordinates: {{ item.gps }}</li>
+                </ul>
+              </v-flex>
+              <v-flex xs4
+                v-for="(i, index) in item.photos" :key="index" >
+                <img :src="'File:' + i.path">           
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card>
+        
+      </v-flex>
+    </v-container>
   </v-layout>
 </template>
 
@@ -42,6 +47,11 @@ export default {
       ]
     }
   },
+  computed: {
+    photoReport() {
+      return this.$store.getters.photoReport
+    }
+  },
   methods: {
     headlineSelect(person, garden) { // chooses headline from metadata. If there's a garden name then garden else person name
     if(garden !== ""){ // If garden name is not empty...
@@ -49,7 +59,6 @@ export default {
     } else { 
       return person + "'s Garden" // Or if garden name is empty say So-and-so's Garden
     }
-
     }
   }
 }

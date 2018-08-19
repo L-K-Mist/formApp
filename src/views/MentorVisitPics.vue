@@ -20,7 +20,7 @@
         <br><br>
      <p>     [@Paula: The idea is that for every row (that has three pictures) one of these cards will appear - in date order. I do get the feeling though, that at some stage we may want to pivot around some repeated field (like date or geographic area) to more logically group the entries and avoid attribute repetition - but I'll leave that thinking to you.]
 </p> <br>
-        <mentor-pictures></mentor-pictures>
+        <mentor-pictures v-if="$store.getters.photoReport !== null"></mentor-pictures>
       </v-container>   
     </v-layout>
 </template>

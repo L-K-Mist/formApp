@@ -5,7 +5,11 @@ const state = {
     imageIndex: [],
     photoReport: null
 }
-
+const getters = {
+  photoReport(state) {
+      return state.photoReport
+  }
+};
 const actions = {
     processImageIndex({
         rootState,
@@ -85,6 +89,6 @@ const actions = {
 }    
 export default {
     state,
-    // getters,
+    getters,
     actions
 }
