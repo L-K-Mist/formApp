@@ -83,9 +83,9 @@ Hope this helps.  Enjoy your day with fam.
   salesForm({
     state,
     dispatch
-  }, payload) {
+  }, allSales) {
     // Takes the JSON of the csv and simplifies it to the essentials
-    const dateFilter = payload.filter(
+    const dateFilter = allSales.filter(
       entry =>
       entry.Date !== undefined && entry.Date.includes(state.reportMonth)
     );
