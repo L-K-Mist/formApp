@@ -2,11 +2,16 @@ import db from '@/api/pouchDB'
 
 const state = {
     mentorVisits: null,
+    commercialGardens: null,
+    subsistenceGardens: null,
     countMentorVisits: null,
-    countGrowersVisited: null
+    countGrowersVisited: null,
 }
 
 const getters = {
+    mentorVisits(state) {
+        return state.mentorVisits
+    },
     countMentorVisits(state) {
         return state.countMentorVisits
     },
@@ -14,7 +19,12 @@ const getters = {
         return state.countGrowersVisited
     }
 }
-
+/**TODO: REMOVE DUPLICATES 
+ * Using underScore.js: 
+ *     var arr = ['a','b','c','a','b']
+    console.log('unique array is ',_.uniq(arr))
+ * 
+ */
 const actions = { // If the file-name includes "mentorvisit" it is sent here
     // Must pivot to grouped months, then count each unique occurance of member id
     mentorVisits({
@@ -23,7 +33,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
     }, payload) {
         console.log('​payload', payload);
         console.log('​state.reportMonth', rootState.SeedlingSales.reportMonth);
-
+        dispatch('receiveAllMentorVisits', payload)
         function imageObj(linkString) {
             if(linkString == "") {
                 return "No Image"
@@ -62,10 +72,31 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
                 name: row['First Name'] + ' ' + row['Last Name'],
                 nationalId: row['SA ID Number'],
                 farmingActivity: row['Farming Activity'],
-                memberArea: row['Member Area']
+                memberArea: row['Member Area'],
+                mentor: row['username']
             };
         });
         state.mentorVisits = fieldMap
+
+        var commercialGardens = fieldMap.filter(
+            entry =>
+            entry.mentor !== undefined && entry.mentor == 'sabu'
+        )
+        console.log('​-----------------------');
+        console.log('​commercial', commercialGardens);
+        console.log('​-----------------------');
+
+        state.commercialGardens = commercialGardens
+
+        var subsistenceGardens = fieldMap.filter(
+            entry =>
+                entry.mentor !== undefined && entry.mentor == 'gabriel'
+        )
+        console.log('​-----------------------');
+        console.log('subsistance', subsistenceGardens);
+        console.log('​-----------------------');
+
+        state.subsistenceGardens = subsistenceGardens
 
         var dataFormatForDB = {
             _id: rootState.SeedlingSales.reportMonth + "MentorVisits",
@@ -73,7 +104,6 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         }
         db.put(dataFormatForDB).then(response => console.log("dbResp", response))
 
-        console.log('​fieldMap', fieldMap);
 
         dispatch("growersVisited", fieldMap) // Send the fieldMap data to the action-function that must work out how many growers were visited, while this action-function carries on crunching down to number of mentorvisits in the month.
 
@@ -93,13 +123,15 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
                     values: []
                 };
 
+             
+             
                 // add the new object to the result set, too
                 dateGrouped.push(this[a.date]);
             }
 
             // create a new object with the other values and push it
             // to the array of the object of the hash table
-            this[a.date].values.push(a.memberId);
+            this[a.date].values.push(a.memberId);  // if I chose I could push an object in here with any fields I want arranged by date.
         }, Object.create(null)); // Object.create creates an empty object without prototypes
 
         console.log(dateGrouped); // result of above: An array of objects grouped by date :)
