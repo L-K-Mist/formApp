@@ -15,6 +15,7 @@
               @change="upload">
           </template>
           <v-flex xs12>
+            <reports-received v-if="$store.getters.reportMonth !== null && $store.getters.ReportsReceived !== null"></reports-received>
             <!-- <report-text v-if="$store.getters.cropValue !== null"></report-text> -->
             <br>
             <report-text v-if="$store.getters.cropValue !== null"></report-text>
@@ -34,6 +35,7 @@ import FileSaver from "file-saver";
 import MonthPicker from "@/components/MonthPicker";
 import SimpleTable from "@/components/SimpleTable";
 import ReportText from "@/components/ReportText";
+import ReportsReceived from "@/components/ReportsReceived"
 
 export default {
   name: "parse",
@@ -108,7 +110,8 @@ export default {
   components: {
     MonthPicker,
     SimpleTable,
-    ReportText
+    ReportText,
+    ReportsReceived
   }
 };
 </script>
