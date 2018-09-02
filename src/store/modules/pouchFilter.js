@@ -17,7 +17,8 @@ function imageObj(linkString) {
 
 const state = {
     commercialVisits: null,
-    nonCommercialVisits: null
+    nonCommercialVisits: null,
+    
 
 }
 
@@ -55,26 +56,48 @@ const actions = {
             memberArea: row['Member Area'],
             mentor: row['username']
         };
+
+    var dataFormatForDB = { 
+        _id: rootState.SeedlingSales.reportMonth + "MentorVisits", 
+        mentorVisits: fewerFields
+    };
+    db.put(dataFormatForDB).then(response => console.log("dbResp", response))
+  
     });
+    },
+
+    splitByActivity({ // activated by activity drop-down
+        state
+    }, payload){
+        // The `_.property` iteratee shorthand.
+        // _.partition(users, { 'age': 1, 'active': false });
+        var splitByActivity = _.partition(noDuplicates, {mentor: 'sabu'})
     
+        state.commercialVisits = splitByActivity[0]
+        state.nonCommercialVisits = splitByActivity[1]
+    },
 
-    // This removes the entries with the same date, gps, and photos
-    var noDuplicates = _.uniqBy(fewerFields, x => (x.date && x.gps && x.photos[0] && x.photos[1] && x.photos[2]));
-    console.log('TCL: -------------------------------');
-    console.log('TCL: noDuplicates', noDuplicates);
-    console.log('TCL: -------------------------------');
+    hasThreePhotos({
+        state
+    }, payload){
+        var hasThreePhotos = payload.filter(row => row.photos[0] !== "No Image" && row.photos[1] !== "No Image" && row.photos[2] !== "No Image");
+    },
 
-    // The `_.property` iteratee shorthand.
-    // _.partition(users, { 'age': 1, 'active': false });
-    var splitByActivity = _.partition(noDuplicates, {mentor: 'sabu'})
+    connectImages({
+        state
+    }, payload){
+        
+    },
+    removeDuplicates({
+        state, dispatch
+    }, payload) {
 
-    state.commercialVisits = splitByActivity[0]
-    state.nonCommercialVisits = splitByActivity[1]
-
-
+        // This removes the entries with the same date, gps, and photos
+        var noDuplicates = _.uniqBy(payload, x => (x.date && x.gps && x.photos[0] && x.photos[1] && x.photos[2]));
+        console.log('TCL: -------------------------------');
+        console.log('TCL: noDuplicates', noDuplicates);
+        console.log('TCL: -------------------------------');
     }
-
-
 }
 
 export default {
