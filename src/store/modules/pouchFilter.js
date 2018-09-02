@@ -16,12 +16,18 @@ function imageObj(linkString) {
 
 
 const state = {
+    commercialVisits: null,
+    nonCommercialVisits: null
 
 }
 
 const getters = {
-
-
+    commercialVisits(state) {
+        return state.commercialVisits
+    },
+    nonCommercialVisits(state) {
+        return state.nonCommercialVisits
+    }
 }
 
 const actions = {
@@ -51,10 +57,6 @@ const actions = {
         };
     });
     
-    console.log('TCL: -----------------------------');
-    console.log('TCL: fewerFields', fewerFields);
-    console.log('TCL: -----------------------------');
-
 
     // This removes the entries with the same date, gps, and photos
     var noDuplicates = _.uniqBy(fewerFields, x => (x.date && x.gps && x.photos[0] && x.photos[1] && x.photos[2]));
@@ -64,11 +66,15 @@ const actions = {
 
     // The `_.property` iteratee shorthand.
     // _.partition(users, { 'age': 1, 'active': false });
-        var splitByActivity = _.partition(noDuplicates, {mentor: 'sabu'})
-        console.log('TCL: -------------------------------------');
-        console.log('TCL: splitByActivity', splitByActivity);
-        console.log('TCL: -------------------------------------');
+    var splitByActivity = _.partition(noDuplicates, {mentor: 'sabu'})
+
+    state.commercialVisits = splitByActivity[0]
+    state.nonCommercialVisits = splitByActivity[1]
+
+
     }
+
+
 }
 
 export default {
