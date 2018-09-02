@@ -44,6 +44,7 @@ export const store = new Vuex.Store({
     MentorVisits,
     CropUpdates,
     ProduceSales,
-    MentorVisitImages
+    MentorVisitImages,
+    pouchFilter
   }
 });

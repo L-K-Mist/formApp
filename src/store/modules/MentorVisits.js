@@ -31,7 +31,6 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         rootState,
         dispatch
     }, payload) {
-        console.log('​payload', payload);
         console.log('​state.reportMonth', rootState.SeedlingSales.reportMonth);
         dispatch('receiveAllMentorVisits', payload)
         function imageObj(linkString) {
