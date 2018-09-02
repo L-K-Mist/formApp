@@ -31,7 +31,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         rootState,
         dispatch
     }, payload) {
-        console.log('​state.reportMonth', rootState.csvMailroom.reportMonth);
+        // console.log('​state.reportMonth', rootState.csvMailroom.reportMonth);
         dispatch('receiveAllMentorVisits', payload)
         function imageObj(linkString) {
             if(linkString == "") {
@@ -52,7 +52,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
             entry =>
             entry.Date !== undefined && entry.Date.includes(rootState.csvMailroom.reportMonth)
         );
-        console.log('​dateFilter', dateFilter);
+        // console.log('​dateFilter', dateFilter);
 
         // Pull out only those columns we need
         const fieldMap = dateFilter.map(function (row) {
@@ -81,9 +81,9 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
             entry =>
             entry.mentor !== undefined && entry.mentor == 'sabu'
         )
-        console.log('​-----------------------');
-        console.log('​commercial', commercialGardens);
-        console.log('​-----------------------');
+        // console.log('​-----------------------');
+        // console.log('​commercial', commercialGardens);
+        // console.log('​-----------------------');
 
         state.commercialGardens = commercialGardens
 
@@ -91,9 +91,9 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
             entry =>
                 entry.mentor !== undefined && entry.mentor == 'gabriel'
         )
-        console.log('​-----------------------');
-        console.log('subsistance', subsistenceGardens);
-        console.log('​-----------------------');
+        // console.log('​-----------------------');
+        // console.log('subsistance', subsistenceGardens);
+        // console.log('​-----------------------');
 
         state.subsistenceGardens = subsistenceGardens
 
@@ -143,7 +143,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
                 uniquePerDay.push(element)
             })
         })
-        console.log('​uniquePerDay', uniquePerDay);
+        // console.log('​uniquePerDay', uniquePerDay);
 
         state.countMentorVisits = uniquePerDay.length // The length of the array is basically the count of id's in the array.
     },

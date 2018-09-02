@@ -32,8 +32,8 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         rootState,
         dispatch
     }, payload) {
-        console.log('​payload', payload);
-        console.log('​state.reportMonth', rootState.csvMailroom.reportMonth);
+        // console.log('​payload', payload);
+        // console.log('​state.reportMonth', rootState.csvMailroom.reportMonth);
 
         const fieldMap = payload.map(function (row) {
             var date = row["created at"]
@@ -49,31 +49,31 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
                 cropValue
             };
         });
-        console.log('​fieldMap', fieldMap);
+        // console.log('​fieldMap', fieldMap);
         // Filter to include only the month in question
         const dateFilter = fieldMap.filter(
             entry =>
             entry.date !== undefined && entry.date.includes(rootState.csvMailroom.reportMonth)
         );
-        console.log('​dateFilter', dateFilter);
-
+        // console.log('​dateFilter', dateFilter);
+// 
         var cropsRecorded = dateFilter.length
-        console.log('​visitsCount', cropsRecorded);
+        // console.log('​visitsCount', cropsRecorded);
 
         var totalArea = dateFilter.reduce((total, entry) => total + entry.squareMeters, 0) / 10000
         totalArea = totalArea.toFixed(2)
 
-        console.log('​totalArea', totalArea);
+        // console.log('​totalArea', totalArea);
 
         var totalKg = dateFilter.reduce((total, entry) => total + entry.yieldKg, 0)
-        console.log('​totalKg', totalKg);
+        // console.log('​totalKg', totalKg);
 
 
         var totalValue = dateFilter.reduce((total, entry) => total + entry.cropValue, 0)
-        console.log('​totalValue', totalValue);
+        // console.log('​totalValue', totalValue);
 
         var altTotalValue = totalKg * 10
-        console.log('​altTotalValue', altTotalValue);
+        // console.log('​altTotalValue', altTotalValue);
 
         state.cropsRecorded = cropsRecorded
         state.totalArea = totalArea

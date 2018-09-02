@@ -87,7 +87,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         state.honeySold = honey.reduce(
             (total, row) => total + Number(row.paid), 0
         )
-        console.log('​state', state);
+        console.log('sales ', state);
     },
     growersVisited({
         state,
