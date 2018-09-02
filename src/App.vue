@@ -41,7 +41,7 @@
       
     </v-toolbar>
     <v-content>
-      <router-view transition="fade-transition"/>
+      <router-view transition="slide-x-reverse-transition"/>
     </v-content>
    
     <v-footer :fixed="fixed" app>

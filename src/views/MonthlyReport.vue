@@ -5,17 +5,21 @@
         <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
           <h1>Monthly Narrative Report</h1>
           <month-picker></month-picker>
-          <img v-if="src !== null"  :src="src">
-          <template v-if="$store.getters.reportMonth !== null">
-            <h3>Select CSV</h3>
-            <h5>Better to load them in the order they appear in the report, but system can handle either way.</h5>
-            <input 
-              id="fileInput"
-              type="file"
-              @change="upload">
-          </template>
+          <v-slide-x-reverse-transition>
+            <template v-if="$store.getters.reportMonth !== null">
+              <v-flex xs12>
+                <h3>Select CSV</h3>
+                <h5>Better to load them in the order they appear in the report, but system can handle either way.</h5>
+                <input
+                  id="fileInput"
+                  type="file"
+                  @change="upload">
+                
+              </v-flex>
+            </template>
+          </v-slide-x-reverse-transition>
           <v-flex xs12>
-            <reports-received v-if="$store.getters.reportMonth !== null && $store.getters.ReportsReceived !== null"></reports-received>
+            <reports-received transition="slide-x-reverse-transition" v-if="$store.getters.reportMonth !== null && $store.getters.ReportsReceived !== null"></reports-received>
             <!-- <report-text v-if="$store.getters.cropValue !== null"></report-text> -->
             <br>
             <report-text v-if="$store.getters.cropValue !== null"></report-text>

@@ -9,15 +9,15 @@ import {
 // https://stackoverflow.com/questions/18133635/javascript-remove-attribute-for-all-objects-in-array
 
 const state = {
-  docsReceived: [],
+  // docsReceived: [], depricate
 
   salesForm: null,
-  mentorVisit: null,
+  // mentorVisit: null, depricate
   seedlingSum: null,
   supportedGrowersCount: null,
   plantedArea: null,
   cropYield: null,
-  cropValue: null,
+  cropValue: null
 };
 
 const getters = {
@@ -34,9 +34,6 @@ const getters = {
   plantedArea(state) {
     return state.plantedArea;
   },
-  mentorVisit(state) {
-    return state.mentorVisit;
-  },
   cropYield(state) {
     return state.cropYield;
   },
@@ -45,11 +42,6 @@ const getters = {
   },
 };
 
-// const mutations = {
-//     salesForm(state, payload) {
-//         state.salesForm = payload
-//     },
-// }
 
 const actions = {
   /**
@@ -100,26 +92,11 @@ Hope this helps.  Enjoy your day with fam.
     console.log("​-----------------------------------------");
     console.log("​state.salesForm", state.salesForm);
     console.log("​-----------------------------------------");
-    state.docsReceived.push({  // to keep track of what docs we have for what month
-      month: state.reportMonth,
-      report: "Seedling Sales" 
-    })
+    
     dispatch("seedlingsSold", fieldMap);
     dispatch("supportedGrowersCount", fieldMap);
   },
-  mentorVisit({
-    state
-  }, payload) {
-    state.mentorVisit = payload;
-    console.log("​---------------------------------------");
-    console.log("​state.mentorVisit", state.mentorVisit);
-    console.log("​---------------------------------------");
-    state.docsReceived.push({  // to keep track of what docs we have for what month
-      month: state.reportMonth,
-      report: "Mentor Visits"
-    })
 
-  },
   seedlingsSold({
     state,
     dispatch
@@ -133,10 +110,7 @@ Hope this helps.  Enjoy your day with fam.
     console.log("​-------------------------");
     console.log("​seedlingSum", state.seedlingSum);
     console.log("​-------------------------");
-    state.docsReceived.push({  // to keep track of what docs we have for what month
-      month: state.reportMonth,
-      report: "Seedling Sales"
-    })
+
   },
   supportedGrowersCount({
     state
