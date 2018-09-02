@@ -61,9 +61,14 @@ const actions = {
     console.log('TCL: -------------------------------');
     console.log('TCL: noDuplicates', noDuplicates);
     console.log('TCL: -------------------------------');
-    }
 
-    var commercialVisits = _.where(noDuplicates, {mentor: sabu})
+    // The `_.property` iteratee shorthand.
+    // _.partition(users, { 'age': 1, 'active': false });
+        var splitByActivity = _.partition(noDuplicates, {mentor: 'sabu'})
+        console.log('TCL: -------------------------------------');
+        console.log('TCL: splitByActivity', splitByActivity);
+        console.log('TCL: -------------------------------------');
+    }
 }
 
 export default {
