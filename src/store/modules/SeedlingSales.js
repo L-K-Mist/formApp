@@ -9,8 +9,8 @@ import {
 // https://stackoverflow.com/questions/18133635/javascript-remove-attribute-for-all-objects-in-array
 
 const state = {
-  gotMonth: false,
-  reportMonth: null,
+  docsReceived: [],
+
   salesForm: null,
   mentorVisit: null,
   seedlingSum: null,
@@ -21,9 +21,7 @@ const state = {
 };
 
 const getters = {
-  reportMonth(state) {
-    return state.reportMonth
-  },
+
   seedlingSum(state) {
     return state.seedlingSum
   },
@@ -71,15 +69,7 @@ This has no data other than it's a proof that he was there - as pics and gps wer
 Hope this helps.  Enjoy your day with fam.
  */
 
-  reportMonth({
-    state
-  }, payload) {
-    state.reportMonth = payload;
-    state.gotMonth = true;
-    console.log("​-------------------------------------");
-    console.log("​state.reportMonth", state.reportMonth);
-    console.log("​-------------------------------------");
-  },
+
   salesForm({
     state,
     dispatch
@@ -110,7 +100,10 @@ Hope this helps.  Enjoy your day with fam.
     console.log("​-----------------------------------------");
     console.log("​state.salesForm", state.salesForm);
     console.log("​-----------------------------------------");
-
+    state.docsReceived.push({  // to keep track of what docs we have for what month
+      month: state.reportMonth,
+      report: "Seedling Sales" 
+    })
     dispatch("seedlingsSold", fieldMap);
     dispatch("supportedGrowersCount", fieldMap);
   },
@@ -121,6 +114,11 @@ Hope this helps.  Enjoy your day with fam.
     console.log("​---------------------------------------");
     console.log("​state.mentorVisit", state.mentorVisit);
     console.log("​---------------------------------------");
+    state.docsReceived.push({  // to keep track of what docs we have for what month
+      month: state.reportMonth,
+      report: "Mentor Visits"
+    })
+
   },
   seedlingsSold({
     state,
@@ -135,6 +133,10 @@ Hope this helps.  Enjoy your day with fam.
     console.log("​-------------------------");
     console.log("​seedlingSum", state.seedlingSum);
     console.log("​-------------------------");
+    state.docsReceived.push({  // to keep track of what docs we have for what month
+      month: state.reportMonth,
+      report: "Seedling Sales"
+    })
   },
   supportedGrowersCount({
     state

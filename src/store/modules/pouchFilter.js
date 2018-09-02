@@ -58,7 +58,7 @@ const actions = {
         };
 
     var dataFormatForDB = { 
-        _id: rootState.SeedlingSales.reportMonth + "MentorVisits", 
+        _id: rootState.csvMailroom.reportMonth + "MentorVisits", 
         mentorVisits: fewerFields
     };
     db.put(dataFormatForDB).then(response => console.log("dbResp", response))

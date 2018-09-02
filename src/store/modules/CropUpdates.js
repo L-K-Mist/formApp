@@ -33,7 +33,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         dispatch
     }, payload) {
         console.log('​payload', payload);
-        console.log('​state.reportMonth', rootState.SeedlingSales.reportMonth);
+        console.log('​state.reportMonth', rootState.csvMailroom.reportMonth);
 
         const fieldMap = payload.map(function (row) {
             var date = row["created at"]
@@ -53,7 +53,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         // Filter to include only the month in question
         const dateFilter = fieldMap.filter(
             entry =>
-            entry.date !== undefined && entry.date.includes(rootState.SeedlingSales.reportMonth)
+            entry.date !== undefined && entry.date.includes(rootState.csvMailroom.reportMonth)
         );
         console.log('​dateFilter', dateFilter);
 

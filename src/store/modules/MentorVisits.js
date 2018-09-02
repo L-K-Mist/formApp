@@ -31,7 +31,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         rootState,
         dispatch
     }, payload) {
-        console.log('​state.reportMonth', rootState.SeedlingSales.reportMonth);
+        console.log('​state.reportMonth', rootState.csvMailroom.reportMonth);
         dispatch('receiveAllMentorVisits', payload)
         function imageObj(linkString) {
             if(linkString == "") {
@@ -50,7 +50,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         // Filter to include only the month in question
         const dateFilter = payload.filter(
             entry =>
-            entry.Date !== undefined && entry.Date.includes(rootState.SeedlingSales.reportMonth)
+            entry.Date !== undefined && entry.Date.includes(rootState.csvMailroom.reportMonth)
         );
         console.log('​dateFilter', dateFilter);
 
@@ -98,7 +98,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         state.subsistenceGardens = subsistenceGardens
 
         var dataFormatForDB = {
-            _id: rootState.SeedlingSales.reportMonth + "MentorVisits",
+            _id: rootState.csvMailroom.reportMonth + "MentorVisits",
             mentorVisits: fieldMap
         }
         db.put(dataFormatForDB).then(response => console.log("dbResp", response))

@@ -78,35 +78,16 @@ export default {
       this.$store.dispatch("processImageIndex", this.imageIndex);
     },
     upload(e) {
-      const that = this;
-      const fileToLoad = event.target.files[0];
+      var infoMailRoomNeeds = {}
+      infoMailRoomNeeds.fileToLoad = event.target.files[0];
       console.log("​---------------------------------");
-      console.log("​upload -> fileToLoad", fileToLoad.name);
+      console.log("​upload -> fileToLoad", infoMailRoomNeeds.fileToLoad.name);
       console.log("​---------------------------------");
-
       const reader = new FileReader();
-      reader.readAsText(fileToLoad);
+      reader.readAsText(infoMailRoomNeeds.fileToLoad);
       reader.onload = fileLoadedEvent => {
-        Papa.parse(fileLoadedEvent.target.result, {
-          header: true,
-          complete(results) {
-            if (fileToLoad.name.includes("salesforms")) {
-              that.$store.dispatch("salesForm", results.data);
-              console.log("​complete -> fileToLoad.name", fileToLoad.name);
-            } else if (fileToLoad.name.includes("mentorvisit")) {
-              that.$store.dispatch("mentorVisits", results.data);
-            } else if (fileToLoad.name.includes("cropupdate")) {
-              that.$store.dispatch("cropsCaptured", results.data);
-            } else if (fileToLoad.name.includes("producesales")) {
-              that.$store.dispatch("produceSales", results.data);
-            }
-            //   console.log('complete', results)
-            // that.doc = JSON.stringify(results.data, null, 2)
-          },
-          error(errors) {
-            console.log("error", errors);
-          }
-        });
+        infoMailRoomNeeds.result = fileLoadedEvent.target.result
+        this.$store.dispatch('prepareCSV', infoMailRoomNeeds)
       };
     },
     save() {

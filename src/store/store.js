@@ -8,6 +8,7 @@ import CropUpdates from './modules/CropUpdates'
 import ProduceSales from './modules/ProduceSales'
 import MentorVisitImages from './modules/MentorVisitImages'
 import pouchFilter from './modules/pouchFilter'
+import csvMailroom from './modules/csvMailroom'
 
 Vue.use(Vuex)
 
@@ -45,6 +46,7 @@ export const store = new Vuex.Store({
     CropUpdates,
     ProduceSales,
     MentorVisitImages,
-    pouchFilter
+    pouchFilter,
+    csvMailroom
   }
 });
