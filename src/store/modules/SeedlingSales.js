@@ -64,12 +64,17 @@ Hope this helps.  Enjoy your day with fam.
 
   salesForm({
     state,
+    rootState,
     dispatch
   }, allSales) {
+  // // // console.log('TCL: -----------------------');
+  // // // console.log('TCL: allSales', allSales);
+  // // // console.log('TCL: -----------------------');
+    
     // Takes the JSON of the csv and simplifies it to the essentials
     const dateFilter = allSales.filter(
       entry =>
-      entry.Date !== undefined && entry.Date.includes(state.reportMonth)
+        entry.Date !== undefined && entry.Date.includes(rootState.csvMailroom.reportMonth)
     );
     console.log('​salesForm -> dateFilter', dateFilter);
 
@@ -84,14 +89,14 @@ Hope this helps.  Enjoy your day with fam.
       };
     });
 
-    console.log("​-------------------");
-    console.log("​fieldMap", fieldMap);
-    console.log("​-------------------");
+    // console.log("​-------------------");
+    // console.log("​fieldMap", fieldMap);
+    // console.log("​-------------------");
 
     state.salesForm = fieldMap;
-    console.log("​-----------------------------------------");
-    console.log("​state.salesForm", state.salesForm);
-    console.log("​-----------------------------------------");
+    // console.log("​-----------------------------------------");
+    // console.log("​state.salesForm", state.salesForm);
+    // console.log("​-----------------------------------------");
     
     dispatch("seedlingsSold", fieldMap);
     dispatch("supportedGrowersCount", fieldMap);
