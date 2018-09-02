@@ -29,7 +29,12 @@
 
 <script>
 import moment from "moment";
+
+
 export default {
+  props: 
+    ['photoReport']
+  ,
   data(){
     return{ // this data represents one row of the pouch db dataset. We then program the view to produce one such card for every row of the dataset.
       date: moment("2018-07-31").format("DD MMMM YYYY"),
@@ -48,9 +53,9 @@ export default {
     }
   },
   computed: {
-    photoReport() {
-      return this.$store.getters.photoReport
-    }
+    // photoReport() {
+    //   return this.$store.getters.photoReport
+    // }
   },
   methods: {
     headlineSelect(person, garden) { // chooses headline from metadata. If there's a garden name then garden else person name
@@ -60,6 +65,9 @@ export default {
       return person + "'s Garden" // Or if garden name is empty say So-and-so's Garden
     }
     }
+  },
+  components: {
+    
   }
 }
 </script>

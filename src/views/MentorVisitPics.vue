@@ -5,35 +5,66 @@
             
           <h1>Mentor Visit Pictures</h1>
           <template>
-                <div class="container">
-                <!--UPLOAD-->
-                    <div class="dropbox" @drop="multiFile" @dragover="stopDefault">
-                    <h1>Upload images</h1>
-                        <p>
-                        Drag your image file(s) here to begin
-                        </p>
-                    </div>
+            <reports-received></reports-received>
+            <div class="container">
+            <!--UPLOAD-->
+              <div class="dropbox" @drop="multiFile" @dragover="stopDefault">
+              <h1>Upload images</h1>
+                  <p>
+                  Drag your image file(s) here to begin
+                  </p>
+              </div>               
             </div>
-            <v-btn @click.stop="$store.dispatch('connectImagesToVisits')"  color="info">Produce Draft Report for Editing</v-btn>
+            <v-select
+              :items="agriActivities"
+              v-model="agriActivitiesSelected"
+              label="Commercial or Non?"
+            ></v-select>
+            <!-- <v-btn @click.stop="$store.dispatch('connectImagesToVisits')"  color="info">Produce Draft Report for Editing</v-btn> -->
         </template>
         </v-flex>
         <br><br><br>
-        <mentor-pictures v-if="$store.getters.photoReport !== null"></mentor-pictures>
+        <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
       </v-container>   
     </v-layout>
 </template>
 <script>
   import MentorPictures from "@/components/MentorPictures"
+  import ReportsReceived from '@/components/ReportsReceived'
 export default {
+  beforeCreate(){
+    this.$store.dispatch('receiveAllMentorVisits')
+  },
   data() {
     return {
+      agriActivitiesSelected: "",
+      agriActivities:['Commercial', 'Non-Commercial'],
       uploadedFiles: [],
       uploadError: null,
       currentStatus: null,
       uploadFieldName: "photos"
     };
   },
-  computed: {},
+  watch: {
+    agriActivitiesSelected(newVal) {
+      console.log('TCL: ---------------------------------------------------------------------------------------------');
+      console.log('TCL: agriActivitiesSelected -> agriActivitiesSelected(newVal)', newVal);
+      console.log('TCL: ---------------------------------------------------------------------------------------------');
+        
+      this.$store.dispatch('agriActivityFilter', newVal)
+    }
+  },
+  computed: {
+      photoReport() {
+        if(this.agriActivitiesSelected === ""){
+          return null
+        } else if(this.agriActivitiesSelected === "Commercial") {
+          return this.$store.getters.commercialVisits
+        } else if (this.agriActivitiesSelected === "Non-Commercial") {
+          return this.$store.getters.nonCommercialVisits
+        }
+    }
+  },
   methods: {
     stopDefault(e) {
       e.preventDefault();
@@ -67,7 +98,8 @@ export default {
     }
   },
   components: {
-    MentorPictures
+    MentorPictures,
+    ReportsReceived
   }
 };
 </script>

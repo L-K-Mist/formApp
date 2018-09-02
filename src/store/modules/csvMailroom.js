@@ -20,9 +20,9 @@ const actions = {
     }, payload) {
         state.reportMonth = payload;
         state.gotMonth = true;
-        console.log("​-------------------------------------");
-        console.log("​state.reportMonth", state.reportMonth);
-        console.log("​-------------------------------------");
+        // console.log("​-------------------------------------");
+        // console.log("​state.reportMonth", state.reportMonth);
+        // console.log("​-------------------------------------");
     },
     prepareCSV({
         state,
