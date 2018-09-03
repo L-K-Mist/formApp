@@ -39,12 +39,16 @@ const actions = {
   },
 
   async receiveAllMentorVisits({ state, rootState, dispatch }) {
-    state.rawMentorVisits = await db.get(
-        rootState.csvMailroom.reportMonth + "MentorVisits"
-    );
-    console.log('TCL: --------------------------------------------------------------------------------');
-    console.log('TCL: asyncreceiveAllMentorVisits -> state.rawMentorVisits', state.rawMentorVisits.mentorVisits);
-    console.log('TCL: --------------------------------------------------------------------------------');
+      if (rootState.csvMailroom.reportMonth !== null) {
+          state.rawMentorVisits = await db.get(
+              rootState.csvMailroom.reportMonth + "MentorVisits"
+          );
+          console.log('TCL: --------------------------------------------------------------------------------');
+          console.log('TCL: asyncreceiveAllMentorVisits -> state.rawMentorVisits', state.rawMentorVisits.mentorVisits);
+          console.log('TCL: --------------------------------------------------------------------------------');
+      } else {
+          console.log("I don't know what month we're planning for")
+      }
     
     // const fewerFields = state.rawMentorVisits.mentorVisits.map(function(row) {
     //     return {
