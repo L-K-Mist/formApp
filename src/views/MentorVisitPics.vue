@@ -13,6 +13,7 @@
                   <p>
                   Drag your image file(s) here to begin
                   </p>
+                  <!-- <h3 v-if="photoReport !== null">Number of rows: {{ photoReport.length }}</h3> -->
               </div>               
             </div>
             <v-select
@@ -20,25 +21,27 @@
               v-model="agriActivitiesSelected"
               label="Commercial or Non?"
             ></v-select>
+            <v-btn color="success" @click="threePhotos = true">Remove Visits Missing Three Photos</v-btn>
             <!-- <v-btn @click.stop="$store.dispatch('connectImagesToVisits')"  color="info">Produce Draft Report for Editing</v-btn> -->
         </template>
         </v-flex>
         <br><br><br>
-        <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
+        <mentor-pictures :photoReport="photoReport" ></mentor-pictures>
       </v-container>   
     </v-layout>
 </template>
 <script>
-  import MentorPictures from "@/components/MentorPictures"
-  import ReportsReceived from '@/components/ReportsReceived'
+import MentorPictures from "@/components/MentorPictures";
+import ReportsReceived from "@/components/ReportsReceived";
 export default {
-  beforeCreate(){
-    this.$store.dispatch('receiveAllMentorVisits')
+  beforeCreate() {
+    this.$store.dispatch("splitByCommercial");
   },
   data() {
     return {
+      threePhotos: false,
       agriActivitiesSelected: "",
-      agriActivities:['Commercial', 'Non-Commercial'],
+      agriActivities: ["Commercial", "Non-Commercial"],
       uploadedFiles: [],
       uploadError: null,
       currentStatus: null,
@@ -47,22 +50,31 @@ export default {
   },
   watch: {
     agriActivitiesSelected(newVal) {
-      console.log('TCL: ---------------------------------------------------------------------------------------------');
-      console.log('TCL: agriActivitiesSelected -> agriActivitiesSelected(newVal)', newVal);
-      console.log('TCL: ---------------------------------------------------------------------------------------------');
-        
-      this.$store.dispatch('agriActivityFilter', newVal)
+      console.log(
+        "TCL: ---------------------------------------------------------------------------------------------"
+      );
+      console.log(
+        "TCL: agriActivitiesSelected -> agriActivitiesSelected(newVal)",
+        newVal
+      );
+      console.log(
+        "TCL: ---------------------------------------------------------------------------------------------"
+      );
+
+      this.$store.dispatch("agriActivityFilter", newVal);
     }
   },
   computed: {
-      photoReport() {
-        if(this.agriActivitiesSelected === ""){
-          return null
-        } else if(this.agriActivitiesSelected === "Commercial") {
-          return this.$store.getters.commercialVisits
-        } else if (this.agriActivitiesSelected === "Non-Commercial") {
-          return this.$store.getters.nonCommercialVisits
-        }
+    photoReport() {
+      if (this.agriActivitiesSelected === null) {
+        return [];
+      } else if (this.agriActivitiesSelected === "Commercial") {
+        return this.$store.getters.commercialVisits;
+      } else if (this.agriActivitiesSelected === "Non-Commercial") {
+        return this.$store.getters.nonCommercialVisits;
+      } else if (this.threePhotos === true) {
+        return this.mustHaveThreePhotos(photoReport);
+      }
     }
   },
   methods: {
