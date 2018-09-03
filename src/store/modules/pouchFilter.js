@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import db from '@/api/pouchDB'
 
-var docs = [];
 
 function imageObj(linkString) {
     if (linkString == "" || linkString == null) {
@@ -16,6 +15,8 @@ function imageObj(linkString) {
         }
     }
 }
+// https://bl.ocks.org/nolanlawson/3e096160b848689f1058
+var docs = [];
 
 function binarySearch(arr, docId) {
     var low = 0, high = arr.length, mid;
@@ -50,7 +51,7 @@ function fetchInitialDocs() {
         console.log('TCL: -----------------------------------');
         console.log('TCL: fetchInitialDocs -> docs', docs);
         console.log('TCL: -----------------------------------');
-        
+        state.docs = docs
         //renderDocs();
     });
 }
@@ -64,7 +65,8 @@ function reactToChanges() {
             // change.doc holds the new doc
             onUpdatedOrInserted(change.doc);
         }
-        renderDocs();
+        state.docs = docs
+        // renderDocs();
     }).on('error', console.log.bind(console));
 }
 
@@ -73,7 +75,7 @@ fetchInitialDocs()
   .catch(console.log.bind(console));
 
 const state = {
-    docs,
+  docs: [],
   rawMentorVisits: null,  
   commercialVisits: null,
   nonCommercialVisits: null,

@@ -26,12 +26,12 @@
             <br><br>
             <simple-table v-if="$store.getters.salesForm !== null"></simple-table>
           </v-flex>
-          <v-flex id="pouch" v-for="(doc, index) in docs" :key="index" xs12>
-            {{ JSON.stringify(doc) }}
-            
-          </v-flex>
         </v-flex>
 
+          <v-flex id="pouch" v-for="(doc, index) in docs" :key="index" xs12>
+            {{ doc._id }}
+            
+          </v-flex>
       </v-container>     
     </v-layout>
   </div>
@@ -50,7 +50,7 @@ export default {
   name: "parse",
   data() {
     return {
-      doc: null,
+      // doc: null,
       picker: null,
       src: null,
       imageIndex: []
