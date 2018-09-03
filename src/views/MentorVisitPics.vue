@@ -21,8 +21,6 @@
               v-model="agriActivitiesSelected"
               label="Commercial or Non?"
             ></v-select>
-            <v-btn color="success" @click="threePhotos = true">Remove Visits Missing Three Photos</v-btn>
-            <!-- <v-btn @click.stop="$store.dispatch('connectImagesToVisits')"  color="info">Produce Draft Report for Editing</v-btn> -->
         </template>
         </v-flex>
         <br><br><br>
@@ -33,9 +31,10 @@
 <script>
 import MentorPictures from "@/components/MentorPictures";
 import ReportsReceived from "@/components/ReportsReceived";
+
 export default {
-  beforeCreate() {
-    this.$store.dispatch("splitByCommercial");
+  mounted() {
+    //this.$store.dispatch("splitByCommercial");
   },
   data() {
     return {
@@ -62,6 +61,7 @@ export default {
       );
 
       this.$store.dispatch("agriActivityFilter", newVal);
+      this.$store.dispatch("splitByCommercial");
     }
   },
   computed: {
@@ -69,11 +69,9 @@ export default {
       if (this.agriActivitiesSelected === null) {
         return [];
       } else if (this.agriActivitiesSelected === "Commercial") {
-        return this.$store.getters.commercialVisits;
+        return this.$store.getters.commercialThreePhotos;
       } else if (this.agriActivitiesSelected === "Non-Commercial") {
-        return this.$store.getters.nonCommercialVisits;
-      } else if (this.threePhotos === true) {
-        return this.mustHaveThreePhotos(photoReport);
+        return this.$store.getters.subsistenceThreePhotos;
       }
     }
   },

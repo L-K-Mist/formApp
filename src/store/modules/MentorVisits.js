@@ -1,5 +1,8 @@
 import db from '@/api/pouchDB'
 import _ from 'lodash'
+import {
+    moment
+} from 'moment';
 
 function hasThreePhotos(array) {
     return array.filter(
@@ -17,6 +20,30 @@ function removeDuplicates(visitsArray) {
     );
 }
 
+function connectPhotos(photoIndex, visitsArray) {
+    var photoReport = []
+    visitsArray.forEach(function (row) {
+        var combo = row.photos.map(visitPhoto => ({
+            ...photoIndex.fsImages.find(photoRow => visitPhoto.name == photoRow.name)
+        }))
+        var comboRow = {
+            date: row.date,
+            memberId: row.memberId,
+            gps: row.gps,
+            gardenName: row.gardenName,
+            name: row.name,
+            nationalId: row.nationalId,
+            farmingActivity: row.farmingActivity,
+            memberArea: row.memberArea,
+            photos: combo
+        };
+        photoReport.push(comboRow)
+    })
+    photoReport.sort(function (obj1, obj2) {
+        return moment(obj1.date) - moment(obj2.date);
+    })
+}
+
 const state = {
     mentorVisits: null,
     countMentorVisits: null,
@@ -24,11 +51,8 @@ const state = {
     commercialVisits: null,
     nonCommercialVisits: null,
     commercialThreePhotos: null,
-    subsitenceThreePhotos: null,
+    subsistenceThreePhotos: null,
 }
-
-
-
 
 const getters = {
     mentorVisits(state) {
@@ -46,11 +70,11 @@ const getters = {
     nonCommercialVisits(state) {
         return state.nonCommercialVisits
     },
-    commercialVisits(state) {
-        return state.commercialVisits
+    commercialThreePhotos(state) {
+        return state.commercialThreePhotos
     },
-    nonCommercialVisits(state) {
-        return state.nonCommercialVisits
+    subsistenceThreePhotos(state) {
+        return state.subsistenceThreePhotos
     },
 }
 /**TODO: REMOVE DUPLICATES 
@@ -190,9 +214,8 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         state.commercialVisits = commercialGardens
 
         var commercialThreePhotos = hasThreePhotos(commercialGardens)
-        state.commercialThreePhotos = removeDuplicates(commercialThreePhotos)
+        var commercialThreePhotos = removeDuplicates(commercialThreePhotos)
         console.log('TCL: commercialThreePhotos', commercialThreePhotos);
-
         var subsistenceGardens = mentorVisits.filter(
             entry =>
             entry.farmingActivity !== undefined && entry.farmingActivity !== 'Commercial_more_than_1000sqm'
@@ -202,19 +225,14 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         console.log('​-----------------------');
 
         state.nonCommercialVisits = subsistenceGardens
-        var subsitenceThreePhotos = hasThreePhotos(subsistenceGardens)
-        state.subsitenceThreePhotos = removeDuplicates(subsitenceThreePhotos)
-        console.log('TCL: subsitenceThreePhotos', subsitenceThreePhotos);
-
+        var subsistenceThreePhotos = hasThreePhotos(subsistenceGardens)
+        var subsistenceThreePhotos = removeDuplicates(subsistenceThreePhotos)
+        console.log('TCL: subsistenceThreePhotos', subsistenceThreePhotos);
+        var photoIndex = rootState.pouchFilter.docsObj['2018-08MentorPhotos'] // TODO take out hardcoded date Make a better plan for date state
+        state.commercialThreePhotos = connectPhotos(photoIndex, commercialThreePhotos)
+        state.subsistenceThreePhotos = connectPhotos(photoIndex, subsistenceThreePhotos)
+        console.log('TCL: state.subsistenceThreePhotos', state.subsistenceThreePhotos);
     },
-
-
-
-
-    // growersVisited({
-    //     state,
-    //     dispatch
-    // }, fieldMap) {}
 }
 
 export default {
