@@ -6,15 +6,7 @@ const state = {
   selectedPic: null,
 
   showConnectDialog: false,
-  heaterLeft: {
-    name: "Left Inlet",
-    targetTemp: 60,
-    actualTemp: 25,
-    fanOn: false
-  },
-  rawActualTemps: [],
-  rawTargetTemps: [], // TODO flesh out below
-  rawSwitchStates: [] // TODO flesh out below
+
 };
 
 const getters = {

@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Camera from './modules/camera'
-import db from "@/api/pouchDB";
+// import db from "@/api/pouchDB";
 import SeedlingSales from './modules/SeedlingSales'
 import MentorVisits from './modules/MentorVisits'
 import CropUpdates from './modules/CropUpdates'
 import ProduceSales from './modules/ProduceSales'
 import MentorVisitImages from './modules/MentorVisitImages'
+import pouchFilter from './modules/pouchFilter'
+import csvMailroom from './modules/csvMailroom'
 
 Vue.use(Vuex)
 
@@ -43,6 +45,8 @@ export const store = new Vuex.Store({
     MentorVisits,
     CropUpdates,
     ProduceSales,
-    MentorVisitImages
+    MentorVisitImages,
+    pouchFilter,
+    csvMailroom
   }
 });

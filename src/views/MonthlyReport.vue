@@ -5,16 +5,21 @@
         <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
           <h1>Monthly Narrative Report</h1>
           <month-picker></month-picker>
-          <img v-if="src !== null"  :src="src">
-          <template v-if="$store.getters.reportMonth !== null">
-            <h3>Select CSV</h3>
-            <h5>Better to load them in the order they appear in the report, but system can handle either way.</h5>
-            <input 
-              id="fileInput"
-              type="file"
-              @change="upload">
-          </template>
+          <v-slide-x-reverse-transition>
+            <template v-if="$store.getters.reportMonth !== null">
+              <v-flex xs12>
+                <h3>Select CSV</h3>
+                <h5>Better to load them in the order they appear in the report, but system can handle either way.</h5>
+                <input
+                  id="fileInput"
+                  type="file"
+                  @change="upload">
+                
+              </v-flex>
+            </template>
+          </v-slide-x-reverse-transition>
           <v-flex xs12>
+            <reports-received transition="slide-x-reverse-transition" v-if="$store.getters.reportMonth !== null && $store.getters.ReportsReceived !== null"></reports-received>
             <!-- <report-text v-if="$store.getters.cropValue !== null"></report-text> -->
             <br>
             <report-text v-if="$store.getters.cropValue !== null"></report-text>
@@ -22,6 +27,11 @@
             <simple-table v-if="$store.getters.salesForm !== null"></simple-table>
           </v-flex>
         </v-flex>
+
+          <v-flex id="pouch" v-for="(doc, index) in docs" :key="index" xs12>
+            {{ doc._id }}
+            
+          </v-flex>
       </v-container>     
     </v-layout>
   </div>
@@ -34,16 +44,20 @@ import FileSaver from "file-saver";
 import MonthPicker from "@/components/MonthPicker";
 import SimpleTable from "@/components/SimpleTable";
 import ReportText from "@/components/ReportText";
+import ReportsReceived from "@/components/ReportsReceived";
+// import jsPDF from "jspdf";
 
 export default {
   name: "parse",
   data() {
     return {
-      doc: null,
-      picker: null,
-      src: null,
       imageIndex: []
     };
+  },
+  computed: {
+    docs() {
+      return this.$store.getters.docs;
+    }
   },
   methods: {
     stopDefault(e) {
@@ -51,62 +65,43 @@ export default {
       e.stopPropagation();
     },
 
-    async multiFile(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      //this.imageIndex = []; // clear the image index for a fresh "upload"
-      var imageIndex = [];
-      for (let f of e.dataTransfer.files) {
-        if (!f.path.includes(".hash")) {
-          //console.log("File(s) you dragged here: ", f.path);
-          imageIndex.push(f.path);
-        }
-      }
-      var fileNames = imageIndex.map(entry => {
-        var fn = entry.match(/([^/])+/g);
-        fn = fn[fn.length - 1];
-        var obj = {
-          path: entry,
-          name: fn
-        };
-        return obj;
-      });
-      console.log("​asyncmultiFile -> fileNames", fileNames);
+    // async multiFile(e) {
+    //   e.preventDefault();
+    //   e.stopPropagation();
+    //   //this.imageIndex = []; // clear the image index for a fresh "upload"
+    //   var imageIndex = [];
+    //   for (let f of e.dataTransfer.files) {
+    //     if (!f.path.includes(".hash")) {
+    //       //console.log("File(s) you dragged here: ", f.path);
+    //       imageIndex.push(f.path);
+    //     }
+    //   }
+    //   var fileNames = imageIndex.map(entry => {
+    //     var fn = entry.match(/([^/])+/g);
+    //     fn = fn[fn.length - 1];
+    //     var obj = {
+    //       path: entry,
+    //       name: fn
+    //     };
+    //     return obj;
+    //   });
+    //   console.log("​asyncmultiFile -> fileNames", fileNames);
 
-      this.imageIndex = fileNames;
-      console.log("​asyncmultiFile -> this.imageIndex", this.imageIndex);
-      this.$store.dispatch("processImageIndex", this.imageIndex);
-    },
+    //   this.imageIndex = fileNames;
+    //   console.log("​asyncmultiFile -> this.imageIndex", this.imageIndex);
+    //   this.$store.dispatch("processImageIndex", this.imageIndex);
+    // },
     upload(e) {
-      const that = this;
-      const fileToLoad = event.target.files[0];
+      var infoMailRoomNeeds = {};
+      infoMailRoomNeeds.fileToLoad = event.target.files[0];
       console.log("​---------------------------------");
-      console.log("​upload -> fileToLoad", fileToLoad.name);
+      console.log("​upload -> fileToLoad", infoMailRoomNeeds.fileToLoad.name);
       console.log("​---------------------------------");
-
       const reader = new FileReader();
-      reader.readAsText(fileToLoad);
+      reader.readAsText(infoMailRoomNeeds.fileToLoad);
       reader.onload = fileLoadedEvent => {
-        Papa.parse(fileLoadedEvent.target.result, {
-          header: true,
-          complete(results) {
-            if (fileToLoad.name.includes("salesforms")) {
-              that.$store.dispatch("salesForm", results.data);
-              console.log("​complete -> fileToLoad.name", fileToLoad.name);
-            } else if (fileToLoad.name.includes("mentorvisit")) {
-              that.$store.dispatch("mentorVisits", results.data);
-            } else if (fileToLoad.name.includes("cropupdate")) {
-              that.$store.dispatch("cropsCaptured", results.data);
-            } else if (fileToLoad.name.includes("producesales")) {
-              that.$store.dispatch("produceSales", results.data);
-            }
-            //   console.log('complete', results)
-            // that.doc = JSON.stringify(results.data, null, 2)
-          },
-          error(errors) {
-            console.log("error", errors);
-          }
-        });
+        infoMailRoomNeeds.result = fileLoadedEvent.target.result;
+        this.$store.dispatch("prepareCSV", infoMailRoomNeeds);
       };
     },
     save() {
@@ -127,7 +122,8 @@ export default {
   components: {
     MonthPicker,
     SimpleTable,
-    ReportText
+    ReportText,
+    ReportsReceived
   }
 };
 </script>

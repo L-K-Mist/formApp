@@ -27,12 +27,12 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         dispatch
     }, payload) {
         // console.log('​payload', payload);
-        // console.log('​state.reportMonth', rootState.SeedlingSales.reportMonth);
+        // console.log('​state.reportMonth', rootState.csvMailroom.reportMonth);
 
         // Filter to include only the month in question
         const dateFilter = payload.filter(
             entry =>
-            entry.Date !== undefined && entry.Date.includes(rootState.SeedlingSales.reportMonth)
+            entry.Date !== undefined && entry.Date.includes(rootState.csvMailroom.reportMonth)
         );
         // console.log('​dateFilter', dateFilter);
 
@@ -87,7 +87,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         state.honeySold = honey.reduce(
             (total, row) => total + Number(row.paid), 0
         )
-        console.log('​state', state);
+        console.log('sales ', state);
     },
     growersVisited({
         state,

@@ -5,37 +5,77 @@
             
           <h1>Mentor Visit Pictures</h1>
           <template>
-                <div class="container">
-                <!--UPLOAD-->
-                    <div class="dropbox" @drop="multiFile" @dragover="stopDefault">
-                    <h1>Upload images</h1>
-                        <p>
-                        Drag your image file(s) here to begin
-                        </p>
-                    </div>
+            <reports-received></reports-received>
+            <div class="container">
+            <!--UPLOAD-->
+              <div class="dropbox" @drop="multiFile" @dragover="stopDefault">
+              <h1>Upload images</h1>
+                  <p>
+                  Drag your image file(s) here to begin
+                  </p>
+                  <!-- <h3 v-if="photoReport !== null">Number of rows: {{ photoReport.length }}</h3> -->
+              </div>               
             </div>
-            <v-btn @click.stop="$store.dispatch('connectImagesToVisits')"  color="info">Ready to Test the Union of Unconnected Tables?</v-btn>
+            <v-select
+              :items="agriActivities"
+              v-model="agriActivitiesSelected"
+              label="Commercial or Non?"
+            ></v-select>
         </template>
         </v-flex>
-        <br><br>
-     <p>     [@Paula: The idea is that for every row (that has three pictures) one of these cards will appear - in date order. I do get the feeling though, that at some stage we may want to pivot around some repeated field (like date or geographic area) to more logically group the entries and avoid attribute repetition - but I'll leave that thinking to you.]
-</p> <br>
-        <mentor-pictures v-if="$store.getters.photoReport !== null"></mentor-pictures>
+        <br><br><br>
+        <mentor-pictures :photoReport="photoReport" ></mentor-pictures>
       </v-container>   
     </v-layout>
 </template>
 <script>
-  import MentorPictures from "@/components/MentorPictures"
+import MentorPictures from "@/components/MentorPictures";
+import ReportsReceived from "@/components/ReportsReceived";
+
 export default {
+  mounted() {
+    //this.$store.dispatch("splitByCommercial");
+  },
   data() {
     return {
+      threePhotos: false,
+      agriActivitiesSelected: "",
+      agriActivities: ["Commercial", "Non-Commercial"],
       uploadedFiles: [],
       uploadError: null,
       currentStatus: null,
       uploadFieldName: "photos"
     };
   },
-  computed: {},
+  watch: {
+    agriActivitiesSelected(newVal) {
+      console.log(
+        "TCL: ---------------------------------------------------------------------------------------------"
+      );
+      console.log(
+        "TCL: agriActivitiesSelected -> agriActivitiesSelected(newVal)",
+        newVal
+      );
+      console.log(
+        "TCL: ---------------------------------------------------------------------------------------------"
+      );
+
+      this.$store.dispatch("agriActivityFilter", newVal);
+      this.$store.dispatch("splitByCommercial");
+      this.$store.dispatch("connectPhotos");
+    }
+  },
+  computed: {
+    photoReport() {
+      if (this.agriActivitiesSelected === null) {
+        return [];
+      } else if (this.agriActivitiesSelected === "Commercial") {
+        return this.$store.getters.commercialThreePhotos;
+      } else if (this.agriActivitiesSelected === "Non-Commercial") {
+        return this.$store.getters.subsistenceThreePhotos;
+      }
+    }
+  },
   methods: {
     stopDefault(e) {
       e.preventDefault();
@@ -69,7 +109,8 @@ export default {
     }
   },
   components: {
-    MentorPictures
+    MentorPictures,
+    ReportsReceived
   }
 };
 </script>

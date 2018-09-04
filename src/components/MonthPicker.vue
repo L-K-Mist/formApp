@@ -13,11 +13,11 @@
         <v-text-field
           slot="activator"
           v-model="date"
-          label="Month Being Reported On"
+          label="Month in question"
           prepend-icon="event"
           readonly
         ></v-text-field>
-        <v-date-picker v-model="date" type="month" scrollable>
+        <v-date-picker :picker-date="date"   v-model="date" type="month" scrollable>
           <v-spacer></v-spacer>
           <v-btn flat color="primary" @click="modal = false">Cancel</v-btn>
           <v-btn flat color="primary" @click="saveDate(date)">OK</v-btn>
@@ -28,17 +28,21 @@
 </template>
 
 <script>
-  export default {
-    data: () => ({
-      date: null,
-      menu: false,
-      modal: false
-    }),
-    methods: {
-        saveDate(date){
-            this.$refs.dialog.save(date)
-            this.$store.dispatch("reportMonth", date)
-        }
+export default {
+  mounted() {
+    this.date = this.$store.getters.reportMonth;
+    console.log("TCL: created -> this.date", this.date);
+  },
+  data: () => ({
+    date: null,
+    menu: false,
+    modal: false
+  }),
+  methods: {
+    saveDate(date) {
+      this.$refs.dialog.save(date);
+      this.$store.dispatch("reportMonth", date);
     }
   }
+};
 </script>

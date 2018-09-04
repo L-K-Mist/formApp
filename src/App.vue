@@ -41,7 +41,7 @@
       
     </v-toolbar>
     <v-content>
-      <router-view transition="fade-transition"/>
+      <router-view transition="slide-x-reverse-transition"/>
     </v-content>
    
     <v-footer :fixed="fixed" app>
@@ -73,7 +73,7 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: "Future Data Gathering App"
+      title: "Paula's Getting it DONE App"
     };
   }
 };

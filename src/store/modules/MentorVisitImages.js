@@ -19,7 +19,7 @@ const actions = {
         state.imageIndex = imageIndex
 
         db.put({
-            _id: rootState.SeedlingSales.reportMonth + "MentorPhotos",
+            _id: rootState.csvMailroom.reportMonth + "/MentorPhotos",
             fsImages: imageIndex
         }).then(response => {
             console.log("dbResp", response)
@@ -33,13 +33,12 @@ const actions = {
         state,
         dispatch
     }) {
-        rootState.SeedlingSales.reportMonth = "2018-07"; // Hardcoded for now to avoid re-setting each time during dev-cycles.
+        // rootState.csvMailroom.reportMonth = "2018-07"; // Hardcoded for now to avoid re-setting each time during dev-cycles.
 
 
         // let result = appointments.map(a => ({...patients.find(p => a.patientId === p.patientId), ...a}));
-        var mentorVisits = await db.get(rootState.SeedlingSales.reportMonth + "MentorVisits")
-        var mentorPhotos = await db.get(rootState.SeedlingSales.reportMonth + "MentorPhotos")
-
+        var mentorVisits = await db.get(rootState.csvMailroom.reportMonth + "/MentorVisits")
+        var mentorPhotos = await db.get(rootState.csvMailroom.reportMonth + "/MentorPhotos")
 
 
         // TODO SOLUTION: Think I need a forEach first bacause it's not the whole array I'm iterating  but each photos array in photoVisits, that needs to find it's photo.
@@ -61,9 +60,6 @@ const actions = {
             var combo = row.photos.map(visitPhoto => ({
                 ...mentorPhotos.fsImages.find(photoRow => visitPhoto.name == photoRow.name)
             }))
-            // console.log('​-------------');
-            // console.log('​combo', combo);
-            // console.log('​-------------');
             var comboRow = {
                 date: row.date,
                 memberId: row.memberId,
@@ -85,6 +81,16 @@ const actions = {
         console.log("​-------------------------");
         console.log('photoReport', state.photoReport);
         console.log('​-------------------------');
+
+        db.put({
+            _id: rootState.csvMailroom.reportMonth + "PhotoReport_before",
+            photo: state.imageIndex
+        }).then(response => {
+            console.log("dbResp", response)
+            // dispatch("connectImagesToVisits")
+        }).catch(function (err) {
+            console.log(err);
+        })
     }
 }
 export default {

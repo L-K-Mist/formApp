@@ -9,21 +9,19 @@ import {
 // https://stackoverflow.com/questions/18133635/javascript-remove-attribute-for-all-objects-in-array
 
 const state = {
-  gotMonth: false,
-  reportMonth: null,
+  // docsReceived: [], depricate
+
   salesForm: null,
-  mentorVisit: null,
+  // mentorVisit: null, depricate
   seedlingSum: null,
   supportedGrowersCount: null,
   plantedArea: null,
   cropYield: null,
-  cropValue: null,
+  cropValue: null
 };
 
 const getters = {
-  reportMonth(state) {
-    return state.reportMonth
-  },
+
   seedlingSum(state) {
     return state.seedlingSum
   },
@@ -36,9 +34,6 @@ const getters = {
   plantedArea(state) {
     return state.plantedArea;
   },
-  mentorVisit(state) {
-    return state.mentorVisit;
-  },
   cropYield(state) {
     return state.cropYield;
   },
@@ -47,11 +42,6 @@ const getters = {
   },
 };
 
-// const mutations = {
-//     salesForm(state, payload) {
-//         state.salesForm = payload
-//     },
-// }
 
 const actions = {
   /**
@@ -71,23 +61,20 @@ This has no data other than it's a proof that he was there - as pics and gps wer
 Hope this helps.  Enjoy your day with fam.
  */
 
-  reportMonth({
-    state
-  }, payload) {
-    state.reportMonth = payload;
-    state.gotMonth = true;
-    console.log("​-------------------------------------");
-    console.log("​state.reportMonth", state.reportMonth);
-    console.log("​-------------------------------------");
-  },
+
   salesForm({
     state,
+    rootState,
     dispatch
-  }, payload) {
+  }, allSales) {
+  // // // console.log('TCL: -----------------------');
+  // // // console.log('TCL: allSales', allSales);
+  // // // console.log('TCL: -----------------------');
+    
     // Takes the JSON of the csv and simplifies it to the essentials
-    const dateFilter = payload.filter(
+    const dateFilter = allSales.filter(
       entry =>
-      entry.Date !== undefined && entry.Date.includes(state.reportMonth)
+        entry.Date !== undefined && entry.Date.includes(rootState.csvMailroom.reportMonth)
     );
     console.log('​salesForm -> dateFilter', dateFilter);
 
@@ -102,26 +89,19 @@ Hope this helps.  Enjoy your day with fam.
       };
     });
 
-    console.log("​-------------------");
-    console.log("​fieldMap", fieldMap);
-    console.log("​-------------------");
+    // console.log("​-------------------");
+    // console.log("​fieldMap", fieldMap);
+    // console.log("​-------------------");
 
     state.salesForm = fieldMap;
-    console.log("​-----------------------------------------");
-    console.log("​state.salesForm", state.salesForm);
-    console.log("​-----------------------------------------");
-
+    // console.log("​-----------------------------------------");
+    // console.log("​state.salesForm", state.salesForm);
+    // console.log("​-----------------------------------------");
+    
     dispatch("seedlingsSold", fieldMap);
     dispatch("supportedGrowersCount", fieldMap);
   },
-  mentorVisit({
-    state
-  }, payload) {
-    state.mentorVisit = payload;
-    console.log("​---------------------------------------");
-    console.log("​state.mentorVisit", state.mentorVisit);
-    console.log("​---------------------------------------");
-  },
+
   seedlingsSold({
     state,
     dispatch
@@ -135,6 +115,7 @@ Hope this helps.  Enjoy your day with fam.
     console.log("​-------------------------");
     console.log("​seedlingSum", state.seedlingSum);
     console.log("​-------------------------");
+
   },
   supportedGrowersCount({
     state
