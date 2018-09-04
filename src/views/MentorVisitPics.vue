@@ -62,6 +62,7 @@ export default {
 
       this.$store.dispatch("agriActivityFilter", newVal);
       this.$store.dispatch("splitByCommercial");
+      this.$store.dispatch("connectPhotos");
     }
   },
   computed: {

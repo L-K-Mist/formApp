@@ -5,7 +5,9 @@ import db from "@/api/pouchDB"
 //initialise reportMonth from value in db
 db.get('global/reportMonth').then(function (doc) {
     state.reportMonth = doc.month
-})
+}).catch(function (err) {
+    console.log("Have you selected a month yet Paula? That's basically what this error means. \n", err);
+});
 
 const state = {
     filesReceived: [],

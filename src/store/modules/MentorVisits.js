@@ -24,7 +24,7 @@ function connectPhotos(photoIndex, visitsArray) {
     var photoReport = []
     visitsArray.forEach(function (row) {
         var combo = row.photos.map(visitPhoto => ({
-            ...photoIndex.fsImages.find(photoRow => visitPhoto.name == photoRow.name)
+            ...photoIndex.find(photoRow => visitPhoto.name == photoRow.name)
         }))
         var comboRow = {
             date: row.date,
@@ -39,10 +39,11 @@ function connectPhotos(photoIndex, visitsArray) {
         };
         photoReport.push(comboRow)
     })
-    photoReport.sort(function (obj1, obj2) {
-        return moment(obj1.date) - moment(obj2.date);
-    })
+    return photoReport
+
 }
+
+
 
 const state = {
     mentorVisits: null,
@@ -143,7 +144,15 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
             _id: globalMonth + "/MentorVisits",
             mentorVisits: fieldMap
         }
-        db.put(dataFormatForDB).then(response => console.log("dbResp", response))
+        db.put(dataFormatForDB).then(response => {
+                console.log("dbResp", response)
+            }
+
+        )
+        _.delay(() => {
+            dispatch('splitByCommercial');
+        }, 500, 'later');
+        // => Logs 'later' after one second.
 
         // Effect a pivot that groups member id's per date as per https://stackoverflow.com/questions/40523257/how-do-i-pivot-an-array-of-objects-in-javascript
 
@@ -192,7 +201,6 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         console.log('​uniqueMembers', uniqueMembers);
         state.countGrowersVisited = uniqueMembers.length
 
-        dispatch('splitByCommercial')
 
     },
     splitByCommercial({
@@ -202,6 +210,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
     }) {
         var globalMonth = rootState.pouchFilter.docsObj['global/reportMonth'].month
         var mentorVisits = rootState.pouchFilter.docsObj[globalMonth + "/MentorVisits"].mentorVisits
+        console.log('TCL: globalMonth + "/MentorVisits"', globalMonth + "/MentorVisits");
         // Commercial_more_than_1000sqm
         var commercialGardens = mentorVisits.filter(
             entry =>
@@ -214,7 +223,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         state.commercialVisits = commercialGardens
 
         var commercialThreePhotos = hasThreePhotos(commercialGardens)
-        var commercialThreePhotos = removeDuplicates(commercialThreePhotos)
+        state.commercialThreePhotos = removeDuplicates(commercialThreePhotos)
         console.log('TCL: commercialThreePhotos', commercialThreePhotos);
         var subsistenceGardens = mentorVisits.filter(
             entry =>
@@ -226,13 +235,37 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
 
         state.nonCommercialVisits = subsistenceGardens
         var subsistenceThreePhotos = hasThreePhotos(subsistenceGardens)
-        var subsistenceThreePhotos = removeDuplicates(subsistenceThreePhotos)
+        state.subsistenceThreePhotos = removeDuplicates(subsistenceThreePhotos)
         console.log('TCL: subsistenceThreePhotos', subsistenceThreePhotos);
-        var photoIndex = rootState.pouchFilter.docsObj['2018-08MentorPhotos'] // TODO take out hardcoded date Make a better plan for date state
-        state.commercialThreePhotos = connectPhotos(photoIndex, commercialThreePhotos)
-        state.subsistenceThreePhotos = connectPhotos(photoIndex, subsistenceThreePhotos)
-        console.log('TCL: state.subsistenceThreePhotos', state.subsistenceThreePhotos);
+
+
+        // .sort(function (obj1, obj2) {
+        // return moment(obj1.date) - moment(obj2.date);
+        // })
     },
+    connectPhotos({
+        rootState,
+        state
+    }) {
+        var photoIndex = rootState.pouchFilter.docsObj['2018-08/MentorPhotos'].fsImages // TODO take out hardcoded date Make a better plan for date state
+        state.commercialThreePhotos = connectPhotos(photoIndex, state.commercialThreePhotos)
+        state.subsistenceThreePhotos = connectPhotos(photoIndex, state.subsistenceThreePhotos)
+        console.log('TCL: state.subsistenceThreePhotos', state.subsistenceThreePhotos);
+        var globalMonth = rootState.pouchFilter.docsObj['global/reportMonth'].month
+
+
+        var dataFormatForDB = {
+            _id: globalMonth + "/PhotoVisits",
+            commercial: state.commercialThreePhotos,
+            nonCommercial: state.subsistenceThreePhotos
+        }
+        db.put(dataFormatForDB).then(response => {
+            console.log("dbResp", response)
+        }).catch(err => console.log(err))
+
+
+
+    }
 }
 
 export default {

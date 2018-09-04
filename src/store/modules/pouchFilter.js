@@ -66,9 +66,6 @@ function fetchInitialDocs() {
         docs = res.rows.map(function (row) {
             return row.doc;
         });
-        console.log('TCL: -----------------------------------');
-        console.log('TCL: fetchInitialDocs -> docs', docs);
-        console.log('TCL: -----------------------------------');
         state.docs = docs
         state.docsObj = arrayToObj(docs)
         console.log('TCL: fetchInitialDocs -> state.docsObj', state.docsObj);

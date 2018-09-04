@@ -73,7 +73,7 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: "Future Data Gathering App"
+      title: "Paula's Getting it DONE App"
     };
   }
 };
