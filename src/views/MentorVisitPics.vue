@@ -126,6 +126,7 @@ export default {
 </script>
 <style scoped>
 @media print {
+  .dropbox,
   .navbar {
     display: none;
   }
