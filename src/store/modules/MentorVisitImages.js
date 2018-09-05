@@ -3,12 +3,12 @@ import moment from 'moment'
 
 const state = {
     imageIndex: [],
-    photoReport: null
+    // photoReport: null
 }
 const getters = {
-    photoReport(state) {
-        return state.photoReport
-    }
+    // photoReport(state) {
+    //     return state.photoReport
+    // }
 };
 const actions = {
     processImageIndex({

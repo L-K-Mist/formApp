@@ -40,10 +40,7 @@ function connectPhotos(photoIndex, visitsArray) {
         photoReport.push(comboRow)
     })
     return photoReport
-
 }
-
-
 
 const state = {
     mentorVisits: null,
@@ -53,6 +50,7 @@ const state = {
     nonCommercialVisits: null,
     commercialThreePhotos: null,
     subsistenceThreePhotos: null,
+    photoReport: null,
 }
 
 const getters = {
@@ -76,6 +74,9 @@ const getters = {
     },
     subsistenceThreePhotos(state) {
         return state.subsistenceThreePhotos
+    },
+    photoReport(state) {
+        return state.photoReport
     },
 }
 /**TODO: REMOVE DUPLICATES 
@@ -265,6 +266,11 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
 
 
 
+    },
+    photoReport({
+        state
+    }, watchedVal) {
+        state.photoReport = watchedVal
     }
 }
 

@@ -70,6 +70,10 @@ export default {
       this.$store.dispatch("agriActivityFilter", newVal);
       this.$store.dispatch("splitByCommercial");
       this.$store.dispatch("connectPhotos");
+    },
+    photoReport(newVal) {
+      this.$store.dispatch("photoReport", newVal);
+      console.log("TCL: photoReport -> newVal", newVal);
     }
   },
   computed: {
