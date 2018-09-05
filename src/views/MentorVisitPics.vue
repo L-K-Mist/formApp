@@ -24,6 +24,7 @@
         </template>
         </v-flex>
         <br><br><br>
+        <v-btn @click="printPDF"  color="success">Convert to PDF</v-btn>
         <mentor-pictures :photoReport="photoReport" ></mentor-pictures>
       </v-container>   
     </v-layout>
@@ -31,13 +32,19 @@
 <script>
 import MentorPictures from "@/components/MentorPictures";
 import ReportsReceived from "@/components/ReportsReceived";
+import { ipcRenderer } from "electron";
 
 export default {
   mounted() {
     //this.$store.dispatch("splitByCommercial");
+    ipcRenderer.on("wrote-pdf", (event, path) => {
+      this.ipcMessage = `Wrote pdf to : ${path}`;
+      console.log("TCL: mounted -> this.ipcMessage", this.ipcMessage);
+    });
   },
   data() {
     return {
+      ipcMessage: "",
       threePhotos: false,
       agriActivitiesSelected: "",
       agriActivities: ["Commercial", "Non-Commercial"],
@@ -77,6 +84,9 @@ export default {
     }
   },
   methods: {
+    printPDF() {
+      ipcRenderer.send("print-to-pdf");
+    },
     stopDefault(e) {
       e.preventDefault();
       e.stopPropagation();
@@ -115,6 +125,22 @@ export default {
 };
 </script>
 <style scoped>
+@media print {
+  .navbar {
+    display: none;
+  }
+  .v-toolbar {
+    display: none;
+  }
+  nav,
+  aside,
+  footer {
+    display: none;
+  }
+  section {
+    background: none;
+  }
+}
 .dropbox {
   outline: 2px dashed grey;
   /* the dash box */
