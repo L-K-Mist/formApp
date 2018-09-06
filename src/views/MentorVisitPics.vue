@@ -2,29 +2,32 @@
    <v-layout row wrap>
       <v-container grid-list-xs>
         <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
-            
           <h1>Mentor Visit Pictures</h1>
-          <template>
-            <reports-received></reports-received>
-            <div class="container">
-            <!--UPLOAD-->
-              <div class="dropbox" @drop="multiFile" @dragover="stopDefault">
-              <h1>Upload images</h1>
-                  <p>
-                  Drag your image file(s) here to begin
-                  </p>
-                  <!-- <h3 v-if="photoReport !== null">Number of rows: {{ photoReport.length }}</h3> -->
-              </div>               
-            </div>
-            <v-select
-              :items="agriActivities"
-              v-model="agriActivitiesSelected"
-              label="Commercial or Non?"
-            ></v-select>
-        </template>
+            <div class="not-print">
+              <template>
+                <reports-received></reports-received>
+                <div class="container">
+                <!--UPLOAD-->
+                  <div class="dropbox" @drop="multiFile" @dragover="stopDefault">
+                  <h1>Upload images</h1>
+                      <p>
+                      Drag your image file(s) here to begin
+                      </p>
+                      <!-- <h3 v-if="photoReport !== null">Number of rows: {{ photoReport.length }}</h3> -->
+                  </div>               
+                </div>
+                <v-select
+                  :items="agriActivities"
+                  v-model="agriActivitiesSelected"
+                  label="Commercial or Non?"
+                ></v-select>
+            </template>
+             
+             
+          </div> 
         </v-flex>
         <br><br><br>
-        <v-btn @click="printPDF"  color="success">Convert to PDF</v-btn>
+        <v-btn class="not-print" @click="printPDF"  color="success">Convert to PDF</v-btn>
         <mentor-pictures :photoReport="photoReport" ></mentor-pictures>
       </v-container>   
     </v-layout>
@@ -128,10 +131,11 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style>
 @media print {
   .dropbox,
-  .navbar {
+  .navbar,
+  .not-print {
     display: none;
   }
   .v-toolbar {
@@ -144,6 +148,21 @@ export default {
   }
   section {
     background: none;
+  }
+  .container,
+  /* .content, */
+  .main {
+    width: 90%;
+    margin: 0px;
+    padding: 0px;
+  }
+  .p-image {
+    max-height: 40mm;
+  }
+  .p-card {
+    margin: 2mm;
+    padding: 2mm;
+    max-height: 60mm;
   }
 }
 .dropbox {

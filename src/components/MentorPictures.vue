@@ -2,7 +2,7 @@
   <v-layout row wrap>
     <v-container grid-list-xl>
       <v-flex xs12>
-        <v-card class="mb-2" v-for="(item, index) in photoReport" :key="index">
+        <v-card class="p-card b-2" v-for="(item, index) in photoReport" :key="index">
           <v-container grid-list-lg> 
             <v-layout row wrap>
               <v-flex xs12>
@@ -14,7 +14,7 @@
                   <li>GPS Co-ordinates: {{ item.gps }}</li>
                 </ul>
               </v-flex>
-              <v-flex xs4
+              <v-flex class="p-image" xs4
                 v-for="(i, index) in item.photos" :key="index" >
                 <img :src="'File:' + i.path">           
               </v-flex>
