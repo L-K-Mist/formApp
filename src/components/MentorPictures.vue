@@ -6,7 +6,7 @@
           <v-container grid-list-lg> 
             <v-layout row wrap>
               <v-flex xs12>
-                <h3 class="headline mb-0">{{ item.date }} &nbsp; | &nbsp; {{ headlineSelect(item.name, item.gardenName)}}</h3>
+                <h3 class=" mb-0"> {{ headlineSelect(item.name, item.gardenName)}} &nbsp; | &nbsp; {{ item.date }}</h3>
                 <br>
                 <ul>
                   <li>Activity: {{item.farmingActivity}}</li>

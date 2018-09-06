@@ -2,7 +2,7 @@
    <v-layout row wrap>
       <v-container grid-list-xs>
         <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
-          <h1>Mentor Visit Pictures</h1>
+          <h1 class="print-title">Mentor Visit Pictures</h1>
             <div class="not-print">
               <template>
                 <reports-received></reports-received>
@@ -133,6 +133,34 @@ export default {
 </script>
 <style>
 @media print {
+  /* @page {
+    margin: 0.5cm;
+  } */
+  body {
+    font: 6pt Georgia, "Times New Roman", Times, serif;
+    color: "black";
+    line-height: 1.3;
+  }
+  .print-title {
+    position: absolute;
+    top: -5mm;
+  }
+  .headline {
+    font-size: 10pt;
+  }
+  h1 {
+    font-size: 10pt;
+    color: "black";
+  }
+
+  h2 {
+    font-size: 8pt;
+    margin-top: 25px;
+  }
+  h3 {
+    color: "black";
+    font-size: 10pt;
+  }
   .dropbox,
   .navbar,
   .not-print {
@@ -157,12 +185,16 @@ export default {
     padding: 0px;
   }
   .p-image {
-    max-height: 40mm;
+    max-height: 50mm;
+    float: left;
+    width: 33.33%;
+    /* width: 120; */
   }
   .p-card {
     margin: 2mm;
     padding: 2mm;
-    max-height: 60mm;
+    max-height: 70mm;
+    align-content: center;
   }
 }
 .dropbox {
