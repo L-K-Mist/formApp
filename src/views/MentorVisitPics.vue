@@ -133,24 +133,40 @@ export default {
 </script>
 <style>
 @media print {
-  /* @page {
+  @page {
+    size: A4;
     margin: 0.5cm;
-  } */
+  }
+  #mentor-visit {
+    color: black;
+    /* position: absolute; */
+    left: 0mm;
+    page-break-inside: avoid;
+    /* page-break-inside: auto; */
+  }
   body {
     font: 6pt Georgia, "Times New Roman", Times, serif;
-    color: "black";
+    color: black !important;
     line-height: 1.3;
   }
-  .print-title {
-    position: absolute;
-    top: -5mm;
+  ul {
+    color: black !important;
   }
+  .print-title {
+    font-size: 15pt;
+    position: absolute;
+    top: -15mm;
+  }
+  /* .texty {
+    color: "black";
+  } */
   .headline {
-    font-size: 10pt;
+    font-size: 15pt;
+    color: black !important;
   }
   h1 {
     font-size: 10pt;
-    color: "black";
+    color: black !important;
   }
 
   h2 {
@@ -158,7 +174,7 @@ export default {
     margin-top: 25px;
   }
   h3 {
-    color: "black";
+    color: black !important;
     font-size: 10pt;
   }
   .dropbox,
@@ -171,7 +187,8 @@ export default {
   }
   nav,
   aside,
-  footer {
+  footer,
+  br {
     display: none;
   }
   section {
@@ -194,6 +211,7 @@ export default {
     margin: 2mm;
     padding: 2mm;
     max-height: 70mm;
+    width: 98%;
     align-content: center;
   }
 }

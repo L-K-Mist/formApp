@@ -2,13 +2,13 @@
   <v-layout row wrap>
     <v-container grid-list-xl>
       <v-flex xs12>
-        <v-card class="p-card b-2" v-for="(item, index) in photoReport" :key="index">
+        <v-card id="mentor-visit"  class="p-card texty" v-for="(item, index) in photoReport" :key="index">
           <v-container grid-list-lg> 
             <v-layout row wrap>
               <v-flex xs12>
                 <h3 class=" mb-0"> {{ headlineSelect(item.name, item.gardenName)}} &nbsp; | &nbsp; {{ item.date }}</h3>
                 <br>
-                <ul>
+                <ul class="texty">
                   <li>Activity: {{item.farmingActivity}}</li>
                   <li>Person Mentored: {{ item.name }}</li>
                   <li>GPS Co-ordinates: {{ item.gps }}</li>
