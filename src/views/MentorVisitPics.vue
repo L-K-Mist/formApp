@@ -25,7 +25,8 @@
         </v-flex>
         <br><br><br>
         <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
-      </v-container>   
+      </v-container> 
+      <v-btn color="success" @click="saveToPouch">Save to Local</v-btn>  
     </v-layout>
 </template>
 <script>
@@ -95,6 +96,9 @@ export default {
       this.imageIndex = fileNames;
       console.log("​asyncmultiFile -> this.imageIndex", this.imageIndex);
       this.$store.dispatch("processImageIndex", this.imageIndex);
+    },
+    async saveToPouch() {
+      console.log("photoReport: ", photoReport)
     }
   },
   components: {
