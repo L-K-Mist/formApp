@@ -2,44 +2,57 @@
    <v-layout row wrap>
       <v-container grid-list-xs>
         <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
-            
-          <h1>Mentor Visit Pictures</h1>
-          <template>
-            <reports-received></reports-received>
-            <div class="container">
-            <!--UPLOAD-->
-              <div class="dropbox" @drop="multiFile" @dragover="stopDefault">
-              <h1>Upload images</h1>
-                  <p>
-                  Drag your image file(s) here to begin
-                  </p>
-              </div>               
-            </div>
-            <v-select
-              :items="agriActivities"
-              v-model="agriActivitiesSelected"
-              label="Commercial or Non?"
-            ></v-select>
-            <!-- <v-btn @click.stop="$store.dispatch('connectImagesToVisits')"  color="info">Produce Draft Report for Editing</v-btn> -->
-        </template>
+          <h1 class="print-title">Mentor Visit Pictures</h1>
+            <div class="not-print">
+              <template>
+                <reports-received></reports-received>
+                <div class="container">
+                <!--UPLOAD-->
+                  <div class="dropbox" @drop="multiFile" @dragover="stopDefault">
+                  <h1>Upload images</h1>
+                      <p>
+                      Drag your image file(s) here to begin
+                      </p>
+                      <!-- <h3 v-if="photoReport !== null">Number of rows: {{ photoReport.length }}</h3> -->
+                  </div>               
+                </div>
+                <v-select
+                  :items="agriActivities"
+                  v-model="agriActivitiesSelected"
+                  label="Commercial or Non?"
+                ></v-select>
+            </template>
+             
+             
+          </div> 
         </v-flex>
         <br><br><br>
         <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
-      </v-container> 
       <v-btn color="success" @click="saveToPouch">Save to Local</v-btn>  
+        <v-btn class="not-print" @click="printPDF"  color="success">Convert to PDF</v-btn>
+        <mentor-pictures :photoReport="photoReport" ></mentor-pictures>
+      </v-container>   
     </v-layout>
 </template>
 <script>
-  import MentorPictures from "@/components/MentorPictures"
-  import ReportsReceived from '@/components/ReportsReceived'
+import MentorPictures from "@/components/MentorPictures";
+import ReportsReceived from "@/components/ReportsReceived";
+import { ipcRenderer } from "electron";
+
 export default {
-  beforeCreate(){
-    this.$store.dispatch('receiveAllMentorVisits')
+  mounted() {
+    //this.$store.dispatch("splitByCommercial");
+    ipcRenderer.on("wrote-pdf", (event, path) => {
+      this.ipcMessage = `Wrote pdf to : ${path}`;
+      console.log("TCL: mounted -> this.ipcMessage", this.ipcMessage);
+    });
   },
   data() {
     return {
+      ipcMessage: "",
+      threePhotos: false,
       agriActivitiesSelected: "",
-      agriActivities:['Commercial', 'Non-Commercial'],
+      agriActivities: ["Commercial", "Non-Commercial"],
       uploadedFiles: [],
       uploadError: null,
       currentStatus: null,
@@ -48,25 +61,41 @@ export default {
   },
   watch: {
     agriActivitiesSelected(newVal) {
-      console.log('TCL: ---------------------------------------------------------------------------------------------');
-      console.log('TCL: agriActivitiesSelected -> agriActivitiesSelected(newVal)', newVal);
-      console.log('TCL: ---------------------------------------------------------------------------------------------');
-        
-      this.$store.dispatch('agriActivityFilter', newVal)
+      console.log(
+        "TCL: ---------------------------------------------------------------------------------------------"
+      );
+      console.log(
+        "TCL: agriActivitiesSelected -> agriActivitiesSelected(newVal)",
+        newVal
+      );
+      console.log(
+        "TCL: ---------------------------------------------------------------------------------------------"
+      );
+
+      this.$store.dispatch("agriActivityFilter", newVal);
+      this.$store.dispatch("splitByCommercial");
+      this.$store.dispatch("connectPhotos");
+    },
+    photoReport(newVal) {
+      this.$store.dispatch("photoReport", newVal);
+      console.log("TCL: photoReport -> newVal", newVal);
     }
   },
   computed: {
-      photoReport() {
-        if(this.agriActivitiesSelected === ""){
-          return null
-        } else if(this.agriActivitiesSelected === "Commercial") {
-          return this.$store.getters.commercialVisits
-        } else if (this.agriActivitiesSelected === "Non-Commercial") {
-          return this.$store.getters.nonCommercialVisits
-        }
+    photoReport() {
+      if (this.agriActivitiesSelected === null) {
+        return [];
+      } else if (this.agriActivitiesSelected === "Commercial") {
+        return this.$store.getters.commercialThreePhotos;
+      } else if (this.agriActivitiesSelected === "Non-Commercial") {
+        return this.$store.getters.subsistenceThreePhotos;
+      }
     }
   },
   methods: {
+    printPDF() {
+      ipcRenderer.send("print-to-pdf");
+    },
     stopDefault(e) {
       e.preventDefault();
       e.stopPropagation();
@@ -107,7 +136,72 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style>
+@media print {
+  /* @page {
+    margin: 0.5cm;
+  } */
+  body {
+    font: 6pt Georgia, "Times New Roman", Times, serif;
+    color: "black";
+    line-height: 1.3;
+  }
+  .print-title {
+    position: absolute;
+    top: -5mm;
+  }
+  .headline {
+    font-size: 10pt;
+  }
+  h1 {
+    font-size: 10pt;
+    color: "black";
+  }
+
+  h2 {
+    font-size: 8pt;
+    margin-top: 25px;
+  }
+  h3 {
+    color: "black";
+    font-size: 10pt;
+  }
+  .dropbox,
+  .navbar,
+  .not-print {
+    display: none;
+  }
+  .v-toolbar {
+    display: none;
+  }
+  nav,
+  aside,
+  footer {
+    display: none;
+  }
+  section {
+    background: none;
+  }
+  .container,
+  /* .content, */
+  .main {
+    width: 90%;
+    margin: 0px;
+    padding: 0px;
+  }
+  .p-image {
+    max-height: 50mm;
+    float: left;
+    width: 33.33%;
+    /* width: 120; */
+  }
+  .p-card {
+    margin: 2mm;
+    padding: 2mm;
+    max-height: 70mm;
+    align-content: center;
+  }
+}
 .dropbox {
   outline: 2px dashed grey;
   /* the dash box */

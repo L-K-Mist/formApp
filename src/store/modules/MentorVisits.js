@@ -1,11 +1,56 @@
 import db from '@/api/pouchDB'
+import _ from 'lodash'
+import {
+    moment
+} from 'moment';
+
+function hasThreePhotos(array) {
+    return array.filter(
+        row =>
+        row.photos[0] !== "No Image" &&
+        row.photos[1] !== "No Image" &&
+        row.photos[2] !== "No Image"
+    );
+}
+
+function removeDuplicates(visitsArray) {
+    return _.uniqBy(
+        visitsArray,
+        x => x.date && x.gps && x.name
+    );
+}
+
+function connectPhotos(photoIndex, visitsArray) {
+    var photoReport = []
+    visitsArray.forEach(function (row) {
+        var combo = row.photos.map(visitPhoto => ({
+            ...photoIndex.find(photoRow => visitPhoto.name == photoRow.name)
+        }))
+        var comboRow = {
+            date: row.date,
+            memberId: row.memberId,
+            gps: row.gps,
+            gardenName: row.gardenName,
+            name: row.name,
+            nationalId: row.nationalId,
+            farmingActivity: row.farmingActivity,
+            memberArea: row.memberArea,
+            photos: combo
+        };
+        photoReport.push(comboRow)
+    })
+    return photoReport
+}
 
 const state = {
     mentorVisits: null,
-    commercialGardens: null,
-    subsistenceGardens: null,
     countMentorVisits: null,
     countGrowersVisited: null,
+    commercialVisits: null,
+    nonCommercialVisits: null,
+    commercialThreePhotos: null,
+    subsistenceThreePhotos: null,
+    photoReport: null,
 }
 
 const getters = {
@@ -17,7 +62,22 @@ const getters = {
     },
     countGrowersVisited(state) {
         return state.countGrowersVisited
-    }
+    },
+    commercialVisits(state) {
+        return state.commercialVisits
+    },
+    nonCommercialVisits(state) {
+        return state.nonCommercialVisits
+    },
+    commercialThreePhotos(state) {
+        return state.commercialThreePhotos
+    },
+    subsistenceThreePhotos(state) {
+        return state.subsistenceThreePhotos
+    },
+    photoReport(state) {
+        return state.photoReport
+    },
 }
 /**TODO: REMOVE DUPLICATES 
  * Using underScore.js: 
@@ -32,9 +92,8 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         dispatch
     }, payload) {
         // console.log('​state.reportMonth', rootState.csvMailroom.reportMonth);
-        dispatch('receiveAllMentorVisits', payload)
         function imageObj(linkString) {
-            if(linkString == "") {
+            if (linkString == "") {
                 return "No Image"
             } else {
                 var path = linkString
@@ -46,24 +105,26 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
                 }
             }
         }
-
+        console.log('payload length:', payload.length)
         // Filter to include only the month in question
         const dateFilter = payload.filter(
             entry =>
             entry.Date !== undefined && entry.Date.includes(rootState.csvMailroom.reportMonth)
         );
+        console.log('TCL: dateFilter.length', dateFilter.length);
+
+
         // console.log('​dateFilter', dateFilter);
 
         // Pull out only those columns we need
         const fieldMap = dateFilter.map(function (row) {
-            
+
             return {
                 date: row.Date,
                 memberId: row.Member_id,
                 gps: row.GPS,
                 gardenName: row['Garden Name'],
-                photos: 
-                [ // TODO give this same struct as imageIndex array
+                photos: [ // TODO give this same struct as imageIndex array
                     imageObj(row.Picture1),
                     imageObj(row.Picture2),
                     imageObj(row.Picture3),
@@ -77,34 +138,22 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         });
         state.mentorVisits = fieldMap
 
-        var commercialGardens = fieldMap.filter(
-            entry =>
-            entry.mentor !== undefined && entry.mentor == 'sabu'
-        )
-        // console.log('​-----------------------');
-        // console.log('​commercial', commercialGardens);
-        // console.log('​-----------------------');
-
-        state.commercialGardens = commercialGardens
-
-        var subsistenceGardens = fieldMap.filter(
-            entry =>
-                entry.mentor !== undefined && entry.mentor == 'gabriel'
-        )
-        // console.log('​-----------------------');
-        // console.log('subsistance', subsistenceGardens);
-        // console.log('​-----------------------');
-
-        state.subsistenceGardens = subsistenceGardens
+        var globalMonth = rootState.pouchFilter.docsObj['global/reportMonth'].month
+        console.log('TCL: globalMonth', globalMonth);
 
         var dataFormatForDB = {
-            _id: rootState.csvMailroom.reportMonth + "MentorVisits",
+            _id: globalMonth + "/MentorVisits",
             mentorVisits: fieldMap
         }
-        db.put(dataFormatForDB).then(response => console.log("dbResp", response))
+        db.put(dataFormatForDB).then(response => {
+                console.log("dbResp", response)
+            }
 
-
-        dispatch("growersVisited", fieldMap) // Send the fieldMap data to the action-function that must work out how many growers were visited, while this action-function carries on crunching down to number of mentorvisits in the month.
+        )
+        _.delay(() => {
+            dispatch('splitByCommercial');
+        }, 500, 'later');
+        // => Logs 'later' after one second.
 
         // Effect a pivot that groups member id's per date as per https://stackoverflow.com/questions/40523257/how-do-i-pivot-an-array-of-objects-in-javascript
 
@@ -122,15 +171,15 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
                     values: []
                 };
 
-             
-             
+
+
                 // add the new object to the result set, too
                 dateGrouped.push(this[a.date]);
             }
 
             // create a new object with the other values and push it
             // to the array of the object of the hash table
-            this[a.date].values.push(a.memberId);  // if I chose I could push an object in here with any fields I want arranged by date.
+            this[a.date].values.push(a.memberId); // if I chose I could push an object in here with any fields I want arranged by date.
         }, Object.create(null)); // Object.create creates an empty object without prototypes
 
         console.log(dateGrouped); // result of above: An array of objects grouped by date :)
@@ -146,16 +195,82 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         // console.log('​uniquePerDay', uniquePerDay);
 
         state.countMentorVisits = uniquePerDay.length // The length of the array is basically the count of id's in the array.
-    },
-    growersVisited({
-        state,
-        dispatch
-    }, fieldMap) {
+
         var allMembers = [] // as we iterate through the fieldMap, we'll push just the member Id's here.
         fieldMap.forEach(row => allMembers.push(row.memberId))
         var uniqueMembers = Array.from(new Set(allMembers)) // Not very readible (BAD Javascript! ) But creates a set of only unique elements.
         console.log('​uniqueMembers', uniqueMembers);
         state.countGrowersVisited = uniqueMembers.length
+
+
+    },
+    splitByCommercial({
+        rootState,
+        state,
+        dispatch
+    }) {
+        var globalMonth = rootState.pouchFilter.docsObj['global/reportMonth'].month
+        var mentorVisits = rootState.pouchFilter.docsObj[globalMonth + "/MentorVisits"].mentorVisits
+        console.log('TCL: globalMonth + "/MentorVisits"', globalMonth + "/MentorVisits");
+        // Commercial_more_than_1000sqm
+        var commercialGardens = mentorVisits.filter(
+            entry =>
+            entry.farmingActivity !== undefined && entry.farmingActivity == 'Commercial_more_than_1000sqm'
+        )
+        console.log('​-----------------------');
+        console.log('​commercial', commercialGardens);
+        console.log('​-----------------------');
+
+        state.commercialVisits = commercialGardens
+
+        var commercialThreePhotos = hasThreePhotos(commercialGardens)
+        state.commercialThreePhotos = removeDuplicates(commercialThreePhotos)
+        console.log('TCL: commercialThreePhotos', commercialThreePhotos);
+        var subsistenceGardens = mentorVisits.filter(
+            entry =>
+            entry.farmingActivity !== undefined && entry.farmingActivity !== 'Commercial_more_than_1000sqm'
+        )
+        console.log('​-----------------------');
+        console.log('subsistance', subsistenceGardens);
+        console.log('​-----------------------');
+
+        state.nonCommercialVisits = subsistenceGardens
+        var subsistenceThreePhotos = hasThreePhotos(subsistenceGardens)
+        state.subsistenceThreePhotos = removeDuplicates(subsistenceThreePhotos)
+        console.log('TCL: subsistenceThreePhotos', subsistenceThreePhotos);
+
+
+        // .sort(function (obj1, obj2) {
+        // return moment(obj1.date) - moment(obj2.date);
+        // })
+    },
+    connectPhotos({
+        rootState,
+        state
+    }) {
+        var photoIndex = rootState.pouchFilter.docsObj['2018-08/MentorPhotos'].fsImages // TODO take out hardcoded date Make a better plan for date state
+        state.commercialThreePhotos = connectPhotos(photoIndex, state.commercialThreePhotos)
+        state.subsistenceThreePhotos = connectPhotos(photoIndex, state.subsistenceThreePhotos)
+        console.log('TCL: state.subsistenceThreePhotos', state.subsistenceThreePhotos);
+        var globalMonth = rootState.pouchFilter.docsObj['global/reportMonth'].month
+
+
+        var dataFormatForDB = {
+            _id: globalMonth + "/PhotoVisits",
+            commercial: state.commercialThreePhotos,
+            nonCommercial: state.subsistenceThreePhotos
+        }
+        db.put(dataFormatForDB).then(response => {
+            console.log("dbResp", response)
+        }).catch(err => console.log(err))
+
+
+
+    },
+    photoReport({
+        state
+    }, watchedVal) {
+        state.photoReport = watchedVal
     }
 }
 

@@ -44,21 +44,19 @@ import FileSaver from "file-saver";
 import MonthPicker from "@/components/MonthPicker";
 import SimpleTable from "@/components/SimpleTable";
 import ReportText from "@/components/ReportText";
-import ReportsReceived from "@/components/ReportsReceived"
+import ReportsReceived from "@/components/ReportsReceived";
+// import jsPDF from "jspdf";
 
 export default {
   name: "parse",
   data() {
     return {
-      // doc: null,
-      picker: null,
-      src: null,
       imageIndex: []
     };
   },
   computed: {
-    docs(){
-      return this.$store.getters.docs
+    docs() {
+      return this.$store.getters.docs;
     }
   },
   methods: {
@@ -67,34 +65,34 @@ export default {
       e.stopPropagation();
     },
 
-    async multiFile(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      //this.imageIndex = []; // clear the image index for a fresh "upload"
-      var imageIndex = [];
-      for (let f of e.dataTransfer.files) {
-        if (!f.path.includes(".hash")) {
-          //console.log("File(s) you dragged here: ", f.path);
-          imageIndex.push(f.path);
-        }
-      }
-      var fileNames = imageIndex.map(entry => {
-        var fn = entry.match(/([^/])+/g);
-        fn = fn[fn.length - 1];
-        var obj = {
-          path: entry,
-          name: fn
-        };
-        return obj;
-      });
-      console.log("​asyncmultiFile -> fileNames", fileNames);
+    // async multiFile(e) {
+    //   e.preventDefault();
+    //   e.stopPropagation();
+    //   //this.imageIndex = []; // clear the image index for a fresh "upload"
+    //   var imageIndex = [];
+    //   for (let f of e.dataTransfer.files) {
+    //     if (!f.path.includes(".hash")) {
+    //       //console.log("File(s) you dragged here: ", f.path);
+    //       imageIndex.push(f.path);
+    //     }
+    //   }
+    //   var fileNames = imageIndex.map(entry => {
+    //     var fn = entry.match(/([^/])+/g);
+    //     fn = fn[fn.length - 1];
+    //     var obj = {
+    //       path: entry,
+    //       name: fn
+    //     };
+    //     return obj;
+    //   });
+    //   console.log("​asyncmultiFile -> fileNames", fileNames);
 
-      this.imageIndex = fileNames;
-      console.log("​asyncmultiFile -> this.imageIndex", this.imageIndex);
-      this.$store.dispatch("processImageIndex", this.imageIndex);
-    },
+    //   this.imageIndex = fileNames;
+    //   console.log("​asyncmultiFile -> this.imageIndex", this.imageIndex);
+    //   this.$store.dispatch("processImageIndex", this.imageIndex);
+    // },
     upload(e) {
-      var infoMailRoomNeeds = {}
+      var infoMailRoomNeeds = {};
       infoMailRoomNeeds.fileToLoad = event.target.files[0];
       console.log("​---------------------------------");
       console.log("​upload -> fileToLoad", infoMailRoomNeeds.fileToLoad.name);
@@ -102,8 +100,8 @@ export default {
       const reader = new FileReader();
       reader.readAsText(infoMailRoomNeeds.fileToLoad);
       reader.onload = fileLoadedEvent => {
-        infoMailRoomNeeds.result = fileLoadedEvent.target.result
-        this.$store.dispatch('prepareCSV', infoMailRoomNeeds)
+        infoMailRoomNeeds.result = fileLoadedEvent.target.result;
+        this.$store.dispatch("prepareCSV", infoMailRoomNeeds);
       };
     },
     save() {
