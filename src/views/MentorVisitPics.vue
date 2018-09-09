@@ -22,8 +22,6 @@
                   label="Commercial or Non?"
                 ></v-select>
             </template>
-             
-             
           </div> 
         </v-flex>
         <br><br><br>
