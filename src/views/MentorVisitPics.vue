@@ -2,7 +2,7 @@
    <v-layout row wrap>
       <v-container grid-list-xs>
         <h1>Map</h1>
-      <monthly-visits-map></monthly-visits-map>
+      <next-monthly-visits-map></next-monthly-visits-map>
         <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
           <h1 class="print-title">Mentor Visit Pictures</h1>
             <div class="not-print">
@@ -37,7 +37,7 @@
 import MentorPictures from "@/components/MentorPictures";
 import ReportsReceived from "@/components/ReportsReceived";
 import { ipcRenderer } from "electron";
-import MonthlyVisitsMap from "@/components/MonthlyVisitsMap"
+import NextMonthlyVisitsMap from "@/components/NextMonthlyVisitsMap"
 
 export default {
   mounted() {
@@ -134,7 +134,7 @@ export default {
   components: {
     MentorPictures,
     ReportsReceived,
-    MonthlyVisitsMap
+    NextMonthlyVisitsMap
   }
 };
 </script>
