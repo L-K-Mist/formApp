@@ -2,12 +2,16 @@ import db from '@/api/pouchDB'
 import moment from 'moment'
 
 const state = {
-   mapData : null
+   mapData : null,
+   showMap: false
 }
 const getters = {
-    // photoReport(state) {
-    //     return state.photoReport
-    // }
+    mapData(state) {
+        return state.mapData
+    },
+    showMap(state) {
+        return state.showMap
+    },
 };
 const actions = {
   mapReportData({ rootState, state, dispatch }, reportData) {
@@ -29,6 +33,7 @@ const actions = {
     console.log('TCL: mapReportData -> goodGPS', goodGPS);
     console.log('TCL: --------------------------------------');
     state.mapData = goodGPS 
+    state.showMap = true
   }
 };
 export default {

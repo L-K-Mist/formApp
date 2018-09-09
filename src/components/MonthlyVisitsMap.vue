@@ -1,16 +1,16 @@
 <template>
 <v-flex xs12>
-    <div class="full">
+    <div v-if="$store.getters.showMap === true" class="full">
        <h1>Map</h1>
-    <l-map :zoom="zoom" :center="center" :min-zoom="minZoom" :max-zoom="maxZoom" 
+    <l-map  :zoom="zoom" :center="center" :min-zoom="minZoom" :max-zoom="maxZoom" 
         :attributionControl="attributionControl" :zoomend="zoomend">
         <l-tilelayer :url="url" :attribution="attribution"></l-tilelayer>
         <!-- <l-marker :position="center" :title="title" :opacity="opacity" :draggable="draggable"> -->
           <!-- <l-tooltip content="a tooltip"></l-tooltip>
           </l-marker>  -->
-         <template v-for="(marker, index) in markers" >
-          <l-marker :key="index" :position="marker" :title="title" :opacity="opacity" :draggable="false">
-          <l-popup content="a popup"></l-popup>
+         <template v-for="(marker, index) in mapData" >
+          <l-marker :key="index" :position="marker.gps" :title="marker.garden" :opacity="opacity" :draggable="false">
+          <l-popup :content="marker.person"></l-popup>
           </l-marker>
         </template> 
     </l-map>
@@ -48,9 +48,9 @@ export default {
     docs(){
       return this.$store.getters.docs
     },
-    // markers() {
-
-    // }
+    mapData() {
+      return this.$store.getters.mapData
+    }
   },
   methods: {
     zoomend() {
