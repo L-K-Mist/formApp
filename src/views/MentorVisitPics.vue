@@ -105,6 +105,10 @@ export default {
       //this.imageIndex = []; // clear the image index for a fresh "upload"
       var imageIndex = [];
       for (let f of e.dataTransfer.files) {
+      console.log('TCL: ---------------------------');
+      console.log('TCL: asyncmultiFile -> f', f);
+      console.log('TCL: ---------------------------');
+        
         if (!f.path.includes(".hash")) {
           //console.log("File(s) you dragged here: ", f.path);
           imageIndex.push(f.path);
