@@ -1,7 +1,7 @@
 <template>
    <v-layout row wrap>
       <v-container grid-list-xs>
-        <h1>Map</h1>
+
       <next-monthly-visits-map></next-monthly-visits-map>
         <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
           <h1 class="print-title">Mentor Visit Pictures</h1>

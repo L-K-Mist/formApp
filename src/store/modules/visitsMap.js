@@ -18,17 +18,22 @@ const actions = {
   console.log('TCL: --------------------------------------------');
   console.log('TCL: mapReportData -> reportData', reportData);
   console.log('TCL: --------------------------------------------');
-    var goodGPS = reportData.map(function(row){
+      var goodGPS = reportData.filter(function (row) {
+          return row.gps !== ""  // Only show those rows that actually have a gps
+      })
+    
+    .map(function(row){
         var newGPS = row.gps.split(", ")
+        var lng = Number(newGPS[0])
+        var lat = Number(newGPS[1])
         return { 
             person: row.name,
             garden: row.gardenName, 
             area: row.memberArea,
-            gps: newGPS
+            gps: {lng, lat}
         };
-    }).filter(function(row){
-        return row.gps.length > 1  // Only show those rows that actually have a gps
     })
+
     console.log('TCL: --------------------------------------');
     console.log('TCL: mapReportData -> goodGPS', goodGPS);
     console.log('TCL: --------------------------------------');
