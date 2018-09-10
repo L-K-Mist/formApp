@@ -4,36 +4,26 @@
       <h1>Map</h1>
     </div>
     <div style="height: 47%; overflow: auto;">
-      Zoom: level <input v-model="zoom" type="number">
-            position:
-            <select v-model="zoomPosition">
-              <option v-for="position in Positions" :value="position" :key="position.id">{{position}}</option>
-            </select>
+      Zoom: level <input v-model="map.zoom" type="number">
       <br>
-      Center : <span> {{ center }} </span><br>
-      Bounds : <span> {{ bounds }} </span><br>
+      Center : <span> {{ map.center }} </span><br>
+      Bounds : <span> {{ map.bounds }} </span><br>
       <hr/>
     </div>
-    <l-map style="height: 45vh" :zoom.sync="zoom" :options="mapOptions"
-      :center="center" :min-zoom="minZoom" :max-zoom="maxZoom" >
-      <l-control-layers :position="layersPosition"/>
+      <l-map style="height: 95vh" :zoom="map.zoom" :options="map.options"
+      :center="map.center" :min-zoom="map.minZoom" :max-zoom="map.maxZoom" >
+      <l-control-layers :position="map.layersPosition"/>
       <l-tile-layer v-for="(tileProvider, index) in tileProviders" :key="index"
         layerType="base" :name="tileProvider.name" :visible="tileProvider.visible"
         :url="tileProvider.url" :attribution="tileProvider.attribution" :token="token"/>
-      <l-control-zoom :position="zoomPosition" />
-      <l-control-attribution :position="attributionPosition" :prefix="attributionPrefix" />
-      <l-control-scale :imperial="imperial" />
-      <l-marker v-for="marker in markers" :key="marker.id"
-        :visible="marker.visible" :draggable="marker.draggable"
-        :lat-lng="marker.position" @click="alert(marker)" :icon="marker.icon">
-        <l-popup :content="marker.tooltip" />
-        <l-tooltip :content="marker.tooltip" />
-      </l-marker>
+      <l-control-zoom :position="map.zoomPosition" />
+      <l-control-attribution :position="map.attributionPosition" :prefix="map.attributionPrefix" />
+      <l-control-scale :imperial="map.imperial" />
       <l-layer-group v-for="item in stuff" :key="item.id" :visible="item.visible" >
         <l-layer-group :visible="item.markersVisible" >
-          <l-marker v-for="marker in item.markers" :key="marker.id"
-            :visible="marker.visible" :draggable="marker.draggable"
-            :lat-lng="marker.position" @click="alert(marker)" />
+          <l-marker v-for="(row, index) in visitData" :key="index"
+            :visible="true" :draggable="false"
+            :lat-lng="row.gps" @click="alert(row)" />
         </l-layer-group>
        </l-layer-group>
     </l-map>
@@ -46,56 +36,7 @@ import Glyph from 'leaflet.icon.glyph';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css'; 
 import 'leaflet-defaulticon-compatibility';
-var markers1 = [
-  { position: { lng:-1.219482, lat:47.413220}, visible: true, draggable: true},
-  { position: { lng:-1.571045, lat:47.457809}},
-  { position: { lng:-1.560059, lat:47.739323}},
-  { position: { lng:-0.922852, lat:47.886881}},
-  { position: { lng:-0.769043, lat:48.231991}},
-  { position: { lng:0.395508, lat:48.268569}},
-  { position: { lng:0.604248, lat:48.026672}},
-  { position: { lng:1.285400, lat:47.982568}},
-  { position: { lng:1.318359, lat:47.894248}},
-  { position: { lng:1.373291, lat:47.879513}},
-  { position: { lng:1.384277, lat:47.798397}},
-  { position: { lng:1.329346, lat:47.754098}},
-  { position: { lng:1.329346, lat:47.680183}},
-  { position: { lng:0.999756, lat:47.635784}},
-  { position: { lng:0.867920, lat:47.820532}},
-  { position: { lng:0.571289, lat:47.820532}},
-  { position: { lng:0.439453, lat:47.717154}},
-  { position: { lng:0.439453, lat:47.613570}},
-  { position: { lng:-0.571289, lat:47.487513}},
-  { position: { lng:-0.615234, lat:47.680183}},
-  { position: { lng:-0.812988, lat:47.724545}},
-  { position: { lng:-1.054688, lat:47.680183}},
-  { position: { lng:-1.219482, lat:47.413220}}
-];
-var poly1 = [
-  { lng:-1.219482, lat:47.413220},
-  { lng:-1.571045, lat:47.457809},
-  { lng:-1.560059, lat:47.739323},
-  { lng:-0.922852, lat:47.886881},
-  { lng:-0.769043, lat:48.231991},
-  { lng:0.395508, lat:48.268569},
-  { lng:0.604248, lat:48.026672},
-  { lng:1.285400, lat:47.982568},
-  { lng:1.318359, lat:47.894248},
-  { lng:1.373291, lat:47.879513},
-  { lng:1.384277, lat:47.798397},
-  { lng:1.329346, lat:47.754098},
-  { lng:1.329346, lat:47.680183},
-  { lng:0.999756, lat:47.635784},
-  { lng:0.867920, lat:47.820532},
-  { lng:0.571289, lat:47.820532},
-  { lng:0.439453, lat:47.717154},
-  { lng:0.439453, lat:47.613570},
-  { lng:-0.571289, lat:47.487513},
-  { lng:-0.615234, lat:47.680183},
-  { lng:-0.812988, lat:47.724545},
-  { lng:-1.054688, lat:47.680183},
-  { lng:-1.219482, lat:47.413220}
-];
+// 
 var customIcon = L.icon({
   iconUrl: 'images/layers.png',
   shadowUrl: ''
@@ -130,32 +71,27 @@ export default {
   },
   data () {
     return { 
-      center: [47.73100793522518, -0.24169921875000003 ],
-      bounds: L.latLngBounds( {"lat": 46.573931908971865, "lng": -4.757080078125001  }, { "lat": 48.850224803672056, "lng": 4.603271484375001 }),
+      map: { 
+        center: {"lng":30.8021097164601,"lat":-29.9852711241692},
+        bounds: L.latLngBounds( {"lat": 46.573931908971865, "lng": -4.757080078125001  }, { "lat": 48.850224803672056, "lng": 4.603271484375001 }),
+        options: { zoomControl: false , attributionControl: false },
+        zoom:10,
+        minZoom:1,
+        maxZoom:20,
+        zoomPosition: 'topleft',
+        attributionPosition: 'bottomright',
+        layersPosition: 'topright',
+        attributionPrefix: 'Vue2Leaflet',
+        imperial: false,
+      },
+      
       opacity:0.6,
       token: 'your token if using mapbox',
-      mapOptions: { zoomControl: false , attributionControl: false },
-      zoom:7,
-      minZoom:1,
-      maxZoom:20,
-      zoomPosition: 'topleft',
-      attributionPosition: 'bottomright',
-      layersPosition: 'topright',
-      attributionPrefix: 'Vue2Leaflet',
-      imperial: false,
+      
       Positions: ['topleft', 'topright', 'bottomleft', 'bottomright'],
       tileProviders: tileProviders,
-      markers:[
-        { id: "m1", position : {lat:51.505, lng:-0.09}, tooltip: "tooltip for marker1", draggable: true, visible: true, icon: L.icon.glyph({
-          prefix: '',
-          glyph: 'A'})
-        },
-        { id: "m2", position : {lat:51.8905, lng:-0.09}, tooltip: "tooltip for marker2", draggable: true, visible: false },
-        { id: "m3", position : {lat:51.005, lng:-0.09}, tooltip: "tooltip for marker3", draggable: true, visible: true },
-        { id: "m4", position : {lat:50.7605, lng:-0.09}, tooltip: "tooltip for marker4", draggable: true, visible: false }
-      ],
       stuff: [
-        { id: "s1", markers: markers1, visible: true, markersVisible: true},
+        { id: "s1", visible: true, markersVisible: true},
       ],
     }
   },
@@ -165,7 +101,8 @@ export default {
     },
     showMap() {
       return this.$store.getters.showMap
-    }
+    },
+    
   },
   methods: {
     alert(item) {

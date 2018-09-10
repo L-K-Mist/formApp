@@ -24,13 +24,14 @@ const actions = {
     
     .map(function(row){
         var newGPS = row.gps.split(", ")
-        var lng = Number(newGPS[0])
-        var lat = Number(newGPS[1])
+        var lat = Number(newGPS[0])
+        var lng = Number(newGPS[1])
         return { 
             person: row.name,
             garden: row.gardenName, 
             area: row.memberArea,
-            gps: {lng, lat}
+            gps: {lng, lat},
+            photos: row.photos
         };
     })
 
