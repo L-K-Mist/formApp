@@ -2,6 +2,24 @@
     <v-layout row wrap>
         <v-container grid-list-sx>
             <v-flex xs12>
+              <v-flex xs6>
+                  <v-text-field
+                    @click="farmers.supplied = ''"
+                    v-model="farmers.supplied"
+                    label="Kilograms supplied by farmers"
+                    :value="farmers.supplied"
+                    suffix="kg"
+                  ></v-text-field>
+                  <v-text-field
+                    @click="farmers.generatedIncome = ''"
+                    v-model="farmers.generatedIncome"
+                    label="... generating an income of: "
+                    :value="farmers.supplied"
+                    prefix="R"
+                  ></v-text-field>
+                </v-flex>
+              <v-card>
+              </v-card>
                 <v-card>
                     <v-card-title primary-title>
                         <h1>The Fair Food Foundation</h1>
@@ -27,14 +45,13 @@
                           <template transition="slide-y-transition"
                             v-if="$store.getters.honeySold !== null">
                             <h4>Produce Sales </h4>
-                            <p>[ @Paula: I'm not sure what figures you count for income generated. Since categorising is easy, might you rather want a text verion of the break-down bulleted below? ]</p>
-                            <p>In {{month}}, produce was supplied to Shops and some veggie boxes were distributed to a few areas in and around Durban. Farmers supplied 1002kg and generated an income of about R10 900[text not calc]. </p>
+                                                        <p>In {{month}}, produce was supplied to Shops and some veggie boxes were distributed to a few areas in and around Durban. Farmers supplied {{ farmers.supplied }}kg and generated an income of about R {{ farmers.generatedIncome }}. </p>
                             <p>Sales per category were as follows:</p>
                             <ul>
                             <li>Vegetables Sold is: R {{ $store.getters.vegSold.toLocaleString() }}.00</li>
                             <li>Herbs Sold is: R {{ $store.getters.herbsSold.toLocaleString() }}.00</li>
                             <li>Fruit Sold is: R {{ $store.getters.fruitSold.toLocaleString() }}.00</li>
-                            <li>Honey Sold is: R {{ $store.getters.honeySold.toLocaleString() }}.00</li>
+                            <li v-if="$store.getters.honeySold > 1" >Honey Sold is: R {{ $store.getters.honeySold.toLocaleString() }}.00</li>
 
                             </ul>
                           </template>                                                   
@@ -49,6 +66,15 @@
 import moment from "moment";
 
 export default {
+  data() {
+    return {
+      farmers: {
+        supplied: 1,
+        generatedIncome: 1
+
+      }
+    }
+  },
   computed: {
     date() {
       return moment(this.$store.getters.reportMonth).format("MMMM YYYY");

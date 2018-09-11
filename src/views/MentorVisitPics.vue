@@ -1,8 +1,9 @@
 <template>
    <v-layout row wrap>
       <v-container grid-list-xs>
-        <v-flex class="not-print" xs12 sm10 offset-sm1 md8 offset-md2>
-          <h1>Mentor Visit Pictures</h1>
+
+        <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
+          <h1 class="print-title">Mentor Visit Pictures</h1>
             <div class="not-print">
               <template>
                 <reports-received></reports-received>
@@ -21,21 +22,22 @@
                   v-model="agriActivitiesSelected"
                   label="Commercial or Non?"
                 ></v-select>
-            </template>
+                <next-monthly-visits-map></next-monthly-visits-map>
+            </template> 
           </div> 
         </v-flex>
         <br><br><br>
+        <v-btn color="success" @click="saveToPouch">Save to Local</v-btn>  
         <v-btn class="not-print" @click="printPDF"  color="success">Convert to PDF</v-btn>
-        <br><br><br>
-        <h1 class="print-title">{{ reportTitle }}</h1>
-        <mentor-pictures :photoReport="photoReport" ></mentor-pictures>
-      </v-container>   
+        <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
+      </v-container>  
     </v-layout>
 </template>
 <script>
 import MentorPictures from "@/components/MentorPictures";
 import ReportsReceived from "@/components/ReportsReceived";
 import { ipcRenderer } from "electron";
+import NextMonthlyVisitsMap from "@/components/NextMonthlyVisitsMap";
 
 export default {
   mounted() {
@@ -77,6 +79,7 @@ export default {
     photoReport(newVal) {
       this.$store.dispatch("photoReport", newVal);
       console.log("TCL: photoReport -> newVal", newVal);
+      this.$store.dispatch("mapReportData", newVal);
     }
   },
   computed: {
@@ -114,6 +117,10 @@ export default {
       //this.imageIndex = []; // clear the image index for a fresh "upload"
       var imageIndex = [];
       for (let f of e.dataTransfer.files) {
+        console.log("TCL: ---------------------------");
+        console.log("TCL: asyncmultiFile -> f", f);
+        console.log("TCL: ---------------------------");
+
         if (!f.path.includes(".hash")) {
           //console.log("File(s) you dragged here: ", f.path);
           imageIndex.push(f.path);
@@ -132,11 +139,15 @@ export default {
       this.imageIndex = fileNames;
       console.log("​asyncmultiFile -> this.imageIndex", this.imageIndex);
       this.$store.dispatch("processImageIndex", this.imageIndex);
+    },
+    async saveToPouch() {
+      console.log("photoReport: ", photoReport);
     }
   },
   components: {
     MentorPictures,
-    ReportsReceived
+    ReportsReceived,
+    NextMonthlyVisitsMap
   }
 };
 </script>
