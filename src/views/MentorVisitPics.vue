@@ -1,6 +1,7 @@
 <template>
    <v-layout row wrap>
       <v-container grid-list-xs>
+
         <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
           <h1 class="print-title">Mentor Visit Pictures</h1>
             <div class="not-print">
@@ -21,21 +22,22 @@
                   v-model="agriActivitiesSelected"
                   label="Commercial or Non?"
                 ></v-select>
-            </template>
+                <next-monthly-visits-map></next-monthly-visits-map>
+            </template> 
           </div> 
         </v-flex>
         <br><br><br>
-        <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
-      <v-btn color="success" @click="saveToPouch">Save to Local</v-btn>  
+        <v-btn color="success" @click="saveToPouch">Save to Local</v-btn>  
         <v-btn class="not-print" @click="printPDF"  color="success">Convert to PDF</v-btn>
-        <mentor-pictures :photoReport="photoReport" ></mentor-pictures>
-      </v-container>   
+        <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
+      </v-container>  
     </v-layout>
 </template>
 <script>
 import MentorPictures from "@/components/MentorPictures";
 import ReportsReceived from "@/components/ReportsReceived";
 import { ipcRenderer } from "electron";
+import NextMonthlyVisitsMap from "@/components/NextMonthlyVisitsMap"
 
 export default {
   mounted() {
@@ -77,6 +79,7 @@ export default {
     photoReport(newVal) {
       this.$store.dispatch("photoReport", newVal);
       console.log("TCL: photoReport -> newVal", newVal);
+      this.$store.dispatch("mapReportData", newVal)
     }
   },
   computed: {
@@ -134,7 +137,8 @@ export default {
   },
   components: {
     MentorPictures,
-    ReportsReceived
+    ReportsReceived,
+    NextMonthlyVisitsMap
   }
 };
 </script>

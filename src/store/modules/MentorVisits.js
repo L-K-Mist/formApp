@@ -211,7 +211,10 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
     }) {
         var globalMonth = rootState.pouchFilter.docsObj['global/reportMonth'].month
         var mentorVisits = rootState.pouchFilter.docsObj[globalMonth + "/MentorVisits"].mentorVisits
-        console.log('TCL: globalMonth + "/MentorVisits"', globalMonth + "/MentorVisits");
+        console.log('TCL: -------------------------------');
+        console.log('TCL: mentorVisits', mentorVisits);
+        console.log('TCL: -------------------------------');
+        // console.log('TCL: globalMonth + "/MentorVisits"', globalMonth + "/MentorVisits");
         // Commercial_more_than_1000sqm
         var commercialGardens = mentorVisits.filter(
             entry =>
