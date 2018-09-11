@@ -4,6 +4,13 @@
             <v-flex xs12>
               <v-flex xs6>
                   <v-text-field
+                    @click="mhSeedlings = ''"
+                    v-model="mhSeedlings"
+                    label="Seedlings supplied to Marianhill Co-op Gardens"
+                    :value="mhSeedlings"
+                    suffix="Seedlings"
+                  ></v-text-field>                
+                  <v-text-field
                     @click="farmers.supplied = ''"
                     v-model="farmers.supplied"
                     label="Kilograms supplied by farmers"
@@ -30,7 +37,7 @@
                             <h3>{{ date }}</h3>
                             <br>
                             <h4>Seedling Supply</h4>
-                            <p>In {{ date }}, approximately {{ seedlingSum.toLocaleString() }} seedlings were distributed to {{ supportedGrowers.toLocaleString() }} supported growers, as well as [manual amount] to the Mariannhill Co-Op Gardens. This seedling sale figure equates to an approximated planted area of {{ plantedArea.toLocaleString() }} m<span>2</span>, which if all are successfully grown represent an estimated yield  of approximately {{ cropYield.toLocaleString() }}T, which at retail value is about R{{ (cropValue * 1000).toLocaleString() }}.  </p>
+                            <p>In {{ date }}, approximately {{ seedlingSum.toLocaleString() }} seedlings were distributed to {{ supportedGrowers.toLocaleString() }} supported growers, as well as {{ mhSeedlings }} to the Mariannhill Co-Op Gardens. This seedling sale figure equates to an approximated planted area of {{ plantedArea.toLocaleString() }} m<span>2</span>, which if all are successfully grown represent an estimated yield  of approximately {{ cropYield.toLocaleString() }}T, which at retail value is about R{{ (cropValue * 1000).toLocaleString() }}.  </p>
                           </template>
                           <template transition="slide-y-transition"
                               v-if="countMentorVisits !== null">
@@ -68,12 +75,12 @@ import moment from "moment";
 export default {
   data() {
     return {
+      mhSeedlings: 10,
       farmers: {
         supplied: 1,
         generatedIncome: 1
-
       }
-    }
+    };
   },
   computed: {
     date() {
