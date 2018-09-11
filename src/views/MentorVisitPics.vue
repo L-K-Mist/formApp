@@ -6,7 +6,7 @@
             <div class="not-print">
               <template>
                 <reports-received></reports-received>
-                <div class="container">
+                <div id="cont" class="container">
                 <!--UPLOAD-->
                   <div class="dropbox" @drop="multiFile" @dragover="stopDefault">
                   <h1>Upload images</h1>
@@ -26,7 +26,7 @@
         </v-flex>
         <br><br><br>
         <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
-      <v-btn color="success" @click="saveToPouch">Save to Local</v-btn>  
+      <!-- <v-btn color="success" @click="saveToPouch">Save to Local</v-btn>   -->
         <v-btn class="not-print" @click="printPDF"  color="success">Convert to PDF</v-btn>
         <mentor-pictures :photoReport="photoReport" ></mentor-pictures>
       </v-container>   
@@ -36,6 +36,8 @@
 import MentorPictures from "@/components/MentorPictures";
 import ReportsReceived from "@/components/ReportsReceived";
 import { ipcRenderer } from "electron";
+import db from '@/api/pouchDB'
+import { canvasToBlob } from "blob-util";
 
 export default {
   mounted() {
@@ -59,16 +61,6 @@ export default {
   },
   watch: {
     agriActivitiesSelected(newVal) {
-      console.log(
-        "TCL: ---------------------------------------------------------------------------------------------"
-      );
-      console.log(
-        "TCL: agriActivitiesSelected -> agriActivitiesSelected(newVal)",
-        newVal
-      );
-      console.log(
-        "TCL: ---------------------------------------------------------------------------------------------"
-      );
 
       this.$store.dispatch("agriActivityFilter", newVal);
       this.$store.dispatch("splitByCommercial");
@@ -76,7 +68,6 @@ export default {
     },
     photoReport(newVal) {
       this.$store.dispatch("photoReport", newVal);
-      console.log("TCL: photoReport -> newVal", newVal);
     }
   },
   computed: {
@@ -98,44 +89,105 @@ export default {
       e.preventDefault();
       e.stopPropagation();
     },
-
     async multiFile(e) {
       e.preventDefault();
       e.stopPropagation();
       //this.imageIndex = []; // clear the image index for a fresh "upload"
-      var imageIndex = [];
-      for (let f of e.dataTransfer.files) {
-      console.log('TCL: ---------------------------');
-      console.log('TCL: asyncmultiFile -> f', f);
-      console.log('TCL: ---------------------------');
-        
-        if (!f.path.includes(".hash")) {
-          //console.log("File(s) you dragged here: ", f.path);
-          imageIndex.push(f.path);
-        }
-      }
-      var fileNames = imageIndex.map(entry => {
-        var fn = entry.match(/([^/])+/g);
-        fn = fn[fn.length - 1];
-        var obj = {
-          path: entry,
-          name: fn
-        };
-        return obj;
-      });
+        var dt = e.dataTransfer;
+        var files = dt.files;
 
-      this.imageIndex = fileNames;
-      console.log("​asyncmultiFile -> this.imageIndex", this.imageIndex);
-      this.$store.dispatch("processImageIndex", this.imageIndex);
+        handleFiles(files);
+
+        function handleFiles(files) {
+          for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            
+            if (!file.type.startsWith('image/')){ continue }
+            
+            var img = document.createElement("img");   
+            img.src = window.URL.createObjectURL(file);
+            img.file = file
+            var cont = document.getElementById("cont")
+            cont.appendChild(img); 
+            var MAX_WIDTH = 800 * 0.8;
+            var MAX_HEIGHT = 600 * 0.8;
+            var width = img.width;
+            var height = img.height;
+            
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+            } else {
+            if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height;
+                height = MAX_HEIGHT;
+                }
+            }
+            console.log('TCL: ----------------------------');
+            console.log('TCL: handleFiles -> img', img);
+            console.log('TCL: ----------------------------');
+
+            var canvas = document.createElement('canvas')
+            canvas.width = width;
+            canvas.height = height;
+            var ctx = canvas.getContext("2d"); // Once you have the image preview in an <img> element, you can draw this image in a <canvas> element to pre-process the file.
+            console.log('TCL: ----------------------------------');
+            console.log('TCL: handleFiles -> canvas', canvas);
+            console.log('TCL: ----------------------------------');
+            ctx.drawImage(img, width, height);
+
+            canvasToBlob(canvas, "image/jpeg").then(function(blob) {
+            console.log('TCL: --------------------------------');
+            console.log('TCL: reader.onload -> blob', blob);
+            console.log('TCL: --------------------------------');
+              
+              // try {
+              //     var attachment = blob
+              //     var result = await db.put({
+              //       _id: file.name,
+              //       _attachments: {
+              //         [file.name + ".jpeg"]: {
+              //           type: "image/jpeg",
+              //           data: attachment
+              //         }
+              //       }
+              //     });
+              //     console.log('TCL: -------------------');
+              //     console.log('TCL: result', result);
+              //     console.log('TCL: -------------------');
+                  
+              // } catch (err) {
+              //     console.log(err);
+              // }
+            })  
+          }
+       }
+       
     },
-    async saveToPouch() {
-      console.log("photoReport: ", photoReport)
-    }
+      // this.$store.dispatch("receiveFile", imageIndex)
+      // var fileNames = imageIndex.map(entry => {
+      //   var fn = entry.match(/([^/])+/g);
+      //   fn = fn[fn.length - 1];
+      //   var obj = {
+      //     path: entry,
+      //     name: fn
+      //   };
+      //   return obj;
+      // });
+
+      // this.imageIndex = fileNames;
+      // console.log("​asyncmultiFile -> this.imageIndex", this.imageIndex);
+      // this.$store.dispatch("processImageIndex", this.imageIndex);
+   
+
   },
   components: {
     MentorPictures,
     ReportsReceived
   }
+  
 };
 </script>
 <style>
