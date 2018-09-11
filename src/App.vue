@@ -32,6 +32,7 @@
     </v-navigation-drawer>
     <v-toolbar  class="not-print"
       app
+      scrollOffScreen
       :clipped-left="clipped"
     >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>

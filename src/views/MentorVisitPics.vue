@@ -2,7 +2,6 @@
    <v-layout row wrap>
       <v-container grid-list-xs>
 
-      <next-monthly-visits-map></next-monthly-visits-map>
         <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
           <h1 class="print-title">Mentor Visit Pictures</h1>
             <div class="not-print">
@@ -23,6 +22,7 @@
                   v-model="agriActivitiesSelected"
                   label="Commercial or Non?"
                 ></v-select>
+                <next-monthly-visits-map></next-monthly-visits-map>
             </template> 
           </div> 
         </v-flex>
