@@ -1,8 +1,8 @@
 <template>
    <v-layout row wrap>
       <v-container grid-list-xs>
-        <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
-          <h1 class="print-title">Mentor Visit Pictures</h1>
+        <v-flex class="not-print" xs12 sm10 offset-sm1 md8 offset-md2>
+          <h1>Mentor Visit Pictures</h1>
             <div class="not-print">
               <template>
                 <reports-received></reports-received>
@@ -22,12 +22,12 @@
                   label="Commercial or Non?"
                 ></v-select>
             </template>
-             
-             
           </div> 
         </v-flex>
         <br><br><br>
         <v-btn class="not-print" @click="printPDF"  color="success">Convert to PDF</v-btn>
+        <br><br><br>
+        <h1 class="print-title">{{ reportTitle }}</h1>
         <mentor-pictures :photoReport="photoReport" ></mentor-pictures>
       </v-container>   
     </v-layout>
@@ -87,6 +87,15 @@ export default {
         return this.$store.getters.commercialThreePhotos;
       } else if (this.agriActivitiesSelected === "Non-Commercial") {
         return this.$store.getters.subsistenceThreePhotos;
+      }
+    },
+    reportTitle() {
+      if (this.agriActivitiesSelected === null) {
+        return [];
+      } else if (this.agriActivitiesSelected === "Commercial") {
+        return "Commercial Mentoring";
+      } else if (this.agriActivitiesSelected === "Non-Commercial") {
+        return "Mentoring for Subsistance and Market Gardens";
       }
     }
   },
@@ -195,7 +204,6 @@ export default {
     background: none;
   }
   .container,
-  /* .content, */
   .main {
     width: 90%;
     margin: 0px;

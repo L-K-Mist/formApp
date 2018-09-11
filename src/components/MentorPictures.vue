@@ -1,28 +1,31 @@
 <template>
   <v-layout row wrap>
     <v-container grid-list-xl>
-      <v-flex xs12>
         <v-card id="mentor-visit"  class="p-card texty" v-for="(item, index) in photoReport" :key="index">
           <v-container grid-list-lg> 
             <v-layout row wrap>
               <v-flex xs12>
                 <h3 class=" mb-0"> {{ headlineSelect(item.name, item.gardenName)}} &nbsp; | &nbsp; {{ item.date }}</h3>
                 <br>
-                <ul class="texty">
-                  <li>Activity: {{item.farmingActivity}}</li>
-                  <li>Person Mentored: {{ item.name }}</li>
-                  <li>GPS Co-ordinates: {{ item.gps }}</li>
-                </ul>
               </v-flex>
-              <v-flex class="p-image" xs4
-                v-for="(i, index) in item.photos" :key="index" >
-                <img :src="'File:' + i.path">           
-              </v-flex>
+              <v-layout row >
+                <v-flex xs4>
+                  <ul class="texty">
+                    <!-- <li>Activity: {{item.farmingActivity}}</li> -->
+                    <li>Person Mentored: {{ item.name }}</li>
+                    <li>GPS Co-ordinates: {{ item.gps }}</li>
+                  </ul>
+                </v-flex>
+              <v-layout row justify-end>
+                <v-flex class="p-image mb-4 mr-4 " xs3
+                  v-for="(i, index) in item.photos" :key="index" >
+                  <img :src="'File:' + i.path">           
+                </v-flex>
+              </v-layout>
+              </v-layout>
             </v-layout>
           </v-container>
-        </v-card>
-        
-      </v-flex>
+        </v-card> 
     </v-container>
   </v-layout>
 </template>
