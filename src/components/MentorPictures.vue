@@ -62,24 +62,22 @@ export default {
       /**
        * MUSINGS
        *
-       * what if each image onload sends itself for making into a blob  NO
-       *
-       * What I have is the image height and width as viewed and an image source for each image; SO:
-       *                                                                                          For each image source I can make a canvas (I think)
-       *
+       *TODO next: Each image src in photoReport must be replaced with the blob image
        *
        */
 
       var rawImages = this.$refs.images;
       var compressedImages = [];
-      console.log("TCL: checkRefs -> rawImages", rawImages);
       // var imageData = rawImages.map(
       //   image => image.currentSrc,
       //   image.clientHeight,
       //   image.clientWidth,
       //   image.src
       // );
-      rawImages.forEach(function(image) {
+      for (let index = 0; index < rawImages.length; index++) {
+        const image = rawImages[index];
+        console.log("TCL: checkRefs -> element", image);
+
         var canvas = document.createElement("canvas");
         var rawImageSrc = image.currentSrc;
 
@@ -94,38 +92,44 @@ export default {
           image.clientHeight * 2
         );
         console.log("TCL: checkRefs -> canvas", canvas);
-        canvasToBlob(canvas, "image/jpeg")
-          .then(function(blob) {
-            console.log("TCL: --------------------------------");
-            console.log("TCL: reader.onload -> blob", blob);
-            console.log("TCL: --------------------------------");
-            compressedImages.push(blob);
-          })
-          .then(function() {
-            console.log("TCL: checkRefs -> compressedImages", compressedImages);
-            var selectedBlob = compressedImages[2];
-            var blobURL = createObjectURL(selectedBlob);
-            var newImage = document.createElement("img");
-            newImage.src = blobURL;
-            var cont = document.getElementById("cont");
-            cont.appendChild(newImage);
-          });
+        canvasToBlob(canvas, "image/jpeg").then(function(blob) {
+          console.log("TCL: --------------------------------");
+          console.log("TCL: reader.onload -> blob", blob);
+          console.log("TCL: --------------------------------");
+          compressedImages.push(blob);
+          if (compressedImages.length == rawImages.length) {
+            replaceImages();
+          }
+        });
+      }
 
-        // var canvas = document.createElement("canvas");
-        // canvas.width = width;
-        // canvas.height = height;
-        // var ctx = canvas.getContext("2d"); // Once you have the image preview in an <img> element, you can draw this image in a <canvas> element to pre-process the file.
-        // console.log("TCL: ----------------------------------");
-        // console.log("TCL: handleFiles -> canvas", canvas);
-        // console.log("TCL: ----------------------------------");
-        // ctx.drawImage(img, width, height);
+      // rawImages.forEach(function(image) {
+      // var canvas = document.createElement("canvas");
+      // canvas.width = width;
+      // canvas.height = height;
+      // var ctx = canvas.getContext("2d"); // Once you have the image preview in an <img> element, you can draw this image in a <canvas> element to pre-process the file.
+      // console.log("TCL: ----------------------------------");
+      // console.log("TCL: handleFiles -> canvas", canvas);
+      // console.log("TCL: ----------------------------------");
+      // ctx.drawImage(img, width, height);
+      // canvasToBlob(canvas, "image/jpeg").then(function(blob) {
+      //   console.log("TCL: --------------------------------");
+      //   console.log("TCL: reader.onload -> blob", blob);
+      //   console.log("TCL: --------------------------------");
+      // });
+      // });
+      function replaceImages() {
+        var selectedBlob = compressedImages[2];
+        var blobURL = createObjectURL(selectedBlob);
+        console.log("TCL: checkRefs -> blobURL", blobURL);
 
-        // canvasToBlob(canvas, "image/jpeg").then(function(blob) {
-        //   console.log("TCL: --------------------------------");
-        //   console.log("TCL: reader.onload -> blob", blob);
-        //   console.log("TCL: --------------------------------");
-        // });
-      });
+        var newImage = document.createElement("img");
+        newImage.src = blobURL;
+        var cont = document.getElementById("cont");
+        cont.appendChild(newImage);
+        console.log("TCL: checkRefs -> rawImages", rawImages);
+        console.log("TCL: checkRefs -> compressedImages", compressedImages);
+      }
     }
   },
   components: {}
