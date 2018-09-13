@@ -1,15 +1,56 @@
 <template>
    <v-layout row wrap>
-      <v-container grid-list-xs>
+     <v-flex xs12>
+       <v-container grid-list-xs>
+          <form ref="fileform">
+            <span>Drop the images here!</span>
+            
+          </form>
+         
+       </v-container>
+     </v-flex>
+     <v-container grid-list-md>
+       <v-layout row wrap>
+        <v-flex v-if="files.length > 0" 
+              v-for="(file, key) in files" class="file-listing" :key="key">
+              <img class="preview" v-bind:ref="'preview'+parseInt( key )"/>
+              {{ file.name }}
+        </v-flex>
+         
+       </v-layout>
+       
+     </v-container>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <v-container grid-list-xs>
         <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
           <h1 class="print-title">Mentor Visit Pictures</h1>
             <div class="not-print">
               <template>
                 <reports-received></reports-received>
                 <div class="container">
+                  <label>File
+                    <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
+                  </label>
+                  <br><br>
                 <!--UPLOAD-->
-                  <div class="dropbox" @drop="multiFile" @dragover="stopDefault">
+                  <div class="dropbox" @drop="multiFile" ref="files" @dragover="stopDefault">
                   <h1>Upload images</h1>
                       <p>
                       Drag your image file(s) here to begin
@@ -46,9 +87,56 @@ export default {
       this.ipcMessage = `Wrote pdf to : ${path}`;
       console.log("TCL: mounted -> this.ipcMessage", this.ipcMessage);
     });
+    /*
+      Listen to all of the drag events and bind an event listener to each
+      for the fileform.
+    */
+    [
+      "drag",
+      "dragstart",
+      "dragend",
+      "dragover",
+      "dragenter",
+      "dragleave",
+      "drop"
+    ].forEach(
+      function(evt) {
+        /*
+        For each event add an event listener that prevents the default action
+        (opening the file in the browser) and stop the propagation of the event (so
+        no other elements open the file in the browser)
+      */
+        this.$refs.fileform.addEventListener(
+          evt,
+          function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+          }.bind(this),
+          false
+        );
+      }.bind(this)
+    );
+
+    /*
+      Add an event listener for drop to the form
+    */
+    this.$refs.fileform.addEventListener(
+      "drop",
+      function(e) {
+        /*
+        Capture the files from the drop event and add them to our local files
+        array.
+      */
+        for (let i = 0; i < e.dataTransfer.files.length; i++) {
+          this.files.push(e.dataTransfer.files[i]);
+        }
+        this.getImagePreviews();
+      }.bind(this) // bind the local component with the .bind(this) method to the function we are handling the drop event with. This gives us the capability to reference the component directly and set local parameters.
+    );
   },
   data() {
     return {
+      files: [],
       ipcMessage: "",
       threePhotos: false,
       agriActivitiesSelected: "",
@@ -103,6 +191,55 @@ export default {
     }
   },
   methods: {
+    imageInputInit() {},
+    getImagePreviews() {
+      /*
+    Iterate over all of the files and generate an image preview for each one.
+  */
+      for (let i = 0; i < this.files.length; i++) {
+        /*
+      Ensure the file is an image file
+    */
+        if (/\.(jpe?g|png|gif)$/i.test(this.files[i].name)) {
+          /*
+        Create a new FileReader object
+      */
+          let reader = new FileReader();
+
+          /*
+        Add an event listener for when the file has been loaded
+        to update the src on the file preview.
+      */
+          reader.addEventListener(
+            "load",
+            function() {
+              this.$refs["preview" + parseInt(i)][0].src = reader.result;
+            }.bind(this),
+            false
+          );
+
+          /*
+        Read the data for the file in through the reader. When it has
+        been loaded, we listen to the event propagated and set the image
+        src to what was loaded from the reader.
+      */
+          reader.readAsDataURL(this.files[i]);
+        } else {
+          console.log("not an image, but cool");
+          /*
+        We do the next tick so the reference is bound and we can access it.
+
+        Since we are scoped outside of the file being an image, we know the file is a different file type. The catcher with this is we have to work inside the $nextTick method within VueJS. Since we are iterating over the files and VueJS is rendering the template, we have to make sure the references are bound so we can set the appropriate attribute on the src ta
+
+        Now, the template is rendered and we can load the default file of our choice. We didn’t have to wait for the DOM to update on images, because the callback is on load which takes some time so our DOM is updated by the time the file is read in.
+      */
+
+          //     this.$nextTick(function() {
+          //       this.$refs["preview" + parseInt(i)][0].src = "/images/file.png";
+          //     });
+        }
+      }
+    },
     printPDF() {
       ipcRenderer.send("print-to-pdf");
     },
@@ -114,8 +251,12 @@ export default {
     async multiFile(e) {
       e.preventDefault();
       e.stopPropagation();
+      this.files = this.$refs.files.files;
+      console.log("TCL: asyncmultiFile ->  this.files", this.$refs.files);
+
       //this.imageIndex = []; // clear the image index for a fresh "upload"
       var imageIndex = [];
+      var incomingImageFiles = [];
       for (let f of e.dataTransfer.files) {
         console.log("TCL: ---------------------------");
         console.log("TCL: asyncmultiFile -> f", f);
@@ -124,6 +265,7 @@ export default {
         if (!f.path.includes(".hash")) {
           //console.log("File(s) you dragged here: ", f.path);
           imageIndex.push(f.path);
+          incomingImageFiles.push(f);
         }
       }
       var fileNames = imageIndex.map(entry => {
@@ -152,6 +294,20 @@ export default {
 };
 </script>
 <style>
+div.file-listing img {
+  height: 100px;
+}
+form {
+  display: block;
+  height: 400px;
+  width: 400px;
+  background: #ccc;
+  margin: auto;
+  margin-top: 40px;
+  text-align: center;
+  line-height: 400px;
+  border-radius: 4px;
+}
 @media print {
   @page {
     size: A4;

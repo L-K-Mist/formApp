@@ -18,6 +18,9 @@ const actions = {
     }, imageIndex) {
         state.imageIndex = imageIndex
 
+        // Over here we intercept <-- or at the point of sending? 
+
+
         db.put({
             _id: rootState.csvMailroom.reportMonth + "/MentorPhotos",
             fsImages: imageIndex
