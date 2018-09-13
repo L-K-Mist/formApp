@@ -4,7 +4,6 @@ import {
   totalmem
 } from 'os';
 
-// TODO delete unessecary fields or map only necessary ones
 // https://stackoverflow.com/questions/24440403/returning-only-certain-properties-from-an-array-of-objects-in-javascript
 // https://stackoverflow.com/questions/18133635/javascript-remove-attribute-for-all-objects-in-array
 
@@ -67,14 +66,14 @@ Hope this helps.  Enjoy your day with fam.
     rootState,
     dispatch
   }, allSales) {
-  // // // console.log('TCL: -----------------------');
-  // // // console.log('TCL: allSales', allSales);
-  // // // console.log('TCL: -----------------------');
-    
+    // // // console.log('TCL: -----------------------');
+    // // // console.log('TCL: allSales', allSales);
+    // // // console.log('TCL: -----------------------');
+
     // Takes the JSON of the csv and simplifies it to the essentials
     const dateFilter = allSales.filter(
       entry =>
-        entry.Date !== undefined && entry.Date.includes(rootState.csvMailroom.reportMonth)
+      entry.Date !== undefined && entry.Date.includes(rootState.csvMailroom.reportMonth)
     );
     console.log('​salesForm -> dateFilter', dateFilter);
 
@@ -97,7 +96,7 @@ Hope this helps.  Enjoy your day with fam.
     // console.log("​-----------------------------------------");
     // console.log("​state.salesForm", state.salesForm);
     // console.log("​-----------------------------------------");
-    
+
     dispatch("seedlingsSold", fieldMap);
     dispatch("supportedGrowersCount", fieldMap);
   },

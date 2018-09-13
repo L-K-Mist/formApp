@@ -23,38 +23,39 @@
 </template>
 
 <script>
-// TODOS bring markers in as a prop
-//
-
-import 'leaflet/dist/leaflet.css';
+import "leaflet/dist/leaflet.css";
 export default {
   data() {
     return {
       zoom: 13,
       center: ["-29.6725216666667", "30.70266"],
       //marker: ["-29.8677840828896", "30.7913825567812"],
-      markers: [["-29.8677840828896", "30.7913825567812"], ["-29.8777840828896", "30.7813825567812"], ["-29.8277840828896", "30.8013825567812"]],
+      markers: [
+        ["-29.8677840828896", "30.7913825567812"],
+        ["-29.8777840828896", "30.7813825567812"],
+        ["-29.8277840828896", "30.8013825567812"]
+      ],
       minZoom: 8,
       maxZoom: 15,
-      url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-      attribution: 'vue-leaflet',
-      title: 'vue-leaflet',
+      url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+      attribution: "vue-leaflet",
+      title: "vue-leaflet",
       opacity: 1,
       draggable: true,
-      attributionControl: false,
+      attributionControl: false
     };
   },
   computed: {
-    docs(){
-      return this.$store.getters.docs
+    docs() {
+      return this.$store.getters.docs;
     },
     mapData() {
-      return this.$store.getters.mapData
+      return this.$store.getters.mapData;
     }
   },
   methods: {
     zoomend() {
-      console.log(1)
+      console.log(1);
     }
   }
 };

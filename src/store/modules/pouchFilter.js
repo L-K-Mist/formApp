@@ -135,34 +135,6 @@ const actions = {
         } else {
             console.log("I don't know what month we're planning for")
         }
-
-        // const fewerFields = state.rawMentorVisits.mentorVisits.map(function(row) {
-        //     return {
-        //         date: row.Date,
-        //         memberId: row.Member_id,
-        //         gps: row.GPS,
-        //         gardenName: row["Garden Name"],
-        //         photos: [
-        //             // TODO give this same struct as imageIndex array
-        //             imageObj(row.Picture1),
-        //             imageObj(row.Picture2),
-        //             imageObj(row.Picture3)
-        //         ],
-        //         name: row["First Name"] + " " + row["Last Name"],
-        //         nationalId: row["SA ID Number"],
-        //         farmingActivity: row["Farming Activity"],
-        //         memberArea: row["Member Area"],
-        //         mentor: row["username"]
-        //     };
-        // });
-        // console.log('TCL: ------------------------------------------------------------');
-        // console.log('TCL: asyncreceiveAllMentorVisits -> fewerFields', fewerFields);
-        // console.log('TCL: ------------------------------------------------------------');
-        // var dataFormatForDB = {
-        //   _id: rootState.csvMailroom.reportMonth + "MentorVisits",
-        //   mentorVisits: fewerFields
-        // };
-        // db.put(dataFormatForDB).then(response => console.log("dbResp", response));
     },
 
 

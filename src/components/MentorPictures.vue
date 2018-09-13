@@ -40,7 +40,9 @@
 import moment from "moment";
 import { canvasToBlob } from "blob-util";
 import { createObjectURL } from "blob-util";
-
+/**
+ * TODO Next:  Intercept these images right on upload, compress them then before attaching to the report.
+ */
 export default {
   props: ["photoReport"],
   computed: {
@@ -59,13 +61,6 @@ export default {
       }
     },
     checkRefs() {
-      /**
-       * MUSINGS
-       *
-       *TODO next: Each image src in photoReport must be replaced with the blob image
-       *
-       */
-
       var rawImages = this.$refs.images;
       var compressedImages = [];
       // var imageData = rawImages.map(
@@ -129,6 +124,7 @@ export default {
         cont.appendChild(newImage);
         console.log("TCL: checkRefs -> rawImages", rawImages);
         console.log("TCL: checkRefs -> compressedImages", compressedImages);
+        console.log("this.photoReport", this.photoReport);
       }
     }
   },

@@ -79,12 +79,7 @@ const getters = {
         return state.photoReport
     },
 }
-/**TODO: REMOVE DUPLICATES 
- * Using underScore.js: 
- *     var arr = ['a','b','c','a','b']
-    console.log('unique array is ',_.uniq(arr))
- * 
- */
+
 const actions = { // If the file-name includes "mentorvisit" it is sent here
     // Must pivot to grouped months, then count each unique occurance of member id
     mentorVisits({
@@ -124,7 +119,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
                 memberId: row.Member_id,
                 gps: row.GPS,
                 gardenName: row['Garden Name'],
-                photos: [ // TODO give this same struct as imageIndex array
+                photos: [
                     imageObj(row.Picture1),
                     imageObj(row.Picture2),
                     imageObj(row.Picture3),
@@ -274,6 +269,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         state
     }, watchedVal) {
         state.photoReport = watchedVal
+
     }
 }
 
