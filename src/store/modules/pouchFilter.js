@@ -107,6 +107,9 @@ const state = {
 const getters = {
     docs(state) {
         return state.docs
+    },
+    docsObj(state) {
+        return state.docsObj
     }
 }
 

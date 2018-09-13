@@ -11,7 +11,7 @@
      </v-flex>
      <v-container grid-list-md>
        <v-layout row wrap>
-        <v-flex v-if="files.length > 0" 
+        <v-flex ref="images" v-if="files.length > 0" 
               v-for="(file, key) in files" class="file-listing" :key="key">
               <img class="preview" v-bind:ref="'preview'+parseInt( key )"/>
               {{ file.name }}
@@ -20,6 +20,9 @@
        </v-layout>
        
      </v-container>
+        <v-btn color="success" @click="saveToPouch">Save to Local</v-btn>  
+        <v-btn class="not-print" @click="printPDF"  color="success">Convert to PDF</v-btn>
+
 
 
 
@@ -68,8 +71,6 @@
           </div> 
         </v-flex>
         <br><br><br>
-        <v-btn color="success" @click="saveToPouch">Save to Local</v-btn>  
-        <v-btn class="not-print" @click="printPDF"  color="success">Convert to PDF</v-btn>
         <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
       </v-container>  
     </v-layout>
@@ -79,6 +80,9 @@ import MentorPictures from "@/components/MentorPictures";
 import ReportsReceived from "@/components/ReportsReceived";
 import { ipcRenderer } from "electron";
 import NextMonthlyVisitsMap from "@/components/NextMonthlyVisitsMap";
+import { canvasToBlob } from "blob-util";
+import { createObjectURL } from "blob-util";
+import db from "@/api/pouchDB";
 
 export default {
   mounted() {
@@ -191,7 +195,6 @@ export default {
     }
   },
   methods: {
-    imageInputInit() {},
     getImagePreviews() {
       /*
     Iterate over all of the files and generate an image preview for each one.
@@ -293,7 +296,65 @@ export default {
       this.$store.dispatch("processImageIndex", this.imageIndex);
     },
     async saveToPouch() {
-      console.log("photoReport: ", photoReport);
+      var that = this;
+      var raw = this.$refs.images;
+      console.log(
+        "TCL: asyncsaveToPouch -> this.$refs.images;",
+        this.$refs.images
+      );
+      var rawImages = raw.map(function(box) {
+        return {
+          image: box.childNodes[0],
+          src: box.childNodes[0].src,
+          fileName: box.childNodes[1].data
+        };
+      });
+      console.log("TCL: asyncsaveToPouch -> rawImages", rawImages);
+      for (let index = 0; index < rawImages.length; index++) {
+        const image = this.$refs["preview" + parseInt(index)][0];
+        console.log("TCL: asyncsaveToPouch -> image", image);
+
+        const rawImageSrc = rawImages[index].src;
+        const imageName = rawImages[index].fileName;
+
+        var canvas = document.createElement("canvas");
+        canvas.width = image.clientWidth * 2;
+        canvas.height = image.clientHeight * 2;
+        var ctx = canvas.getContext("2d"); // Once you have the image preview in an <img> element, you can draw this image in a <canvas> element to pre-process the file.
+        ctx.drawImage(
+          image,
+          0,
+          0,
+          image.clientWidth * 2,
+          image.clientHeight * 2
+        );
+        console.log("TCL: checkRefs -> canvas", canvas);
+        canvasToBlob(canvas, "image/jpeg").then(function(blob) {
+          console.log("TCL: --------------------------------");
+          console.log("TCL: reader.onload -> blob", blob);
+          console.log("TCL: --------------------------------");
+          var globalMonth =
+            that.$store.getters.docsObj["global/reportMonth"].month; // I'm putting this all over the place. NOT DRY :(  fix DEE  <--- TODO
+          var dataFormatForDB = {
+            _id:
+              globalMonth +
+              "/photos/" +
+              imageName.replace(/\r?\n|\r/g, "").replace(/\s/g, ""),
+            _attachments: {
+              [imageName.replace(/\r?\n|\r/g, "").replace(/\s/g, "")]: {
+                content_type: "image/jpeg",
+                data: blob
+              }
+            }
+          };
+          db
+            .put(dataFormatForDB)
+            .then(response => {
+              console.log("dbResp", response);
+            })
+            .catch(err => console.log(err));
+        });
+      }
     }
   },
   components: {
