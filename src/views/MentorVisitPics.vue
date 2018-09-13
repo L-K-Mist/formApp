@@ -214,6 +214,10 @@ export default {
             "load",
             function() {
               this.$refs["preview" + parseInt(i)][0].src = reader.result;
+              console.log(
+                'TCL: getImagePreviews -> this.$refs["preview" + parseInt(i)][0]',
+                this.$refs["preview" + parseInt(i)][0]
+              );
             }.bind(this),
             false
           );
@@ -237,6 +241,12 @@ export default {
           //     this.$nextTick(function() {
           //       this.$refs["preview" + parseInt(i)][0].src = "/images/file.png";
           //     });
+        }
+        if (i === this.files.length - 1) {
+          console.log(
+            "Yay, done iterating the thumnails to see them",
+            this.files
+          );
         }
       }
     },
