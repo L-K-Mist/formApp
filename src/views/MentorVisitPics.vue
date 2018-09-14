@@ -1,61 +1,44 @@
 <template>
-   <v-layout row wrap>
-     <v-flex xs12>
-       <v-container grid-list-xs>
+  <v-container fluid>
+    <v-layout fluid row wrap justify-center>
+    <h1 class="print-title">Mentor Visit Pictures</h1>
+      <v-flex xs12>
           <form ref="fileform">
             <span>Drop the images here!</span>
-            
           </form>
-         
-       </v-container>
-     </v-flex>
-     <v-layout row>
-     <v-spacer></v-spacer>
-      <v-flex xs10>
-        <v-container grid-list-md>
-          <v-layout row wrap>
-            <v-flex ref="images" v-if="files.length > 0" 
-                  v-for="(file, key) in files" class="file-listing" :key="key">
-                  <img class="preview" v-bind:ref="'preview'+parseInt( key )"/>
-                  {{ file.name }}
-            </v-flex>
-            
-          </v-layout>
-          
-        </v-container>
       </v-flex>
-       
-     <v-spacer></v-spacer>
-     </v-layout>
-     <v-layout row wrap>
-        <v-spacer></v-spacer>
-        <v-btn  color="success" @click="saveToPouch">Save to Local</v-btn>  
+        <v-container fluid grid-list-xs>
+        </v-container>
+        <v-btn color="success" @click="saveToPouch">Save to Local</v-btn>  
+    </v-layout>
+    <v-container grid-list-md>
+      <v-layout row wrap justify-space-between>
+        <v-flex ref="images"  
+              v-for="(file, key) in files" class="file-listing" :key="key">
+              <img class="preview" v-bind:ref="'preview'+parseInt( key )"/>
+              {{ file.name }}
+        </v-flex>
+      </v-layout>   
+    </v-container>
+      <v-layout justify-center row wrap>
+        <v-flex xs4>
+          <v-select
+            :items="agriActivities"
+            v-model="agriActivitiesSelected"
+            label="Commercial or Non?"
+          ></v-select>
         <v-btn class="not-print" @click="printPDF"  color="success">Convert to PDF</v-btn>
-       <v-spacer></v-spacer>
-     </v-layout>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        </v-flex>
+      </v-layout>
+      <v-layout justify-center row >
+        <v-flex xs10>
+          <next-monthly-visits-map></next-monthly-visits-map>   
+        </v-flex>
+      </v-layout>
+      <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
 
       <v-container grid-list-xs>
         <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
-          <h1 class="print-title">Mentor Visit Pictures</h1>
             <div class="not-print">
               <template>
                 <reports-received></reports-received>
@@ -73,20 +56,14 @@
                       <!-- <h3 v-if="photoReport !== null">Number of rows: {{ photoReport.length }}</h3> -->
                   </div>               
                 </div>
-                <v-select
-                  :items="agriActivities"
-                  v-model="agriActivitiesSelected"
-                  label="Commercial or Non?"
-                ></v-select>
-                <next-monthly-visits-map></next-monthly-visits-map>
             </template> 
           </div> 
         </v-flex>
         <br><br><br>
-        <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
-      </v-container>  
-    </v-layout>
+      </v-container>
+  </v-container>  
 </template>
+
 <script>
 import MentorPictures from "@/components/MentorPictures";
 import ReportsReceived from "@/components/ReportsReceived";
