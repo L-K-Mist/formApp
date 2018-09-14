@@ -9,19 +9,31 @@
          
        </v-container>
      </v-flex>
-     <v-container grid-list-md>
-       <v-layout row wrap>
-        <v-flex ref="images" v-if="files.length > 0" 
-              v-for="(file, key) in files" class="file-listing" :key="key">
-              <img class="preview" v-bind:ref="'preview'+parseInt( key )"/>
-              {{ file.name }}
-        </v-flex>
-         
-       </v-layout>
+     <v-layout row>
+     <v-spacer></v-spacer>
+      <v-flex xs10>
+        <v-container grid-list-md>
+          <v-layout row wrap>
+            <v-flex ref="images" v-if="files.length > 0" 
+                  v-for="(file, key) in files" class="file-listing" :key="key">
+                  <img class="preview" v-bind:ref="'preview'+parseInt( key )"/>
+                  {{ file.name }}
+            </v-flex>
+            
+          </v-layout>
+          
+        </v-container>
+      </v-flex>
        
-     </v-container>
-        <v-btn color="success" @click="saveToPouch">Save to Local</v-btn>  
+     <v-spacer></v-spacer>
+     </v-layout>
+     <v-layout row wrap>
+        <v-spacer></v-spacer>
+        <v-btn  color="success" @click="saveToPouch">Save to Local</v-btn>  
         <v-btn class="not-print" @click="printPDF"  color="success">Convert to PDF</v-btn>
+       <v-spacer></v-spacer>
+     </v-layout>
+
 
 
 
