@@ -7,6 +7,16 @@ import {
 // https://stackoverflow.com/questions/24440403/returning-only-certain-properties-from-an-array-of-objects-in-javascript
 // https://stackoverflow.com/questions/18133635/javascript-remove-attribute-for-all-objects-in-array
 
+/** TODO Workout how to initialize salesForm from DB based on reportMonth. 
+ * the difficulty: pulling reportMonth into here to get the right docName
+ */
+// //initialise reportMonth from value in db
+// db.get('global/reportMonth').then(function (doc) {
+//   state.reportMonth = doc.month
+// }).catch(function (err) {
+//   console.log("Have you selected a month yet Paula? That's basically what this error means. \n", err);
+// });
+
 const state = {
   // docsReceived: [], depricate
 
@@ -93,9 +103,24 @@ Hope this helps.  Enjoy your day with fam.
     // console.log("​-------------------");
 
     state.salesForm = fieldMap;
-    // console.log("​-----------------------------------------");
-    // console.log("​state.salesForm", state.salesForm);
-    // console.log("​-----------------------------------------");
+    var docName = "seedlingSales/" + rootState.csvMailroom.reportMonth;
+
+    // upsert either creates a new db doc (if there isn't one with that name yet, or replaces it if there is one with the same name)
+    db.upsert(docName, function (doc) { // using upsert lib from https://github.com/pouchdb/upsert#dbupsertdocid-difffunc--callback
+      if (!doc.count) {
+        doc.count = 0;
+      }
+      doc.count++;
+      doc.data = state.salesForm
+      return doc;
+    }).then(function (res) {
+      console.log('TCL: res', res);
+
+      // success, res is {rev: '1-xxx', updated: true, id: 'myDocId'}
+    }).catch(function (err) {
+      console.log('TCL: err', err);
+      // error
+    });
 
     dispatch("seedlingsSold", fieldMap);
     dispatch("supportedGrowersCount", fieldMap);

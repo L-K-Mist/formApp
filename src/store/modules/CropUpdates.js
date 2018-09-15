@@ -1,4 +1,7 @@
+import db from "@/api/pouchDB";
+
 const state = {
+    cropsCaptured: null,
     cropsRecorded: null,
     totalArea: null,
     totalKg: null,
@@ -8,6 +11,9 @@ const state = {
 
 
 const getters = {
+    cropsCaptured(state) {
+        return state.cropsCaptured
+    },
     cropsRecorded(state) {
         return state.cropsRecorded
     },
@@ -55,8 +61,24 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
             entry =>
             entry.date !== undefined && entry.date.includes(rootState.csvMailroom.reportMonth)
         );
+        state.cropsCaptured = dateFilter
+
+        var docName = rootState.csvMailroom.reportMonth + "/cropUpdates"
         // console.log('​dateFilter', dateFilter);
-// 
+        db.upsert(docName, function(doc) {
+          if (!doc.count) {
+            doc.count = 0;
+          }
+          doc.count++;
+          doc.data = dateFilter;
+          return doc
+        }).then(response => {
+          console.log("dbResp", response);
+      
+    }).catch(function(err) {
+        console.log('TCL: err', err);
+        // error
+    });
         var cropsRecorded = dateFilter.length
         // console.log('​visitsCount', cropsRecorded);
 

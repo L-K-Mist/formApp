@@ -100,125 +100,124 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
             rootState,
             dispatch
         }, payload) {
-            // console.log('​state.reportMonth', rootState.csvMailroom.reportMonth);
-            function imageObj(linkString) {
-                if (linkString == "") {
-                    return "No Image"
-                } else {
-                    var path = linkString
-                    var stringArray = linkString.match(/([^/])+/g);
-                    var name = stringArray[stringArray.length - 1];
-                    return {
-                        path,
-                        name
-                    }
-                }
-            }
-            console.log('payload length:', payload.length)
-            // Filter to include only the month in question
-            const dateFilter = payload.filter(
-                entry =>
-                entry.Date !== undefined && entry.Date.includes(rootState.csvMailroom.reportMonth)
-            );
-            console.log('TCL: dateFilter.length', dateFilter.length);
+                      // console.log('​state.reportMonth', rootState.csvMailroom.reportMonth);
+                      function imageObj(linkString) {
+                        if (linkString == "") {
+                          return "No Image";
+                        } else {
+                          var path = linkString;
+                          var stringArray = linkString.match(/([^/])+/g);
+                          var name = stringArray[stringArray.length - 1];
+                          return { path, name };
+                        }
+                      }
+                      console.log("payload length:", payload.length);
+                      // Filter to include only the month in question
+                      const dateFilter = payload.filter(entry => entry.Date !== undefined && entry.Date.includes(rootState.csvMailroom.reportMonth));
+                      console.log("TCL: dateFilter.length", dateFilter.length);
+
+                      // console.log('​dateFilter', dateFilter);
+
+                      // Pull out only those columns we need
+                      const fieldMap = dateFilter.map(
+                        function(row) {
+                          return {
+                            date: row.Date,
+                            memberId: row.Member_id,
+                            gps: row.GPS,
+                            gardenName: row["Garden Name"],
+                            photos: [
+                              imageObj(row.Picture1),
+                              imageObj(row.Picture2),
+                              imageObj(row.Picture3)
+                            ],
+                            name:
+                              row["First Name"] +
+                              " " +
+                              row["Last Name"],
+                            nationalId: row["SA ID Number"],
+                            farmingActivity:
+                              row["Farming Activity"],
+                            memberArea: row["Member Area"],
+                            mentor: row["username"]
+                          };
+                        }
+                      );
+                      state.mentorVisits = fieldMap;
+
+                      var globalMonth = rootState.pouchFilter.docsObj["global/reportMonth"].month;
+                      console.log("TCL: globalMonth", globalMonth);
+
+                      var dataFormatForDB = { _id: globalMonth + "/MentorVisits", mentorVisits: fieldMap };
 
 
-            // console.log('​dateFilter', dateFilter);
+                      db.upsert(dataFormatForDB._id, function(doc){
+                          if (!doc.count) {
+                              doc.count = 0;
+                          }
+                          doc.count++;
+                          doc.data = fieldMap
+                      }).then(
+                        response => {
+                          console.log("dbResp", response); 
+                        }
+                      );
+                      _.delay(() => { // a bit hackey. TODO make this properly async, not hacky
+                          dispatch("splitByCommercial");
+                        }, 500, "later");
+                      // => Logs 'later' after one second.
 
-            // Pull out only those columns we need
-            const fieldMap = dateFilter.map(function (row) {
+                      // Effect a pivot that groups member id's per date as per https://stackoverflow.com/questions/40523257/how-do-i-pivot-an-array-of-objects-in-javascript
 
-                return {
-                    date: row.Date,
-                    memberId: row.Member_id,
-                    gps: row.GPS,
-                    gardenName: row['Garden Name'],
-                    photos: [
-                        imageObj(row.Picture1),
-                        imageObj(row.Picture2),
-                        imageObj(row.Picture3),
-                    ],
-                    name: row['First Name'] + ' ' + row['Last Name'],
-                    nationalId: row['SA ID Number'],
-                    farmingActivity: row['Farming Activity'],
-                    memberArea: row['Member Area'],
-                    mentor: row['username']
-                };
-            });
-            state.mentorVisits = fieldMap
+                      var dateGrouped = [];
 
-            var globalMonth = rootState.pouchFilter.docsObj['global/reportMonth'].month
-            console.log('TCL: globalMonth', globalMonth);
+                      fieldMap.forEach(function(a) {
+                        // Go through each object in the array and let "a" be the name for the stuff ...
 
-            var dataFormatForDB = {
-                _id: globalMonth + "/MentorVisits",
-                mentorVisits: fieldMap
-            }
-            db.put(dataFormatForDB).then(response => {
-                    console.log("dbResp", response)
-                }
+                        // check if date is not in hash table
+                        if (!this[a.date]) {
+                          // if not, create new object with date and values array
+                          // and assign it with the date as hash to the hash table
+                          this[a.date] = { date: a.date, values: [] };
 
-            )
-            _.delay(() => {
-                dispatch('splitByCommercial');
-            }, 500, 'later');
-            // => Logs 'later' after one second.
+                          // add the new object to the result set, too
+                          dateGrouped.push(this[a.date]);
+                        }
 
-            // Effect a pivot that groups member id's per date as per https://stackoverflow.com/questions/40523257/how-do-i-pivot-an-array-of-objects-in-javascript
+                        // create a new object with the other values and push it
+                        // to the array of the object of the hash table
+                        this[a.date].values.push(a.memberId); // if I chose I could push an object in here with any fields I want arranged by date.
+                      }, Object.create(null)); // Object.create creates an empty object without prototypes
 
-            var dateGrouped = [];
+                      console.log(dateGrouped); // result of above: An array of objects grouped by date :)
+                      var uniquePerDay = [];
+                      // Iterate through the dates and remove duplicates from the profile id's
+                      dateGrouped.forEach(function(object) {
+                        // go through each object inside dateGrouped Array and...
+                        var unique = Array.from(new Set(object.values)); // create temporary (nested) variable with only unique values.  That means if there's an array of three id's on a given day, but one is repeated; it will now be an array with only two.
+                        // go through each value left in var unique and "post" them to the more public variable uniquePerDay.
+                        unique.forEach(function(element) {
+                          uniquePerDay.push(element);
+                        });
+                      });
+                      // console.log('​uniquePerDay', uniquePerDay);
 
-            fieldMap.forEach(function (a) { // Go through each object in the array and let "a" be the name for the stuff ...
+                      state.countMentorVisits = uniquePerDay.length; // The length of the array is basically the count of id's in the array.
 
-                // check if date is not in hash table
-                if (!this[a.date]) {
-
-                    // if not, create new object with date and values array
-                    // and assign it with the date as hash to the hash table
-                    this[a.date] = {
-                        date: a.date,
-                        values: []
-                    };
-
-
-
-                    // add the new object to the result set, too
-                    dateGrouped.push(this[a.date]);
-                }
-
-                // create a new object with the other values and push it
-                // to the array of the object of the hash table
-                this[a.date].values.push(a.memberId); // if I chose I could push an object in here with any fields I want arranged by date.
-            }, Object.create(null)); // Object.create creates an empty object without prototypes
-
-            console.log(dateGrouped); // result of above: An array of objects grouped by date :)
-            var uniquePerDay = []
-            // Iterate through the dates and remove duplicates from the profile id's
-            dateGrouped.forEach(function (object) { // go through each object inside dateGrouped Array and... 
-                var unique = Array.from(new Set(object.values)) // create temporary (nested) variable with only unique values.  That means if there's an array of three id's on a given day, but one is repeated; it will now be an array with only two.
-                // go through each value left in var unique and "post" them to the more public variable uniquePerDay.
-                unique.forEach(function (element) {
-                    uniquePerDay.push(element)
-                })
-            })
-            // console.log('​uniquePerDay', uniquePerDay);
-
-            state.countMentorVisits = uniquePerDay.length // The length of the array is basically the count of id's in the array.
-
-            var allMembers = [] // as we iterate through the fieldMap, we'll push just the member Id's here.
-            fieldMap.forEach(row => allMembers.push(row.memberId))
-            var uniqueMembers = Array.from(new Set(allMembers)) // Not very readible (BAD Javascript! ) But creates a set of only unique elements.
-            console.log('​uniqueMembers', uniqueMembers);
-            state.countGrowersVisited = uniqueMembers.length
-
-
-        },
+                      var allMembers = []; // as we iterate through the fieldMap, we'll push just the member Id's here.
+                      fieldMap.forEach(row =>
+                        allMembers.push(row.memberId)
+                      );
+                      var uniqueMembers = Array.from(new Set(allMembers)); // Not very readible (BAD Javascript! ) But creates a set of only unique elements.
+                      console.log("​uniqueMembers", uniqueMembers);
+                      state.countGrowersVisited = uniqueMembers.length;
+                    },
         splitByCommercial({
             rootState,
             state,
             dispatch
         }) {
-            var globalMonth = rootState.pouchFilter.docsObj['global/reportMonth'].month
+            var globalMonth = rootState.csvMailroom.reportMonth;
             var mentorVisits = rootState.pouchFilter.docsObj[globalMonth + "/MentorVisits"].mentorVisits
             console.log('TCL: -------------------------------');
             console.log('TCL: mentorVisits', mentorVisits);
@@ -378,7 +377,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
             //     console.log(err);
             // }
 
-        }
+        //}
 
         // var attachments = fromMentorVisitPics.map(function (blob) {
         //     return {
@@ -402,8 +401,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         state.commercialThreePhotos = connectPhotos(photoIndex, state.commercialThreePhotos)
         state.subsistenceThreePhotos = connectPhotos(photoIndex, state.subsistenceThreePhotos)
         console.log('TCL: state.subsistenceThreePhotos', state.subsistenceThreePhotos);
-        var globalMonth = rootState.pouchFilter.docsObj['global/reportMonth'].month
-
+        var globalMonth = rootState.csvMailroom.reportMonth
 
         var dataFormatForDB = {
             _id: globalMonth + "/PhotoVisits",
@@ -425,7 +423,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         state.commercialThreePhotos = connectPhotos(photoIndex, state.commercialThreePhotos)
         state.subsistenceThreePhotos = connectPhotos(photoIndex, state.subsistenceThreePhotos)
         console.log('TCL: state.subsistenceThreePhotos', state.subsistenceThreePhotos);
-        var globalMonth = rootState.pouchFilter.docsObj['global/reportMonth'].month
+        var globalMonth = rootState.csvMailroom.reportMonth
 
 
         var dataFormatForDB = {

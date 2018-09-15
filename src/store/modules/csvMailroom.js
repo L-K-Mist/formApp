@@ -44,32 +44,8 @@ const actions = {
             console.log('TCL: err', err);
             // error
         });
-
-
-        // db.get('global/reportMonth').then(function (doc) {
-        //     if (!doc.updatedCount) {
-        //         doc.updatedCount = 0;
-        //     }
-        //     doc.updatedCount++;
-        //     return db.put(doc);
-        // }).catch(console.log.bind(console));
-
-
-        // var put = db.put({
-        //         _id: 'global/reportMonth',
-        //         someText: state.reportMonth
-        //     })
-        //     .then(function () {
-        //         return db.get('global/reportMonth');
-        //     });
-
-        // console.log('TCL: put', put);
-
-
-        // console.log("​-------------------------------------");
-        // console.log("​state.reportMonth", state.reportMonth);
-        // console.log("​-------------------------------------");
     },
+    
     prepareCSV({
         state,
         dispatch

@@ -1,4 +1,7 @@
+import db from "@/api/pouchDB";
+
 const state = {
+    produceSales: null,
     vegSold: null,
     herbsSold: null,
     fruitSold: null,
@@ -54,6 +57,24 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         });
         // console.log('​fieldMap', fieldMap);
 
+        state.produceSales = fieldMap
+        var docName = rootState.csvMailroom.reportMonth + "/produceSales" 
+        // upsert either creates a new db doc (if there isn't one with that name yet, or replaces it if there is one with the same name)
+        db.upsert(docName, function (doc) { // using upsert lib from https://github.com/pouchdb/upsert#dbupsertdocid-difffunc--callback
+            if (!doc.count) {
+                doc.count = 0;
+            }
+            doc.count++;
+            doc.data = state.produceSales;
+            return doc;
+        }).then(function (res) {
+            console.log('TCL: res', res);
+
+            // success, res is {rev: '1-xxx', updated: true, id: 'myDocId'}
+        }).catch(function (err) {
+            console.log('TCL: err', err);
+            // error
+        });
         const veggies = fieldMap.filter(
             entry => entry.saleType === "Vegetables"
         )
