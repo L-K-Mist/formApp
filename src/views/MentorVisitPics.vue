@@ -206,10 +206,10 @@ export default {
             "load",
             function() {
               this.$refs["preview" + parseInt(i)][0].src = reader.result;
-              console.log(
-                'TCL: getImagePreviews -> this.$refs["preview" + parseInt(i)][0]',
-                this.$refs["preview" + parseInt(i)][0]
-              );
+              // console.log(
+              //   'TCL: getImagePreviews -> this.$refs["preview" + parseInt(i)][0]',
+              //   this.$refs["preview" + parseInt(i)][0]
+              // );
             }.bind(this),
             false
           );
@@ -260,9 +260,9 @@ export default {
       var imageIndex = [];
       var incomingImageFiles = [];
       for (let f of e.dataTransfer.files) {
-        console.log("TCL: ---------------------------");
-        console.log("TCL: asyncmultiFile -> f", f);
-        console.log("TCL: ---------------------------");
+        // console.log("TCL: ---------------------------");
+        // console.log("TCL: asyncmultiFile -> f", f);
+        // console.log("TCL: ---------------------------");
 
         if (!f.path.includes(".hash")) {
           //console.log("File(s) you dragged here: ", f.path);
@@ -299,9 +299,10 @@ export default {
         };
       });
       console.log("TCL: asyncsaveToPouch -> rawImages", rawImages);
+      var mentorBlobs = [];
       for (let index = 0; index < rawImages.length; index++) {
         const image = this.$refs["preview" + parseInt(index)][0];
-        console.log("TCL: asyncsaveToPouch -> image", image);
+        // console.log("TCL: asyncsaveToPouch -> image", image);
 
         const rawImageSrc = rawImages[index].src;
         const imageName = rawImages[index].fileName;
@@ -317,31 +318,41 @@ export default {
           image.clientWidth * 2,
           image.clientHeight * 2
         );
-        console.log("TCL: checkRefs -> canvas", canvas);
+        // console.log("TCL: checkRefs -> canvas", canvas);
         canvasToBlob(canvas, "image/jpeg").then(function(blob) {
-          console.log("TCL: --------------------------------");
-          console.log("TCL: reader.onload -> blob", blob);
-          console.log("TCL: --------------------------------");
-          var globalMonth =
-            that.$store.getters.docsObj["global/reportMonth"].month; // I'm putting this all over the place. NOT DRY :(  fix DEE  <--- TODO
-          var dataFormatForDB = {
-            _id:
-              globalMonth +
-              "/photos/" +
-              imageName.replace(/\r?\n|\r/g, "").replace(/\s/g, ""),
-            _attachments: {
-              [imageName.replace(/\r?\n|\r/g, "").replace(/\s/g, "")]: {
-                content_type: "image/jpeg",
-                data: blob
-              }
-            }
+          // console.log("TCL: --------------------------------");
+          // console.log("TCL: reader.onload -> blob", blob);
+          // console.log("TCL: --------------------------------");
+          var mentorBlob = {
+            fileName: imageName.replace(/\r?\n|\r/g, "").replace(/\s/g, ""),
+            blob: blob
           };
-          db
-            .put(dataFormatForDB)
-            .then(response => {
-              console.log("dbResp", response);
-            })
-            .catch(err => console.log(err));
+          mentorBlobs.push(mentorBlob);
+
+          if (mentorBlobs.length === rawImages.length) {
+            that.$store.dispatch("saveMentorPhotos", mentorBlobs);
+          }
+          // RATHER
+          //   var globalMonth =
+          //     that.$store.getters.docsObj["global/reportMonth"].month; // I'm putting this all over the place. NOT DRY :(  fix DEE  <--- TODO
+          //   var dataFormatForDB = {
+          //     _id:
+          //       globalMonth +
+          //       "/photos/" +
+          //       imageName.replace(/\r?\n|\r/g, "").replace(/\s/g, ""),
+          //     _attachments: {
+          //       [imageName.replace(/\r?\n|\r/g, "").replace(/\s/g, "")]: {
+          //         content_type: "image/jpeg",
+          //         data: blob
+          //       }
+          //     }
+          //   };
+          //   db
+          //     .put(dataFormatForDB)
+          //     .then(response => {
+          //       console.log("dbResp", response);
+          //     })
+          //     .catch(err => console.log(err));
         });
       }
     }
