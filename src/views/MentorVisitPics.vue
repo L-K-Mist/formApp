@@ -155,12 +155,18 @@ export default {
 
       this.$store.dispatch("agriActivityFilter", newVal);
       this.$store.dispatch("splitByCommercial");
-      this.$store.dispatch("connectPhotos");
+
     },
     photoReport(newVal) {
       this.$store.dispatch("photoReport", newVal);
       console.log("TCL: photoReport -> newVal", newVal);
       // this.$store.dispatch("mapReportData", newVal);
+
+      if (newVal !== null && newVal.length > 0) {
+        console.log("dispaching connect photos")
+        this.$store.dispatch("connectPhotos", newVal);
+
+      } else {console.log("WHYYYY!!")}
     }
   },
   computed: {
