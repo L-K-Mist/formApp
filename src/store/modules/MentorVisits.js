@@ -34,27 +34,7 @@ function removeDuplicates(visitsArray) {
     );
 }
 
-function connectPhotos(photoIndex, visitsArray) {
-    var photoReport = []
-    visitsArray.forEach(function (row) {
-        var combo = row.photos.map(visitPhoto => ({
-            ...photoIndex.find(photoRow => visitPhoto.name == photoRow.name)
-        }))
-        var comboRow = {
-            date: row.date,
-            memberId: row.memberId,
-            gps: row.gps,
-            gardenName: row.gardenName,
-            name: row.name,
-            nationalId: row.nationalId,
-            farmingActivity: row.farmingActivity,
-            memberArea: row.memberArea,
-            photos: combo
-        };
-        photoReport.push(comboRow)
-    })
-    return photoReport
-}
+
 
 const state = {
     mentorVisits: null,
@@ -157,11 +137,17 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
                           }
                           doc.count++;
                           doc.data = fieldMap
+                          return doc
                       }).then(
                         response => {
                           console.log("dbResp", response); 
                         }
-                      );
+                      ).catch(function(err){
+                      console.log('TCL: -------------');
+                      console.log('TCL: err', err);
+                      console.log('TCL: -------------');
+                          
+                      })
                       _.delay(() => { // a bit hackey. TODO make this properly async, not hacky
                           dispatch("splitByCommercial");
                         }, 500, "later");
@@ -217,38 +203,50 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
             state,
             dispatch
         }) {
-            var globalMonth = rootState.csvMailroom.reportMonth;
-            var mentorVisits = rootState.pouchFilter.docsObj[globalMonth + "/MentorVisits"].mentorVisits
-            console.log('TCL: -------------------------------');
-            console.log('TCL: mentorVisits', mentorVisits);
-            console.log('TCL: -------------------------------');
-            // console.log('TCL: globalMonth + "/MentorVisits"', globalMonth + "/MentorVisits");
-            // Commercial_more_than_1000sqm
-            var commercialGardens = mentorVisits.filter(
-                entry =>
-                entry.farmingActivity !== undefined && entry.farmingActivity == 'Commercial_more_than_1000sqm'
-            )
-            console.log('​-----------------------');
-            console.log('​commercial', commercialGardens);
-            console.log('​-----------------------');
+            var reportMonth = rootState.csvMailroom.reportMonth;
+            var docName = reportMonth + "/MentorVisits"
+            //initialise reportMonth from value in db
 
-            state.commercialVisits = commercialGardens
+            db.get(docName).then(function (doc) {
+                console.log('TCL: -----------------------');
+                console.log('TCL: doc.data', doc.data);
+                console.log('TCL: -----------------------');
+                var mentorVisits = doc.data
+                
+                console.log('TCL: -------------------------------');
+                console.log('TCL: mentorVisits', mentorVisits);
+                console.log('TCL: -------------------------------');
+                // console.log('TCL: globalMonth + "/MentorVisits"', globalMonth + "/MentorVisits");
+                // Commercial_more_than_1000sqm
+                var commercialGardens = mentorVisits.filter(
+                    entry =>
+                    entry.farmingActivity !== undefined && entry.farmingActivity == 'Commercial_more_than_1000sqm'
+                )
+                console.log('​-----------------------');
+                console.log('​commercial', commercialGardens);
+                console.log('​-----------------------');
+    
+                state.commercialVisits = commercialGardens
+    
+                var commercialThreePhotos = hasThreePhotos(commercialGardens)
+                state.commercialThreePhotos = removeDuplicates(commercialThreePhotos)
+                console.log('TCL: commercialThreePhotos', commercialThreePhotos);
+                var subsistenceGardens = mentorVisits.filter(
+                    entry =>
+                    entry.farmingActivity !== undefined && entry.farmingActivity !== 'Commercial_more_than_1000sqm'
+                )
+                console.log('​-----------------------');
+                console.log('subsistance', subsistenceGardens);
+                console.log('​-----------------------');
+    
+                state.nonCommercialVisits = subsistenceGardens
+                var subsistenceThreePhotos = hasThreePhotos(subsistenceGardens)
+                state.subsistenceThreePhotos = removeDuplicates(subsistenceThreePhotos)
+                console.log('TCL: subsistenceThreePhotos', subsistenceThreePhotos);
+            }).catch(function (err) {
+                console.log(err);
+            });
 
-            var commercialThreePhotos = hasThreePhotos(commercialGardens)
-            state.commercialThreePhotos = removeDuplicates(commercialThreePhotos)
-            console.log('TCL: commercialThreePhotos', commercialThreePhotos);
-            var subsistenceGardens = mentorVisits.filter(
-                entry =>
-                entry.farmingActivity !== undefined && entry.farmingActivity !== 'Commercial_more_than_1000sqm'
-            )
-            console.log('​-----------------------');
-            console.log('subsistance', subsistenceGardens);
-            console.log('​-----------------------');
-
-            state.nonCommercialVisits = subsistenceGardens
-            var subsistenceThreePhotos = hasThreePhotos(subsistenceGardens)
-            state.subsistenceThreePhotos = removeDuplicates(subsistenceThreePhotos)
-            console.log('TCL: subsistenceThreePhotos', subsistenceThreePhotos);
 
 
             // .sort(function (obj1, obj2) {
@@ -260,33 +258,13 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
             state
         }, fromMentorVisitPics) {
 
-            /**
-             *
-             try {
-                 var doc = await db.get('mydoc');
-                 var response = await db.put({
-                     _id: 'mydoc',
-                     _rev: doc._rev,
-                     title: "Let's Dance"
-                 });
-             } catch (err) {
-                 console.log(err);
-             }
-             */
-
             var attachments = fromMentorVisitPics;
             console.log('TCL: attachments', attachments);
 
-            function arrayToObj(allDocs) {
+            function arrayToObj(attachmentsArray) { // Turn attachments array of attachement-objects into attachment-objects nested in attachments object (how PouchDB wants it's attachements)
                 var obj = {}
-                allDocs.forEach(element => {
-                    obj[element.fileName] = {
-                        content_type: 'image/jpeg',
-                        data: element.blob
-
-                    }
-
-
+                attachmentsArray.forEach(element => {
+                  obj[element.fileName] = { content_type: "image/jpeg", data: element.blob };
                 });
                 return obj
             }
@@ -393,15 +371,61 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         // }
 
     },
-    connectPhotos({
+    /**
+     * 
+     * TODO SOON: rewrite this so that instead of taking two arrays and correlating based on imageName, 
+     * instead we iterate through - for example Commercial - and in each row, for each of the three images, we add a new attribute.
+     * This attribute is called blob.  The blob is added to the image-attributes by way of db.getAttachment.
+     */
+    connectPhotos({  // 
         rootState,
         state
     }) {
-        var photoIndex = rootState.pouchFilter.docsObj['2018-08/MentorPhotos'].fsImages // TODO take out hardcoded date Make a better plan for date state
+        var reportMonth = rootState.csvMailroom.reportMonth
+        var docName = reportMonth + "/photos"
+
+
+ 
         state.commercialThreePhotos = connectPhotos(photoIndex, state.commercialThreePhotos)
         state.subsistenceThreePhotos = connectPhotos(photoIndex, state.subsistenceThreePhotos)
         console.log('TCL: state.subsistenceThreePhotos', state.subsistenceThreePhotos);
-        var globalMonth = rootState.csvMailroom.reportMonth
+
+        async function fetchBlob(docName, photoName) {
+            db.getAttachment(docName, photoName).then(function(res){
+            console.log('TCL: --------------------------');
+            console.log('TCL: fetchBlob -> res', res);
+            console.log('TCL: --------------------------');
+            }).catch(function(err) {
+            console.log('TCL: --------------------------');
+            console.log('TCL: fetchBlob -> err', err);
+            console.log('TCL: --------------------------'); 
+            })
+        }
+
+        async function connectPhotos(photoIndex, visitsArray) {
+            var photoReport = []
+            for(const row of visitsArray) {
+                var combo = []
+                for (const photo of visitsArray.photos) {
+                   var blob = fetchBlob(docName, photo.name)
+                   combo.push(blob)
+                }
+                var comboRow = {
+                    date: row.date,
+                    memberId: row.memberId,
+                    gps: row.gps,
+                    gardenName: row.gardenName,
+                    name: row.name,
+                    nationalId: row.nationalId,
+                    farmingActivity: row.farmingActivity,
+                    memberArea: row.memberArea,
+                    photos: combo
+                };
+                photoReport.push(comboRow)
+            }
+            return photoReport
+        }
+
 
         var dataFormatForDB = {
             _id: globalMonth + "/PhotoVisits",

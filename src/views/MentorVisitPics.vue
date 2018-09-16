@@ -32,7 +32,7 @@
       </v-layout>
       <v-layout justify-center row >
         <v-flex xs10>
-          <next-monthly-visits-map></next-monthly-visits-map>   
+          <!-- <next-monthly-visits-map></next-monthly-visits-map>    -->
         </v-flex>
       </v-layout>
       <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
@@ -160,7 +160,7 @@ export default {
     photoReport(newVal) {
       this.$store.dispatch("photoReport", newVal);
       console.log("TCL: photoReport -> newVal", newVal);
-      this.$store.dispatch("mapReportData", newVal);
+      // this.$store.dispatch("mapReportData", newVal);
     }
   },
   computed: {
