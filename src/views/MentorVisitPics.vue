@@ -27,7 +27,7 @@
           </div> 
         </v-flex>
         <br><br><br>
-        <v-btn color="success" @click="saveToPouch">Save to Local</v-btn>  
+        <v-btn class="not-print" color="success" @click="saveToPouch">Save to Local</v-btn>  
         <v-btn class="not-print" @click="printPDF"  color="success">Convert to PDF</v-btn>
         <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
       </v-container>  
@@ -79,6 +79,7 @@ export default {
     photoReport(newVal) {
       this.$store.dispatch("photoReport", newVal);
       console.log("TCL: photoReport -> newVal", newVal);
+      console.log("refs: " + this.$refs.images);
       this.$store.dispatch("mapReportData", newVal);
     }
   },
@@ -126,6 +127,7 @@ export default {
           imageIndex.push(f.path);
         }
       }
+
       var fileNames = imageIndex.map(entry => {
         var fn = entry.match(/([^/])+/g);
         fn = fn[fn.length - 1];
