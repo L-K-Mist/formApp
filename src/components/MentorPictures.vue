@@ -1,6 +1,6 @@
 <template>
   <v-layout row wrap>
-    <v-btn color="info" @click="checkRefs">check refs</v-btn>
+        <v-btn class="not-print" color="info" @click="checkRefs">check refs</v-btn>
     <v-container grid-list-xl>
         <v-card id="mentor-visit"  class="p-card texty" ref="visitCards" v-for="(item, index) in photoReport" :key="index">
           <v-container grid-list-lg> 
@@ -18,13 +18,9 @@
                   </ul>
                 </v-flex>
               <v-layout row justify-end>
-   
-                  <v-flex class="p-image mb-4 mr-4 "   xs3
-                    v-for="(i, key, index) in item.photos" :key="key" >
-                    <img  :ref="'images' + ' index: ' + index + ' key: ' + key"  :src="'File:' + i.path">           
-                  </v-flex>
-                <v-flex id="cont" xs12>
-                  
+                <v-flex class="p-image mb-4 mr-4 " xs3
+                  v-for="(i, index) in item.photos" :key="index" >
+                  <img ref="images"  :src="'File:' + i.path">           
                 </v-flex>
     
               </v-layout>
@@ -38,11 +34,8 @@
 
 <script>
 import moment from "moment";
-import { canvasToBlob } from "blob-util";
-import { createObjectURL } from "blob-util";
-/**
- * TODO Next:  Intercept these images right on upload, compress them then before attaching to the report.
- */
+import { createObjectURL, canvasToBlob } from "blob-util";
+//  + ' index: ' + index + ' key: ' + key
 export default {
   props: ["photoReport"],
   computed: {
@@ -63,18 +56,9 @@ export default {
     checkRefs() {
       var rawImages = this.$refs.images;
       var compressedImages = [];
-      // var imageData = rawImages.map(
-      //   image => image.currentSrc,
-      //   image.clientHeight,
-      //   image.clientWidth,
-      //   image.src
-      // );
-      for (let index = 0; index < rawImages.length; index++) {
-        const image = rawImages[index];
-        console.log("TCL: checkRefs -> element", image);
-
+      for (const image of rawImages) {
         var canvas = document.createElement("canvas");
-        var rawImageSrc = image.currentSrc;
+        var rawImageSrc = image.src;
 
         canvas.width = image.clientWidth * 2;
         canvas.height = image.clientHeight * 2;
@@ -86,46 +70,17 @@ export default {
           image.clientWidth * 2,
           image.clientHeight * 2
         );
-        console.log("TCL: checkRefs -> canvas", canvas);
         canvasToBlob(canvas, "image/jpeg").then(function(blob) {
           console.log("TCL: --------------------------------");
           console.log("TCL: reader.onload -> blob", blob);
           console.log("TCL: --------------------------------");
           compressedImages.push(blob);
-          if (compressedImages.length == rawImages.length) {
-            replaceImages();
-          }
+          var blobURL = createObjectURL(blob);
+          image.src = blobURL;
         });
       }
-
-      // rawImages.forEach(function(image) {
-      // var canvas = document.createElement("canvas");
-      // canvas.width = width;
-      // canvas.height = height;
-      // var ctx = canvas.getContext("2d"); // Once you have the image preview in an <img> element, you can draw this image in a <canvas> element to pre-process the file.
-      // console.log("TCL: ----------------------------------");
-      // console.log("TCL: handleFiles -> canvas", canvas);
-      // console.log("TCL: ----------------------------------");
-      // ctx.drawImage(img, width, height);
-      // canvasToBlob(canvas, "image/jpeg").then(function(blob) {
-      //   console.log("TCL: --------------------------------");
-      //   console.log("TCL: reader.onload -> blob", blob);
-      //   console.log("TCL: --------------------------------");
-      // });
-      // });
-      function replaceImages() {
-        var selectedBlob = compressedImages[2];
-        var blobURL = createObjectURL(selectedBlob);
-        console.log("TCL: checkRefs -> blobURL", blobURL);
-
-        var newImage = document.createElement("img");
-        newImage.src = blobURL;
-        var cont = document.getElementById("cont");
-        cont.appendChild(newImage);
-        console.log("TCL: checkRefs -> rawImages", rawImages);
-        console.log("TCL: checkRefs -> compressedImages", compressedImages);
-        console.log("this.photoReport", this.photoReport);
-      }
+      console.log("TCL: checkRefs -> rawImages", rawImages);
+      var compressedImages = [];
     }
   },
   components: {}

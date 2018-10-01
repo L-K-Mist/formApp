@@ -56,12 +56,25 @@
                       <!-- <h3 v-if="photoReport !== null">Number of rows: {{ photoReport.length }}</h3> -->
                   </div>               
                 </div>
+                <v-select
+                  :items="agriActivities"
+                  v-model="agriActivitiesSelected"
+                  label="Commercial or Non?"
+                ></v-select>
+                      
+
+                <next-monthly-visits-map></next-monthly-visits-map>
             </template> 
           </div> 
         </v-flex>
         <br><br><br>
-      </v-container>
-  </v-container>  
+        <v-btn class="not-print" color="success" @click="saveToPouch">Save to Local</v-btn>  
+        <v-btn class="not-print" @click="printPDF"  color="success">Convert to PDF</v-btn>
+        <h1 class="print-title">{{ reportTitle }}</h1>
+        <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
+      </v-container>  
+    
+  </v-container>
 </template>
 
 <script>
@@ -155,18 +168,12 @@ export default {
 
       this.$store.dispatch("agriActivityFilter", newVal);
       this.$store.dispatch("splitByCommercial");
-
     },
     photoReport(newVal) {
       this.$store.dispatch("photoReport", newVal);
       console.log("TCL: photoReport -> newVal", newVal);
-      // this.$store.dispatch("mapReportData", newVal);
-
-      if (newVal !== null && newVal.length > 0) {
-        console.log("dispaching connect photos")
-        this.$store.dispatch("connectPhotos", newVal);
-
-      } else {console.log("WHYYYY!!")}
+      console.log("refs: " + this.$refs.images);
+      this.$store.dispatch("mapReportData", newVal);
     }
   },
   computed: {
@@ -276,6 +283,7 @@ export default {
           incomingImageFiles.push(f);
         }
       }
+
       var fileNames = imageIndex.map(entry => {
         var fn = entry.match(/([^/])+/g);
         fn = fn[fn.length - 1];
