@@ -20,8 +20,8 @@
               <v-layout row justify-end>
    
                   <v-flex class="p-image mb-4 mr-4 "   xs3
-                    v-for="(i, index) in item.photos" :key="index" >
-                    <img  ref='images'  :src="'File:' + i.path">           
+                    v-for="(i, key, index) in item.photos" :key="key" >
+                    <img  :ref="'images' + ' index: ' + index + ' key: ' + key"  :src="'File:' + i.path">           
                   </v-flex>
                 <v-flex id="cont" xs12>
                   
