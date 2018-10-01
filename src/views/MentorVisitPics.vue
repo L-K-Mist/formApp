@@ -22,6 +22,8 @@
                   v-model="agriActivitiesSelected"
                   label="Commercial or Non?"
                 ></v-select>
+                      
+
                 <next-monthly-visits-map></next-monthly-visits-map>
             </template> 
           </div> 
@@ -29,6 +31,7 @@
         <br><br><br>
         <v-btn class="not-print" color="success" @click="saveToPouch">Save to Local</v-btn>  
         <v-btn class="not-print" @click="printPDF"  color="success">Convert to PDF</v-btn>
+        <h1 class="print-title">{{ reportTitle }}</h1>
         <mentor-pictures :photoReport="photoReport"  v-if="photoReport !== null"></mentor-pictures>
       </v-container>  
     </v-layout>
