@@ -1,6 +1,6 @@
 <template>
   <v-layout row wrap>
-        <v-btn class="not-print" color="info" @click="checkRefs">check refs</v-btn>
+        <v-btn class="not-print" color="info" @click="checkRefs">Compress Images</v-btn>
     <v-container>
         <v-card id="mentor-visit"  class="p-card texty" v-for="(item, index) in photoReport" :key="index" >
           <v-container  @click="$delete(photoReport, index)" grid-list-xs> 
