@@ -3,7 +3,7 @@
       <v-container grid-list-xs>
 
         <v-flex xs12 sm10 offset-sm1 md8 offset-md2>
-          <h1 class="print-title">Mentor Visit Pictures</h1>
+          <h1 class="not-print">Mentor Visit Pictures</h1>
             <div class="not-print">
               <template>
                 <reports-received></reports-received>

@@ -1,24 +1,23 @@
 <template>
   <v-layout row wrap>
         <v-btn class="not-print" color="info" @click="checkRefs">check refs</v-btn>
-    <v-container grid-list-xl>
-        <v-card id="mentor-visit"  class="p-card texty" v-for="(item, index) in photoReport" :key="index">
-          <v-container grid-list-lg> 
+    <v-container>
+        <v-card id="mentor-visit"  class="p-card texty" v-for="(item, index) in photoReport" :key="index" >
+          <v-container  @click="$delete(photoReport, index)" grid-list-xs> 
             <v-layout row wrap>
-              <v-flex xs12>
-                <h3 class=" mb-0"> {{ headlineSelect(item.name, item.gardenName)}} &nbsp; | &nbsp; {{ item.date }}</h3>
-                <br>
+              <v-flex class="pb-0 mb-0" xs12>
+                <h3 class="mb-0 ml-1"> {{ headlineSelect(item.name, item.gardenName)}} &nbsp; | &nbsp; {{ item.date }}</h3>
               </v-flex>
               <v-layout row >
                 <v-flex xs4>
-                  <ul class="texty">
+                  <ul class="texty mt-2" >
                     <!-- <li>Activity: {{item.farmingActivity}}</li> -->
                     <li>Person Mentored: {{ item.name }}</li>
                     <li>GPS Co-ordinates: {{ item.gps }}</li>
                   </ul>
                 </v-flex>
-              <v-layout row justify-end>
-                <v-flex class="p-image mb-4 mr-4 " xs3
+              <v-layout class="mt-3" row justify-end>
+                <v-flex class="p-image mb-4 mr-2 " xs3
                   v-for="(i, index) in item.photos" :key="index" >
                   <img ref="images"  :src="'File:' + i.path">           
                 </v-flex>
