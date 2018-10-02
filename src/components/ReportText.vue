@@ -47,7 +47,7 @@
                           <template transition="slide-y-transition"
                             v-if="totalValue !==null">
                             <h4>Crop Updates [not real data yet]</h4>
-                            <p>{{ cropsRecorded.toLocaleString() }} Crops were captured in {{date}} with a total of {{ totalArea.toLocaleString() }} Ha.  This area represents approximately {{ totalKg.toLocaleString() }} T of produce.  At an average retail rate of R10 000 per Ton the crops captured have a value of  R{{ totalValue.toLocaleString() }}.  </p>
+                            <p>{{ cropsRecorded.toLocaleString() }} Crops were captured in {{date}} with a total of {{ totalArea.toLocaleString() }} Ha.  This area represents approximately {{ (totalKg/1000).toFixed(1).toLocaleString() }} T of produce.  At an average retail rate of R10 000 per Ton the crops captured have a value of  R{{ totalValue.toLocaleString() }}.  </p>
                           </template>     
                           <template transition="slide-y-transition"
                             v-if="$store.getters.honeySold !== null">
