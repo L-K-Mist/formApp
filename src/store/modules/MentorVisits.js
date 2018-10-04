@@ -87,7 +87,7 @@ const getters = {
  */
 const actions = { // If the file-name includes "mentorvisit" it is sent here
     // Must pivot to grouped months, then count each unique occurance of member id
-    mentorVisits({
+    async mentorVisits({
         rootState,
         dispatch
     }, payload) {
@@ -105,13 +105,13 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
                 }
             }
         }
-        console.log('payload length:', payload.length)
+        // console.log('payload length:', payload.length)
         // Filter to include only the month in question
         const dateFilter = payload.filter(
             entry =>
             entry.Date !== undefined && entry.Date.includes(rootState.csvMailroom.reportMonth)
         );
-        console.log('TCL: dateFilter.length', dateFilter.length);
+        // console.log('TCL: dateFilter.length', dateFilter.length);
 
 
         // console.log('​dateFilter', dateFilter);
@@ -138,22 +138,39 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         });
         state.mentorVisits = fieldMap
 
-        var globalMonth = rootState.pouchFilter.docsObj['global/reportMonth'].month
-        console.log('TCL: globalMonth', globalMonth);
+        var globalMonth = rootState.csvMailroom.reportMonth
+        var docName = globalMonth + "/MentorVisits"
 
-        var dataFormatForDB = {
-            _id: globalMonth + "/MentorVisits",
-            mentorVisits: fieldMap
+        try {
+            var doc = await db.upsert(docName, function (doc) { // using upsert lib from https://github.com/pouchdb/upsert#dbupsertdocid-difffunc--callback
+                if (!doc.count) {
+                    doc.count = 0;
+                }
+                doc.count++;
+                doc.data = fieldMap
+                return doc;
+            })
+        } catch (err) {
+            console.log('TCL: }catch -> err', err);
         }
-        db.put(dataFormatForDB).then(response => {
-                console.log("dbResp", response)
-            }
 
-        )
-        _.delay(() => {
-            dispatch('splitByCommercial');
-        }, 500, 'later');
-        // => Logs 'later' after one second.
+        dispatch('splitByCommercial');
+
+
+
+        // var dataFormatForDB = {
+        //     _id: globalMonth + "/MentorVisits",
+        //     mentorVisits: fieldMap
+        // }
+        // db.put(dataFormatForDB).then(response => {
+        //         console.log("dbResp", response)
+        //     }
+
+        // )
+        // _.delay(() => {
+
+        // }, 500, 'later');
+        // // => Logs 'later' after one second.
 
         // Effect a pivot that groups member id's per date as per https://stackoverflow.com/questions/40523257/how-do-i-pivot-an-array-of-objects-in-javascript
 
@@ -209,7 +226,7 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         state,
         dispatch
     }) {
-        var globalMonth = rootState.pouchFilter.docsObj['global/reportMonth'].month
+        var globalMonth = rootState.csvMailroom.reportMonth
         var mentorVisits = rootState.pouchFilter.docsObj[globalMonth + "/MentorVisits"].mentorVisits
         console.log('TCL: -------------------------------');
         console.log('TCL: mentorVisits', mentorVisits);
@@ -251,11 +268,12 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         rootState,
         state
     }) {
-        var photoIndex = rootState.pouchFilter.docsObj['2018-08/MentorPhotos'].fsImages // TODO take out hardcoded date Make a better plan for date state
+
+        var globalMonth = rootState.csvMailroom.reportMonth
+        var photoIndex = rootState.pouchFilter.docsObj[rootState.csvMailroom.reportMonth + '/MentorPhotos'].fsImages // TODO take out hardcoded date Make a better plan for date state
         state.commercialThreePhotos = connectPhotos(photoIndex, state.commercialThreePhotos)
         state.subsistenceThreePhotos = connectPhotos(photoIndex, state.subsistenceThreePhotos)
         console.log('TCL: state.subsistenceThreePhotos', state.subsistenceThreePhotos);
-        var globalMonth = rootState.pouchFilter.docsObj['global/reportMonth'].month
 
 
         var dataFormatForDB = {
