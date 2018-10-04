@@ -44,6 +44,7 @@ function connectPhotos(photoIndex, visitsArray) {
 
 const state = {
     mentorVisits: null,
+    imageIndex: null,
     countMentorVisits: null,
     countGrowersVisited: null,
     commercialVisits: null,
@@ -87,12 +88,31 @@ const getters = {
  */
 const actions = { // If the file-name includes "mentorvisit" it is sent here
     // Must pivot to grouped months, then count each unique occurance of member id
+    processImageIndex({
+        rootState,
+        state,
+        dispatch
+    }, imageIndex) {
+        state.imageIndex = imageIndex
+
+        db.put({
+            _id: rootState.csvMailroom.reportMonth + "/MentorPhotos",
+            fsImages: imageIndex
+        }).then(response => {
+            console.log("dbResp", response)
+            // dispatch("connectImagesToVisits")
+        }).catch(function (err) {
+            console.log(err);
+        })
+    },
+
+
     async mentorVisits({
         rootState,
         dispatch
     }, payload) {
         // console.log('​state.reportMonth', rootState.csvMailroom.reportMonth);
-        function imageObj(linkString) {
+        function givePhotosNameAndPath(linkString) {
             if (linkString == "") {
                 return "No Image"
             } else {
@@ -125,9 +145,9 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
                 gps: row.GPS,
                 gardenName: row['Garden Name'],
                 photos: [ // TODO give this same struct as imageIndex array
-                    imageObj(row.Picture1),
-                    imageObj(row.Picture2),
-                    imageObj(row.Picture3),
+                    givePhotosNameAndPath(row.Picture1),
+                    givePhotosNameAndPath(row.Picture2),
+                    givePhotosNameAndPath(row.Picture3),
                 ],
                 name: row['First Name'] + ' ' + row['Last Name'],
                 nationalId: row['SA ID Number'],
@@ -157,21 +177,6 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         dispatch('splitByCommercial');
 
 
-
-        // var dataFormatForDB = {
-        //     _id: globalMonth + "/MentorVisits",
-        //     mentorVisits: fieldMap
-        // }
-        // db.put(dataFormatForDB).then(response => {
-        //         console.log("dbResp", response)
-        //     }
-
-        // )
-        // _.delay(() => {
-
-        // }, 500, 'later');
-        // // => Logs 'later' after one second.
-
         // Effect a pivot that groups member id's per date as per https://stackoverflow.com/questions/40523257/how-do-i-pivot-an-array-of-objects-in-javascript
 
         var dateGrouped = [];
@@ -180,16 +185,12 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
 
             // check if date is not in hash table
             if (!this[a.date]) {
-
                 // if not, create new object with date and values array
                 // and assign it with the date as hash to the hash table
                 this[a.date] = {
                     date: a.date,
                     values: []
                 };
-
-
-
                 // add the new object to the result set, too
                 dateGrouped.push(this[a.date]);
             }
@@ -264,29 +265,32 @@ const actions = { // If the file-name includes "mentorvisit" it is sent here
         // return moment(obj1.date) - moment(obj2.date);
         // })
     },
-    connectPhotos({
+    async connectPhotos({
         rootState,
         state
     }) {
-
         var globalMonth = rootState.csvMailroom.reportMonth
         var photoIndex = rootState.pouchFilter.docsObj[rootState.csvMailroom.reportMonth + '/MentorPhotos'].fsImages // TODO take out hardcoded date Make a better plan for date state
         state.commercialThreePhotos = connectPhotos(photoIndex, state.commercialThreePhotos)
         state.subsistenceThreePhotos = connectPhotos(photoIndex, state.subsistenceThreePhotos)
         console.log('TCL: state.subsistenceThreePhotos', state.subsistenceThreePhotos);
 
+        var docName = globalMonth + "/MentorVisits"
 
-        var dataFormatForDB = {
-            _id: globalMonth + "/PhotoVisits",
-            commercial: state.commercialThreePhotos,
-            nonCommercial: state.subsistenceThreePhotos
+        try {
+            var doc = await db.upsert(docName, function (doc) { // using upsert lib from https://github.com/pouchdb/upsert#dbupsertdocid-difffunc--callback
+                if (!doc.count) {
+                    doc.count = 0;
+                }
+                doc.count++;
+                doc.commercial = state.commercialThreePhotos
+                doc.nonCommercial = state.subsistenceThreePhotos
+                return doc;
+            })
+        } catch (err) {
+            console.log('TCL: }catch -> err', err);
         }
-        db.put(dataFormatForDB).then(response => {
-            console.log("dbResp", response)
-        }).catch(err => console.log(err))
-
-
-
+        console.log('TCL: doc', doc);
     },
     photoReport({
         state

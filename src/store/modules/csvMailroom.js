@@ -29,8 +29,6 @@ const actions = {
     }, payload) {
         state.reportMonth = payload; // change the reportMonth via user interaction with datepicker
 
-
-
         try {
             var doc = await db.upsert('global/reportMonth', function (doc) { // using upsert lib from https://github.com/pouchdb/upsert#dbupsertdocid-difffunc--callback
                 if (!doc.count) {
@@ -45,47 +43,6 @@ const actions = {
         }
 
         console.log('TCL: doc', doc);
-
-        // db.upsert('global/reportMonth', function (doc) { // using upsert lib from https://github.com/pouchdb/upsert#dbupsertdocid-difffunc--callback
-        //     if (!doc.count) {
-        //         doc.count = 0;
-        //     }
-        //     doc.count++;
-        //     doc.month = state.reportMonth
-        //     return doc;
-        // }).then(function (res) {
-        //     console.log('TCL: res', res);
-
-        //     // success, res is {rev: '1-xxx', updated: true, id: 'myDocId'}
-        // }).catch(function (err) {
-        //     console.log('TCL: err', err);
-        //     // error
-        // });
-
-
-        // db.get('global/reportMonth').then(function (doc) {
-        //     if (!doc.updatedCount) {
-        //         doc.updatedCount = 0;
-        //     }
-        //     doc.updatedCount++;
-        //     return db.put(doc);
-        // }).catch(console.log.bind(console));
-
-
-        // var put = db.put({
-        //         _id: 'global/reportMonth',
-        //         someText: state.reportMonth
-        //     })
-        //     .then(function () {
-        //         return db.get('global/reportMonth');
-        //     });
-
-        // console.log('TCL: put', put);
-
-
-        // console.log("​-------------------------------------");
-        // console.log("​state.reportMonth", state.reportMonth);
-        // console.log("​-------------------------------------");
     },
     prepareCSV({
         state,

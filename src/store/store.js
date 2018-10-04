@@ -1,12 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Camera from './modules/camera'
-// import db from "@/api/pouchDB";
 import SeedlingSales from './modules/SeedlingSales'
 import MentorVisits from './modules/MentorVisits'
 import CropUpdates from './modules/CropUpdates'
 import ProduceSales from './modules/ProduceSales'
-import MentorVisitImages from './modules/MentorVisitImages'
 import pouchFilter from './modules/pouchFilter'
 import csvMailroom from './modules/csvMailroom'
 import visitsMap from './modules/visitsMap'
@@ -22,13 +20,7 @@ export const store = new Vuex.Store({
       return state.showCameraDialog
     }
   },
-  // mutations: {
-  //   showCameraDialog({
-  //     state
-  //   }, payload) {
-  //     state.showCameraDialog = payload
-  //   }
-  // },
+
   actions: {
     showCameraDialog({
       commit,
@@ -46,7 +38,6 @@ export const store = new Vuex.Store({
     MentorVisits,
     CropUpdates,
     ProduceSales,
-    MentorVisitImages,
     pouchFilter,
     csvMailroom,
     visitsMap
