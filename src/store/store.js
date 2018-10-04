@@ -10,6 +10,7 @@ import MentorVisitImages from './modules/MentorVisitImages'
 import pouchFilter from './modules/pouchFilter'
 import csvMailroom from './modules/csvMailroom'
 import visitsMap from './modules/visitsMap'
+import farmers from './modules/farmers'
 
 Vue.use(Vuex)
 
@@ -22,13 +23,7 @@ export const store = new Vuex.Store({
       return state.showCameraDialog
     }
   },
-  // mutations: {
-  //   showCameraDialog({
-  //     state
-  //   }, payload) {
-  //     state.showCameraDialog = payload
-  //   }
-  // },
+
   actions: {
     showCameraDialog({
       commit,
@@ -49,6 +44,7 @@ export const store = new Vuex.Store({
     MentorVisitImages,
     pouchFilter,
     csvMailroom,
-    visitsMap
+    visitsMap,
+    farmers
   }
 });

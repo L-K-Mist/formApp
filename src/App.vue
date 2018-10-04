@@ -65,6 +65,11 @@ export default {
           icon: "photo",
           title: "Mentor-Visit Pictures",
           path: "/pics"
+        },
+        {
+          icon: "supervisor_account",
+          title: "Explore Farmers from Farmer-App",
+          path: "/farmers"
         }
       ],
       miniVariant: false,

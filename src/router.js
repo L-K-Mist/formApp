@@ -4,6 +4,7 @@ import Home from './views/Home.vue'
 import FarmForm from "@/views/FarmForm.vue"
 import MonthlyReport from "@/views/MonthlyReport.vue"
 import MentorVisitPics from "@/views/MentorVisitPics.vue"
+import Farmers from "@/views/Farmers.vue"
 
 
 Vue.use(Router)
@@ -18,6 +19,11 @@ export default new Router({
       path: "/pics",
       name: "MentorVisitPics",
       component: MentorVisitPics
+    },
+    {
+      path: "/farmers",
+      name: "Farmers",
+      component: Farmers
     },
     {
       path: "/farmform",
