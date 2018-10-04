@@ -2,12 +2,16 @@ import apollo from '@/apollo'
 import gql from 'graphql-tag'
 
 const state = {
-    filteredFarmers: null
+    filteredFarmers: null,
+    farmerFilterLoading: true
 }
 
 const getters = {
     filteredFarmers(state) {
         return state.filteredFarmers
+    },
+    farmerFilterLoading(state) {
+        return state.farmerFilterLoading
     }
 }
 
@@ -15,6 +19,7 @@ const actions = {
     async filterFarmers({
         state
     }, payload) {
+        state.farmerFilterLoading = true
         const response = await apollo.query({ // The way to speak to gql database from vuex
             query: gql `
                 query usersFilterByName($filter: String) {
@@ -28,8 +33,11 @@ const actions = {
                 filter: payload
             }
         })
-        console.log('TCL: response', response.data.usersFilterByName);
+
         state.filteredFarmers = response.data.usersFilterByName
+        console.log('TCL: state.filteredFarmers', state.filteredFarmers);
+
+        state.farmerFilterLoading = false
     }
 }
 
