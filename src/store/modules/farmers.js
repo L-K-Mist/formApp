@@ -26,6 +26,15 @@ const actions = {
                     usersFilterByName(filter: $filter) {
                         email
                         name
+                        farmingActivities {
+                            category
+                            longDescription
+                        }
+                        personalDetails {
+                            idSA
+                            lastName
+                            cell
+                        }
                     }
                 }
             `,
