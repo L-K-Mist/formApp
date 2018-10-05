@@ -1,17 +1,23 @@
 <template>
 <v-container fluid grid-list-xl>
-    <v-layout row>
+    <v-container grid-list-xs>
+    <v-layout justify-center row>
       <v-flex xs3>
         <v-card>
-            <v-text-field box label="name or email contains: " v-model="filterValue"></v-text-field>
-            <v-checkbox v-model="selected" label="John" value="John"></v-checkbox>
-            <v-checkbox v-model="selected" label="Jacob" value="Jacob"></v-checkbox>
-        </v-card>
+          <v-card-title primary-title>
+            <h3>Filter By Name or Email</h3>
+          </v-card-title>
+          <v-card-text>
+            <v-text-field   @keypress.enter="$store.dispatch('filterFarmers', filterValue)" box label="name or email contains: " v-model="filterValue"></v-text-field>
             <v-btn :loading="loading" :disabled="loading"
               @click="$store.dispatch('filterFarmers', filterValue)" color="success">Filter By Selection</v-btn>        
+            
+          </v-card-text>
+            <!-- <v-checkbox v-model="selected" label="John" value="John"></v-checkbox>
+            <v-checkbox v-model="selected" label="Jacob" value="Jacob"></v-checkbox> -->
+        </v-card>
       </v-flex>
     </v-layout>
-    <v-container grid-list-xs>
     <v-layout v-for="person in filteredFarmers" :key="person.name"
       v-if="filteredFarmers" row>
       <v-flex xs12>
