@@ -14,11 +14,26 @@ function hasThreePhotos(array) {
 function removeDuplicates(visitsArray) {
   //Function receives a visitsArray and returns a filtered array with the duplicates removed
   const _arr = [...visitsArray];
+  // Donno if creating a string is preferred
+  const isEqual = (a, b) =>
+    a.date === b.date && a.gps === b.gps && a.name === b.name;
+  const noDups = _arr.reduce((collection, obj) => {
+    if (collection.findIndex(p => isEqual(p, obj)) < 0) {
+      collection.push(obj);
+    }
+    return collection;
+  }, []);
+  return noDups;
+}
+
+function removeDuplicatesFilter(visitsArray) {
+  //Function receives a visitsArray and returns a filtered array with the duplicates removed
+  const _arr = [...visitsArray];
   const _filtered = _arr.filter((el, index, array) => {
     // Goes through the array/list of objects and creates a new list only of the el-ements where the code below returns true
     let count = 0;
     array.forEach(element => {
-      // Take the element we have "in hand" that is: el and again iterate through the same array/list to see which other elements/objects of the list have the same data and gps and name as the item we looking for.
+      // Take the element we have "in hand" that is: el and again iterate through the same array/list to see which other elements/objects of the list have the same date and gps and name as the item we looking for.
       if (
         el.date == element.date &&
         el.gps == element.gps &&
@@ -335,3 +350,19 @@ export default {
   getters,
   actions
 };
+
+/**
+ * 
+Hey peeps, I know it's Friday and all, but I'm having a real Javascript Phone-a-Friend moment.  I've got a Real-World array of objects and I want to remove semi-duplicates based on three fields.  As in: 
+
+If there's an object with the same date, gps, and name as other objects keep only one - even if some other fields (particularly timestamp) are not the same, still keep just one.
+
+The closest solutions I find look something like this one
+```function removeDuplicates(myArr, prop) {
+    return myArr.filter((obj, pos, arr) => {
+        return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
+    });
+}```
+
+But can't seem to wrap my head around checking for three props.
+ */
