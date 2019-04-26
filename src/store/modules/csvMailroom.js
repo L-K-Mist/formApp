@@ -61,6 +61,7 @@ const actions = {
                     })
                 } else if (payload.fileToLoad.name.includes("mentorvisit")) {
                     dispatch("mentorVisits", results.data);
+                    console.log('here is the incoming data:', results.data)
                     state.filesReceived.push({
                         name: "Mentor Visits",
                         month: state.reportMonth
