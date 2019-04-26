@@ -12,6 +12,7 @@ function hasThreePhotos(array) {
 }
 
 function removeDuplicates(visitsArray) {
+  //Function receives a visitsArray and returns a filtered array with the duplicates removed
   const _arr = [...visitsArray];
   const _filtered = _arr.filter((el, index, array) => {
     // Goes through the array/list of objects and creates a new list only of the el-ements where the code below returns true
@@ -33,6 +34,8 @@ function removeDuplicates(visitsArray) {
       return true; // You are the last of your kind...  you may proceed.
     }
   });
+
+  return _filtered; // When all that filtering work is done return the filtered array.
 }
 
 function removeDuplicatesLodash(visitsArray) {
